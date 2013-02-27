@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/oa/!svn/ver/3137/src/trunk/CyberOA
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/oa/!svn/ver/2978/src/trunk/CyberOA/.classpath
+END
+jsch.jar
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/oa/!svn/ver/1398/src/trunk/CyberOA/jsch.jar
+END
+.mymetadata
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/oa/!svn/ver/2857/src/trunk/CyberOA/.mymetadata
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/.project
+END
+build.xml
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/oa/!svn/ver/1078/src/trunk/CyberOA/build.xml
+END

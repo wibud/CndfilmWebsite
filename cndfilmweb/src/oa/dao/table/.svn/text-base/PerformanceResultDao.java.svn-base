@@ -1,0 +1,147 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.PerformanceResult;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class PerformanceResultDao extends BaseDao {
+	private static final Logger log = LoggerFactory
+			.getLogger(PerformanceResultDao.class);
+	// property constants
+	public static final String PERFORMANCERESULTID = "performanceResultId"; // 标识
+	public static final String TEMPLATEID = "templateId";
+	public static final String LAUNCHER = "launcher";
+	public static final String LAUNCHTIME = "launchTime";
+	public static final String USERID = "userId";
+	public static final String USERNAME = "userName";
+	public static final String USERDEPT = "userDept";
+	public static final String USERPOSTID = "userPostId";
+	public static final String ASSESSPERIOD = "assessPeriod";
+	public static final String MANAGERMARK = "managerMark";
+	public static final String SELFMARK = "selfMark";
+	public static final String OTHERMARK = "otherMark";
+	public static final String WEIGHT = "weight";
+	public static final String TOTALMARK = "totalMark";
+	public static final String STATUS = "status";
+	public static final String MANAGERASSESSORNOT = "managerAssessOrNot";
+	public static final String SELFASSESSORNOT = "selfAssessOrNot";
+	public static final String OTHERASSESSORNOT = "otherAssessOrNot";
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(PerformanceResult instance) {
+		log.debug("saving PerformanceResult instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(PerformanceResult instance) {
+		log.debug("deleting PerformanceResult instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(PerformanceResult instance) {
+		log.debug("update PerformanceResult instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public PerformanceResult findById(String id) {
+		log.debug("getting PerformanceResult instance with id: " + id);
+		try {
+			PerformanceResult instance = (PerformanceResult) super.get(
+					"oa.model.table.PerformanceResult", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PerformanceResult> findByExample(Integer pageNo,
+			PerformanceResult performanceResult) {
+		log.debug("find PerformanceResult instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.PerformanceResult",
+					performanceResult);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PerformanceResult> findAll(Integer pageNo) {
+		log.debug("finding all PerformanceResult instances");
+		try {
+			return super.find(pageNo, "oa.model.table.PerformanceResult");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PerformanceResult> findByCondition(Integer pageNo,
+			String conditions) {
+		log.debug("finding PerformanceResult instance with conditions: "
+				+ conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.PerformanceResult",
+					conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PerformanceResult> findByProperty(Integer pageNo,
+			String propertyName, String value) {
+		log.debug("finding PerformanceResult instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.PerformanceResult",
+					propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	// 以一个字段或另一个字段为条件查询
+	public ResultList<PerformanceResult> findByProperty(Integer pageNo,
+			String propertyName1, String propertyName2, String value) {
+		log.debug("finding PerformanceResult instance with property: "
+				+ propertyName1 + ", value: " + value + " or " + propertyName2
+				+ ", value; " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.PerformanceResult",
+					propertyName1, propertyName2, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+
+	}
+
+}

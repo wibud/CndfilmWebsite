@@ -1,0 +1,164 @@
+package oa.dao.table;
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.TicketApply;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class TicketApplyDAO extends BaseDao {
+   
+	private static final Logger log = LoggerFactory.getLogger(TicketApplyDAO.class);
+	
+	// property constants
+	public static final String TICKET_ID = "ticketId";//票务序号
+	public static final String USER_ID = "userId";    //用户ID
+	public static final String USER_NAME = "userName";//用户名
+	public static final String USER_DEPT = "userDept";//部门名
+	public static final String USER_POST = "userPost";//职位
+	public static final String DEPATURE = "depature";//出发地
+	public static final String DESTINATION = "destination";//目的地
+	public static final String DEPATURE_TIME = "depatureTime";//目的地
+	public static final String TRAFFIC_WAY = "trafficWay";//出行方式
+	public static final String TRAFFIC_TYPE = "trafficType";//票务类型
+	public static final String TELEPHONE = "telephone";//电话
+	public static final String USER_EMAIL = "userEmail";//申请人电子邮箱
+	public static final String TICKET_PRICE = "ticketPrice";//票务价格
+	public static final String TICKET_INFO = "ticketInfo";//票务班次
+	public static final String BOOK_REASON = "bookReason";//订票原因
+	public static final String HEADER_EMAIL = "headerEmail";//部门主管邮箱
+	public static final String HEADER_ATTITUDE = "headerAttitude";//主管部门意见
+	public static final String CONFIRM_STATE = "confirmState";//订票确认状态
+	public static final String BOOKING_STATE = "bookingState";//订票受理状态
+	public static final String PERSONINCHARGE="personInCharge";
+	public static final String SECONDMANAGER="secondManager";
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(TicketApply transientInstance) {
+		log.debug("saving TicketApply instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.error("save failed", re);
+			throw re;
+		}
+	}
+		
+	public void delete(TicketApply persistentInstance) {
+		log.debug("deleting Ticket instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+   
+	public void update(TicketApply instance) {
+		log.debug("update TicketApply instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	
+	public TicketApply findById(String ticketId){
+		log.debug("finding TicketApply instance with id: " + ticketId);
+		try {
+			TicketApply instance = (TicketApply)super.get("oa.model.table.TicketApply", ticketId);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("find by username failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<TicketApply> findByExample(Integer pageNo, TicketApply instance) {
+		log.debug("find TicketApply instances with example");
+//		System.out.println(instance);
+		try {
+			return super.find(pageNo, "oa.model.table.TicketApply", instance);
+		} catch (RuntimeException re) {
+			log.debug("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<TicketApply> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding TicketApply instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.TicketApply", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<TicketApply> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding TicketApply instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.TicketApply", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<TicketApply> findAll(Integer pageNo) {
+		log.debug("finding all TicketApply instances");
+		try {
+			return super.find(pageNo, "oa.model.table.TicketApply");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	//以一个字段或另一个字段为条件模糊查询
+	public ResultList<TicketApply> findByProperty(Integer pageNo,String propertyName1,String propertyName2,String value){
+		log.debug("finding Project instance with property: " + propertyName1
+				+ ", value: " + value+" or "+propertyName2+", value; "+value);
+		try {
+			return super.likefind(pageNo, "oa.model.table.TicketApply", propertyName1, propertyName2,value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+	//连表查询
+	public List<TicketApply> findByHQL(Integer pageNo, String hql){
+		log.debug("finding Version instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	
+	public String findCount(String hql){
+		log.debug("finding Project instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+			}
+}
+

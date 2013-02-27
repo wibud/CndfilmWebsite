@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring
+END
+org.springframework.aop-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.aop-3.0.5.RELEASE.jar
+END
+org.springframework.test-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.test-3.0.5.RELEASE.jar
+END
+org.springframework.asm-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.asm-3.0.5.RELEASE.jar
+END
+org.springframework.web.struts-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.web.struts-3.0.5.RELEASE.jar
+END
+org.springframework.context-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.context-3.0.5.RELEASE.jar
+END
+org.springframework.transaction-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.transaction-3.0.5.RELEASE.jar
+END
+org.springframework.core-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.core-3.0.5.RELEASE.jar
+END
+org.springframework.beans-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.beans-3.0.5.RELEASE.jar
+END
+org.springframework.jms-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.jms-3.0.5.RELEASE.jar
+END
+org.springframework.orm-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.orm-3.0.5.RELEASE.jar
+END
+org.springframework.instrument.tomcat-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.instrument.tomcat-3.0.5.RELEASE.jar
+END
+org.springframework.expression-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.expression-3.0.5.RELEASE.jar
+END
+org.springframework.context.support-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.context.support-3.0.5.RELEASE.jar
+END
+org.springframework.web.servlet-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.web.servlet-3.0.5.RELEASE.jar
+END
+org.springframework.jdbc-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.jdbc-3.0.5.RELEASE.jar
+END
+org.springframework.aspects-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.aspects-3.0.5.RELEASE.jar
+END
+com.springsource.org.aopalliance-1.0.0.jar
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/com.springsource.org.aopalliance-1.0.0.jar
+END
+org.springframework.oxm-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.oxm-3.0.5.RELEASE.jar
+END
+org.springframework.web.portlet-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.web.portlet-3.0.5.RELEASE.jar
+END
+org.springframework.instrument-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.instrument-3.0.5.RELEASE.jar
+END
+com.springsource.org.aspectj.weaver-1.6.8.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/com.springsource.org.aspectj.weaver-1.6.8.RELEASE.jar
+END
+aspectjrt.jar
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/aspectjrt.jar
+END
+readme.txt
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/readme.txt
+END
+org.springframework.web-3.0.5.RELEASE.jar
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/org.springframework.web-3.0.5.RELEASE.jar
+END
+aspectjweaver.jar
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/spring/aspectjweaver.jar
+END

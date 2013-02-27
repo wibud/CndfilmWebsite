@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--项目进度更新</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript" src="./scripts/js/drag.js"></script>
+        <style type="text/css">
+<!--
+a:link {
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+a:active {
+	text-decoration: none;
+}
+-->
+        </style>
+		<script type="text/javascript">	
+		//对v四舍五入，e为保留多少位小数
+		function round2(v,e){   
+   			var   t=1;   
+   		 	e=Math.round(e);   
+    		for(;e>0;t*=10,e--);   
+    		for(;e<0;t/=10,e++);   
+    		return   Math.round(v*t)/t;   
+  		} 
+		function setDay(self){
+			var now=new Date();
+			var year=now.getFullYear();
+			var month=now.getMonth()+1;
+			var day=now.getDate();
+			if(month<10)month="0"+month;
+			if(day<10)day="0"+day;
+			var nowDate=year+"-"+month+"-"+day;
+			self.value=nowDate;
+			setday(self);
+		}
+		</script>
+
+        <script type="text/javascript">
+			$(document).ready(function(){
+				$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$(this).navi();
+				var href = location.href;
+					href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+				
+				var project_id  =tmp[0].split("=")[1];
+				var percent  =tmp[6].split("=")[1];
+				$("#newpercent").val(percent);
+				
+//				var deTime=new Array(7),currentStep,curStepEndTime;
+				
+				//提交确认处理start
+				$('#comfirm').click(function(){
+					$.post('/pjProgressList',{'projectId':project_id},callback,'xml');
+					function callback(databack){
+						var project_id		= $(databack).find("project_id").text();
+						var stepCount		=Number($(databack).find("stepCount").text());
+						var projectStep		=$(databack).find("projectStep").text().split("$");
+						var deStartTime		=$(databack).find("deStartTime").text().split(",");
+						var deEndTime		=$(databack).find("deEndTime").text().split(",");
+						var reStartTime		=$(databack).find("reStartTime").text();
+						var reStart			=reStartTime.split(",");
+						var reEndTime		=$(databack).find("reEndTime").text();
+						var reEnd			=reEndTime.split(",");
+						var laojindu		=$(databack).find("updateEveryProgress").text().split(",");
+						var reStartStr;
+						var reEndStr;
+						var totalTime		=new Array();
+						var reStartCount	=Number($(databack).find("reStartCount").text());
+						var reEndCount		=Number($(databack).find("reEndCount").text());
+						if(isNaN(reStartCount))reStartCount=0;
+						if(isNaN(reEndCount))reEndCount=0;
+						if(reStartTime=="null")reStartTime="";
+						if(reEndTime=="null")reEndTime="";
+						reStartTime="";
+						reEndTime="";
+						var count=0;
+/*						
+						if(reStartCount==reEndCount){
+							for(i=0;i<stepCount-reStartCount;i++){								
+								totalTime[count++]=$(".reStart").get(i).value;
+								totalTime[count++]=$(".reEnd").get(i).value;
+							}	
+						}else{
+							totalTime[count++]=$(".reEnd").get(0).value;
+							for(i=0;i<stepCount-reStartCount;i++){
+								totalTime[count++]=$(".reStart").get(i).value;
+								totalTime[count++]=$(".reEnd").get(i+1).value;
+							}	
+						}
+*/						
+						//输入正确性判断
+//						for(i=0;i<count-1;i++){
+//							if(totalTime[i]==""&&totalTime[i+1]!=""){alert("进度应该是连续的！");return;}
+//						}
+						
+						for(i=0;i<stepCount;i++){			
+//							if($(".reStart").get(i).value=="")break;
+							reStartTime+=$(".reStart").get(i).value+",";
+//							reStartCount++;
+						}
+						
+						for(i=0;i<stepCount;i++){			
+//							if($(".reEnd").get(i).value=="")break;
+							reEndTime+=$(".reEnd").get(i).value+",";
+							var now = new Date();
+							var year	=now.getFullYear();
+							var month	=now.getMonth()+1;
+							if(month < 10)month = "0" + month;
+							var day		=now.getDate();
+							if(day < 10)day = "0" + day;
+							var now = year +"-"+ month +"-"+ day;
+							if(($(".reStart").get(i).value ==""||$(".reStart").get(i).value =="") && $(".reEnd").get(i).value != ""){
+								alert("不能只有结束时间而没有开始时间！");
+								return;
+							}
+							if($(".reStart").get(i).value > now){
+								alert("开始时间不能晚于当前时间！");
+								return;
+							}
+							if($(".reEnd").get(i).value > now){
+								alert("结束时间不能晚于当前时间！");
+								return;
+							}
+							if($(".reEnd").get(i).value != "" && $(".reEnd").get(i).value != "未完成" && $(".reEnd").get(i).value < $(".reStart").get(i).value){
+								alert("结束时间不能早于开始时间！");
+								return;
+							}
+//							reEndCount++;
+						}
+						var newpercent = "";
+						for(i=0;i<stepCount;i++){					
+							var jishuqi =parseInt($("#text"+i).text());
+							if($(".reEnd").get(i).value !="" && $(".reEnd").get(i).value != "未完成")
+								newpercent += "100,";
+							else
+								newpercent += parseInt($("#text"+i).text())+",";
+//							if(reStartCount == reEndCount && stepCount == reStartCount){
+//								 newpercent += "100,";
+//							}
+						
+//							if(reStartCount == reEndCount && stepCount != reStartCount){
+//								 newpercent += "0,";
+//							}
+//							if(Number(jishuqi)>100){
+//								alert("输入的百分比必须在0-100%！");
+//								return;
+//							}
+//							if($(".reStart").get(i).value!=""&&$("#text"+i).text() $("#text"+i).text() $("#text"+i).text())
+							
+						}
+						
+						$.post('/upDateProgress',{'projectId':project_id,
+						'reStartTime':reStartTime,'reEndTime':reEndTime,'newpercent':newpercent},recallback,'xml');
+						function recallback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode != 0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								alert("更新成功！");
+								location.href=location.href;
+							}
+						}
+					}           
+				});
+				//提交确认处理end
+				//获取旧进度与计划Start
+//				var pjBar="<div id=\"prog\" style=\" width:610px; margin:auto; height:20px; border:#CDCDCD 2px solid; display:block-inline; position:relative; text-align:left\"><div id=\"real\" style=\" width:50%;overflow:hidden; margin:auto; height:20px; border:#CDCDCD 1px solid; position:absolute; text-align:left\"><img  src=\"./images/bg_17.gif\"  height='20' width='600px'></img></div><div id=\"dragBar\"  style=\"height:17px; width:8px;border:#000 3px solid;background-color:#DCDCDC; position:relative; z-index:1\"></div></div><strong id=\"text\" style=\" text-align:center;width:50px; position: relative; right:0px;top:0;Z-INDEX: 2;\"></strong>";
+				//var pjBar="<table id=\"prog\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"table2\"><tr><td width=\"5\" valign=\"middle\"  ><img src=\"images/bg_19.gif\" width=\"5\" height=\"15\" /></td><td valign=\"middle\"><div style=\"border:#CDCDCD 1px solid;\"><div id=\"real\" class=\"jhjd2\" style=\"overflow:hidden;\"><div id=\"dragBar\" style=\"height:17px;width:8px;border:#000 3px solid; background-color:#ADFF2F; solid; position:relative; z-index:1\"></div></div></div></td><td width=\"5\" valign=\"middle\" ></tr></table><strong id=\"text\" style=\" text-align:center;width:50px; position: relative; right:0px;top:0;Z-INDEX: 2;\"></strong>"
+								
+				$.post('/pjProgressList',{'projectId':project_id},decallback,'xml');
+				function decallback(databack){
+						var project_id		= $(databack).find("project_id").text();
+						var stepCount		=Number($(databack).find("stepCount").text());
+						var reStartCount	=Number($(databack).find("reStartCount").text());
+						var reEndCount		=Number($(databack).find("reEndCount").text());
+						var percent			=$(databack).find("updateEveryProgress").text().split(",");
+						var projectStep		=$(databack).find("projectStep").text().split("$");
+						var deStartTime		=$(databack).find("deStartTime").text().split(",");
+						var deEndTime		=$(databack).find("deEndTime").text().split(",");
+						var reStartTime		=$(databack).find("reStartTime").text();
+						var reStart			=reStartTime.split(",");
+						var reEndTime		=$(databack).find("reEndTime").text();
+						var reEnd			=reEndTime.split(",");
+						var miaoshu		=$(databack).find("currentStep").text().split("$");
+						var mubiao		=$(databack).find("curStepEndTime").text().split("$");
+						var reStartStr;
+						var reEndStr;
+						var totalTime=new Array();
+//						if(isNaN(reStartCount))reStartCount=0;
+//						if(isNaN(reEndCount))reEndCount=0;
+						for(i=0;i<stepCount;i++){
+						if(isNaN(Number(percent[i])))percent[i]=0;
+						}
+						for(i=0;i<stepCount;i++){
+							if(reEnd[i]!=""&&reEnd[i]!="未完成"){
+							var pjBar="<div id=\"prog"+i+"\" style=\" width:200px; margin:auto; height:12px; border:#CDCDCD 2px solid; display:block-inline; position:relative; text-align:left\"><div id=\"real"+i+"\" style=\" width:50%;overflow:hidden; margin:auto; height:12px; border:#CDCDCD 1px solid; position:absolute; text-align:left\"><img  src=\"./images/bg_16.gif\"  height='11' width='200px'></img></div><div id=\"dragBar"+i+"\"  style=\"height:10px; width:7px;border:#000 3px solid;background-color:#DCDCDC; position:relative; z-index:1\"></div></div><strong id=\"text"+i+"\" style=\" text-align:center;width:50px; position: relative; right:0px;top:0;Z-INDEX: 2;\"></strong>";
+							}else{
+								var pjBar="<div id=\"prog"+i+"\" style=\" width:200px; margin:auto; height:12px; border:#CDCDCD 2px solid; display:block-inline; position:relative; text-align:left\"><div id=\"real"+i+"\" style=\" width:50%;overflow:hidden; margin:auto; height:12px; border:#CDCDCD 1px solid; position:absolute; text-align:left\"><img  src=\"./images/bg_17.gif\"  height='11' width='200px'></img></div><div id=\"dragBar"+i+"\"  style=\"height:10px; width:7px;border:#000 3px solid;background-color:#DCDCDC; position:relative; z-index:1\"></div></div><strong id=\"text"+i+"\" style=\" text-align:center;width:50px; position: relative; right:0px;top:0;Z-INDEX: 2;\"></strong>";
+							}
+							
+							if(reStart[i] == "未开始" ||reStart[i] == "")reStartStr="<td><input class=\"reStart\" style='width:80px'   onclick=\"setDay(this)\"></input></td>";
+							else reStartStr="<td><input class=\"reStart\" style='width:80px' readonly=true value=\""+reStart[i]+"\"></input></td>";
+							if(reEnd[i] == "未完成" ||reEnd[i] == "")reEndStr="<td><input class=\"reEnd\" readonly=true style='width:80px' onclick=\"setDay(this)\" ></input></td>";
+							else reEndStr="<td><input class=\"reEnd\" style='width:80px' readonly=true value=\""+reEnd[i]+"\"></input></td>";
+							$("#sortTable").append("<tr><th>"+projectStep[i]+"</th><td>"+miaoshu[i]+"</td><td>"+mubiao[i]+"</td><td>"+deStartTime[i]+"</td><td>"+deEndTime[i]+
+							"</td>"+reStartStr+reEndStr+"<td width=100px>"+pjBar+"</td></tr>");
+							
+							var real=document.getElementById("real"+i);
+							var dragBar=document.getElementById("dragBar"+i);
+						//	var text=document.getElementById("text"+i);
+						
+							real.style.width=Number(percent[i])*1.9+"px";
+							dragBar.style.left=Number(percent[i])*1.9+"px";
+							$("#text"+i).prepend(Number(percent[i])+"%");
+	//						alert(percent[i]+"%");
+							if((reEnd[i]=="未完成"||reEnd[i]=="") && reStart[i]!="" &&reStart[i]!="未开始"){
+								canDrag(dragBar,real,"text"+i);		
+							}
+//							$(".reStart").change(function(){
+//								canDrag(dragBar,real,"text"+i);
+//							});
+						}
+					
+//						$("#sortTable").append("<tr><th>当前阶段进度</th><td colspan=\"5\">"+pjBar+"</td></tr>");	
+						
+					}           
+				//获取旧进度与计划End
+
+			});	
+			
+			
+		</script>
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner3.jpg)">
+			  	<div id="userInfo">
+                            	<table class="di"  border="0" cellpadding="0" cellspacing="0">
+						 			 <tr>
+						 			  <td width="5" ><img src="images/sq_img_14.png" /></td>
+  		  				 			  <td align="right" ><span id="welcome" class="welcome"></span></td>
+  						 			  <td width="80" align="center"><a href="authUpdatePasswd.html" class="updatePawd">修改密码</a></td>
+ 									  <td width="80" align="center"><a href="#" onclick="logout()" class="updatePawd">安全退出</a></td>
+ 									  <td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+  								     </tr>
+								</table>
+		     	 </div>
+		  </div>
+			<div id="content" class="c-1000">
+				<div id="main">
+                	<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>项目进度更新</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						</table>
+						</div></td>
+						  </tr>
+						</table>             
+                  </div>
+                  
+                  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+			    <td height="28" align="center" valign="middle" class="b_di"><strong>项目进度更新</strong></td>
+			    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+			  </tr>
+			</table>
+			</div>
+<div id="content_r7">
+						<div >
+						<table id="sortTable" class="sTable" style="word-break:break-all;">
+						<tr>
+							<th style="white-space: nowrap">项目阶段</th><th style="white-space: nowrap">阶段描述</th><th style="white-space: nowrap">目标</th><th style="white-space: nowrap">计划开始时间</th><th style="white-space: nowrap">计划结束时间</th><th style="white-space: nowrap">实际开始时间</th><th style="white-space: nowrap">实际结束时间</th><th style="white-space: nowrap">进度更新</th>
+						</tr>
+						</table>
+						<input class="bt" type="button" value="提交" id="comfirm"></input>
+						 <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+						</div>
+				  </div>
+                    </div>
+				<div id="bg_di"></div>
+            </div>
+		  <div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+          </div>
+</body>
+</html>

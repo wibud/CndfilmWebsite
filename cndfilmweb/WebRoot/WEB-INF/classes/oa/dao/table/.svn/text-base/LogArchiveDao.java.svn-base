@@ -1,0 +1,102 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.Log_archive;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class LogArchiveDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(LogArchiveDao.class);
+	// property constants
+	public static final String LA_ID = "la_id";				//归档ID
+	public static final String FILE_NAME = "file_name";		//归档文件名
+	public static final String START_TIME = "start_time";	//归档阶段开始时间
+	public static final String END_TIME = "end_time";		//归档阶段结束时间
+	public static final String ADD_TIME = "add_time";		//归档生成时间
+	public static final String OPER_ID = "oper_id";			//归档人ID
+	public static final String OPER_NAME = "oper_name";		//归档人名称
+	public static final String IS_DELETE = "is_delete";		//是否已删除
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(Log_archive transientInstance) {
+		log.debug("saving Log_archive instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(Log_archive persistentInstance) {
+		log.debug("deleting Log_archive instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(Log_archive instance) {
+		log.debug("update Log_archive instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public Log_archive findById(java.lang.String id) {
+		log.debug("getting Log_archive instance with id: " + id);
+		try {
+			Log_archive instance = (Log_archive) super.get("oa.model.table.Log_archive", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Log_archive> findByExample(Integer pageNo, Log_archive instance) {
+		log.debug("find Log_archive instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Log_archive", instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Log_archive> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding Log_archive instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.Log_archive", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+
+	public ResultList<Log_archive> findAll(Integer pageNo) {
+		log.debug("finding all Log_archive instances");
+		try {
+			return super.find(pageNo, "oa.model.table.Log_archive");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+}

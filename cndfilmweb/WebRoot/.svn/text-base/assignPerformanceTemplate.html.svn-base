@@ -1,0 +1,627 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--权限管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+    	<style type="text/css">
+			<!--
+			a:link {
+				text-decoration: none;
+			}
+			a:visited {
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			a:active {
+				text-decoration: none;
+			}
+			-->
+        </style>
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+				//初始化dept,userDept,模板选择列表
+				$("#templateselect").append("<option value=''>——模板——</option>");
+				$.post('/getPermission',
+						{},
+						function(xml) {
+							var projectInfoDept=$(xml).find("permission").find("performanceObjectInfo").find("assignObject").text();
+							var deptArray=projectInfoDept.split(";");
+							for(i=0;i<deptArray.length-1;i++){
+								$("#dept").append("<option value='"+deptArray[i].split(',')[0]+"'>"+deptArray[i].split(',')[1]+"</option>");
+								$("#userDept").append("<option value='"+deptArray[i].split(',')[0]+"'>"+deptArray[i].split(',')[1]+"</option>");
+							}
+						},
+						'xml');	
+	             
+
+	             //初始化设置方式
+	             $("#byPosition").attr("checked","checked");
+	             $("#userDept").attr("disabled", "disabled");
+	             $("#user").attr("disabled", "disabled");
+	             
+	             //权限赋予方式切换
+	            var type = "byPosition";
+	             $("#byUser").click(function(){
+	             		$("#userDept").removeAttr("disabled");
+	             		$("#user").removeAttr("disabled");
+	             		$("#dept").attr("disabled", "disabled");
+	             		$("#position").attr("disabled", "disabled");    
+	             		type = "byUser";    
+	             		updateTemplateInfoByUser();
+	             	});
+	             $("#byPosition").click(function(){
+	             		$("#dept").removeAttr("disabled");
+	             		$("#position").removeAttr("disabled");
+	             		$("#userDept").attr("disabled", "disabled");
+	             		$("#user").attr("disabled", "disabled"); 
+	             		type = "byPosition";
+	             		updateTemplateInfoByPosition();
+	             		$("#chooseother").attr("style","display:none");
+	             });
+	             
+	             //改变职位时更新其模板信息        
+	            $("#position").change(function() {
+	            	updateTemplateInfoByPosition();
+	            });
+	             //改变用户时更新其模板信息   
+	            $("#user").change(function(){
+	           		updateTemplateInfoByUser();
+	            });
+	            //改变部门时更新职位信息
+	            $("#dept").change(function(){
+	                //清除原有信息
+           			$("#templateselect option").remove();
+					$("#onetemplate tr:gt(0)").remove();
+	            	var deptId = $("#dept").val();
+	            	$("#position option:gt(0)").remove();
+	            	if(deptId == "-1") {
+	            		return;
+	            	}
+	            	//更新职位列表
+					$.post('/getPostByDeptId',
+		            			{'deptId':$("#dept").val()},
+		            			function(xml){
+		            				$(xml).find("item").each(function(){
+										$("#position").append("<option value=\""+$(this).find("postId").text()+"\">"+$(this).find("postName").text()+"</option>");
+	
+									});
+								},
+									'xml'
+           			);
+	            });
+	            //改变用户部门时，更新用户列表
+	            $("#userDept").change(function(){
+                     //清除原有信息
+           			 $("#templateselect option").remove();
+					 $("#onetemplate tr:gt(0)").remove();
+					 $("#chooseother").attr("style","display:none");
+           			 var userDeptId = $("#userDept").val();
+	            	$("#user option:gt(0)").remove();
+	            	if(userDeptId == "-1") {	            		
+	            		return;
+	            	}
+            		var dept = $("#userDept").val();
+            		$.post('/getUserByDept',
+                    		{'userDeptId':userDeptId},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+										$("#user").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+									});
+   	                		},
+                     		'xml'
+                     );
+	            }); 	           
+				
+				//改变模板选项，更新小表信息
+				$("#templateselect").change(function(){
+					$("#onetemplate tr:gt(0)").remove();
+					if($("#templateselect").val()!=null && $("#templateselect").val()!=""){
+						$.post('/performanceTemplateList',
+							{'templateId':$("#templateselect").val()},
+							function(xml){
+								var template_id = $(xml).find("template_id").text();
+								var templatename = $(xml).find("templatename").text();
+								var templatedescription = $(xml).find("description").text();
+								var creatorname = $(xml).find("creatorname").text();
+								var createtime = $(xml).find("createtime").text().split(":")[0]+":"+$(xml).find("createtime").text().split(":")[1];
+								var managerweight = $(xml).find("managerweight").text();
+								var otherweight = $(xml).find("otherweight").text();
+								if(otherweight==0 || otherweight=="0"){
+	                            	otherweight = "/";
+	                            	$("#chooseother").attr("style","display:none");
+	                            }else {
+	                            	otherweight += "&nbsp;%";
+	                            	$("#chooseother").removeAttr("style");
+	                            	$("#choosed option").remove();
+	                            	updateDeptUserToSelect();
+	                            }
+								var selfweight = $(xml).find("selfweight").text();
+								if(selfweight==0 || selfweight=="0"){
+									var selfweight = "/";
+								}else selfweight += "&nbsp;%";
+								if($.browser.msie){
+								xmlindex = new ActiveXObject("Microsoft.XMLDOM");
+								xmlindex.async = false;
+								xmlindex.loadXML("<xml>"+$(xml).find("index").text()+"</xml>");
+								}else{
+								xmlindex = new DOMParser().parseFromString("<xml>"+$(xml).find("index").text()+"</xml>", "text/xml");
+								}
+								var eachindexname = "";
+								var eachindexweight = "";
+								var strmoreline = "";
+								var line = 1;
+								$(xmlindex).find("index").each(function(k){
+									line++;
+								});
+								var stroneline = "<tr class='content' id='"+template_id+"'><td rowspan="+line+">"+templatename+"</td><td rowspan="+line+">"+templatedescription+"</td><td rowspan="+line+">"+creatorname+"</td><td rowspan="+line+">"+createtime+"</td><td rowspan="+line+">"+managerweight+"&nbsp;%</td><td rowspan="+line+">"+selfweight+"</td><td rowspan="+line+">"+otherweight+"</td></tr>";
+								if(template_id!=null && template_id!="" && template_id!="null"){
+									$("#onetemplate").append(stroneline);
+								}
+								$(xmlindex).find("index").each(function(j){
+									eachindexname = $(this).find("name").text();
+									eachindexweight = $(this).find("weight").text();
+									strmoreline += "<tr class='content'><td>"+eachindexname+"</td><td style='border-right-style:none;'>"+eachindexweight+"&nbsp;%</td></tr>";
+								});
+								if(template_id!=null && template_id!="" && template_id!="null"){
+									$("#onetemplate").append(strmoreline);
+								}
+							},
+							'xml');
+					}
+				});
+						
+					
+					
+	            
+				//点击确定时，存入权限信息
+				$("#submit").click(function(){
+					if(type == "byUser") {
+	            		if($("#user").val() == -1) {
+							alert("请选择用户！");
+							return;
+						}
+	            	}else{
+		            	if($("#dept").val()==-1) {
+							alert("请选择部门！");
+							return;
+						}else if($("#position").val()==-1) {
+							alert("请选择职位！");
+							return;
+						}
+					}
+					
+					var method;	
+					var param;
+					if(type == "byPosition") {
+						method="/assignTemplateByPosition";
+						param = {'deptId':$("#dept").val(), 'postId':$("#position").val(), 'templateId':$("#templateselect").val()};
+					}else{
+						var strMember = "";
+						$("#choosed option").each(function() {
+							var id = $(this).val();
+							var name = $(this).text();
+							strMember += id + "," + name + ";";
+						});
+						method="/assignTemplateByUser";
+						param = {'templateId':$("#templateselect").val(),'appraiser':strMember,'userId':$("#user").val()};
+					}
+					$.post(	method,
+							param,
+							function(xml){
+								var recode = $(xml).find("recode").text();
+								if(recode != 0){
+									alert($(xml).find("errormsg").text());
+								}else{
+									alert("设置成功！");
+								}									
+							},
+							'xml'
+					);
+												
+	            });
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+				
+				
+				//用户下拉菜单变化，则更新必须更新的信息
+				function updateTemplateInfoByUser() {
+					$("#templateselect option").remove();
+					$("#onetemplate tr:gt(0)").remove();
+					if($("#user").val() == -1) {
+						return;
+					}
+					$.ajax({
+						type:'post',
+						async: false,
+						url:'/getTemplateByUser',
+		                data:{'userId':$("#user").val()},
+		                success:function(xml){
+		                    	var template_id     	  = $(xml).find("template_id").text();
+		                    	var templatename = $(xml).find("templatename").text();
+		                    	var templatedescription = $(xml).find("description").text();
+		                    	var creatorname = $(xml).find("creatorname").text();
+		                    	var createtime = $(xml).find("createtime").text().split(":")[0]+":"+$(xml).find("createtime").text().split(":")[1];
+		                    	var managerweight = $(xml).find("managerweight").text();
+		                    	var otherweight = $(xml).find("otherweight").text();
+		                    	if(otherweight==0 || otherweight=="0"){
+	                            	otherweight = "/";
+	                            	$("#chooseother").attr("style","display:none");
+	                            }else {
+	                            	otherweight += "&nbsp;%";
+	                            	$("#chooseother").removeAttr("style");
+	                            	$("#choosed option").remove();
+	                            	updateDeptUserToSelect();
+	                            }
+		                    	var selfweight = $(xml).find("selfweight").text();
+		                    	if(selfweight==0 || selfweight=="0"){
+									var selfweight = "/";
+								}else selfweight += "&nbsp;%";
+		                    	if($.browser.msie){
+	                            	xmlindex = new ActiveXObject("Microsoft.XMLDOM");
+									xmlindex.async = false;
+									xmlindex.loadXML("<xml>"+$(xml).find("index").text()+"</xml>");
+								}else{
+									xmlindex = new DOMParser().parseFromString("<xml>"+$(xml).find("index").text()+"</xml>", "text/xml");
+								}
+								
+								if(template_id!=null && template_id!="" && template_id!="null"){
+									$("#templateselect").append("<option value='"+template_id+"'>——"+templatename+"——</option>");
+								}else {
+									$("#templateselect").append("<option value='"+template_id+"'>——选择模板——</option>");
+								}
+								var eachindexname = "";
+							    var eachindexweight = "";
+							    var strmoreline = "";
+							    var line = 1;
+							    $(xmlindex).find("index").each(function(k){
+									line++;
+								});
+							    var stroneline = "<tr class='content' id='"+template_id+"'><td rowspan="+line+">"+templatename+"</td><td rowspan="+line+">"+templatedescription+"</td><td rowspan="+line+">"+creatorname+"</td><td rowspan="+line+">"+createtime+"</td><td rowspan="+line+">"+managerweight+"&nbsp;%</td><td rowspan="+line+">"+selfweight+"</td><td rowspan="+line+">"+otherweight+"</td></tr>";
+							    if(template_id!=null && template_id!="" && template_id!="null"){
+							    	$("#onetemplate").append(stroneline);
+							    }
+							    $(xmlindex).find("index").each(function(j){
+									eachindexname = $(this).find("name").text();
+									eachindexweight = $(this).find("weight").text();
+									strmoreline += "<tr class='content'><td>"+eachindexname+"</td><td style='border-right-style:none;'>"+eachindexweight+"&nbsp;%</td></tr>";
+								});
+		                        if(template_id!=null && template_id!="" && template_id!="null"){
+		                        	$("#onetemplate").append(strmoreline);
+		                        }
+		   	                 },
+		                dataType:'xml'});
+		            $.post('/performanceTemplateList',
+		            		{},
+		            		function(xml){
+		            			$(xml).find("item").each(function(m){
+	                            	var template_id     	  = $(this).find("template_id").text();
+	                            	var templatename     	  = $(this).find("templatename").text();
+		            				$("#templateselect").append("<option value='"+template_id+"'>"+templatename+"</option>");
+		            			});
+		            		},
+		            		'xml');
+				}
+				
+				//职位下拉菜单变化，则更新必须更新的信息
+				function updateTemplateInfoByPosition() {
+					$("#templateselect option").remove();
+					$("#onetemplate tr:gt(0)").remove();
+					if($("#position").val() == -1) {
+						return;
+					}
+					$.ajax({
+						type:'post',
+						async:false,
+						url:'/getTemplateByPosition',
+						data:{'deptId':$("#dept").val(),'postId':$("#position").val()},
+						success:function(xml){
+								var template_id     	  = $(xml).find("template_id").text();
+								var templatename = $(xml).find("templatename").text();
+								var templatedescription = $(xml).find("description").text();
+								var creatorname = $(xml).find("creatorname").text();
+								var createtime = $(xml).find("createtime").text().split(":")[0]+":"+$(xml).find("createtime").text().split(":")[1];
+								var managerweight = $(xml).find("managerweight").text();
+								var otherweight = $(xml).find("otherweight").text();
+								if(otherweight==0 || otherweight=="0"){
+									otherweight = "/";
+								}else otherweight += "&nbsp;%";
+								var selfweight = $(xml).find("selfweight").text();
+								if(selfweight==0 || selfweight=="0"){
+									var selfweight = "/";
+								}else selfweight += "&nbsp;%";
+								if($.browser.msie){
+									xmlindex = new ActiveXObject("Microsoft.XMLDOM");
+									xmlindex.async = false;
+									xmlindex.loadXML("<xml>"+$(xml).find("index").text()+"</xml>");
+								}else{
+									xmlindex = new DOMParser().parseFromString("<xml>"+$(xml).find("index").text()+"</xml>", "text/xml");
+								}
+								
+								if(template_id!=null && template_id!="" && template_id!="null"){
+									$("#templateselect").append("<option value='"+template_id+"'>——"+templatename+"——</option>");
+								}else {
+									$("#templateselect").append("<option value='"+template_id+"'>——选择模板——</option>");
+								}
+								var eachindexname = "";
+								var eachindexweight = "";
+								var strmoreline = "";
+								var line = 1;
+								$(xmlindex).find("index").each(function(k){
+									line++;
+								});
+								var stroneline = "<tr class='content' id='"+template_id+"'><td rowspan="+line+">"+templatename+"</td><td rowspan="+line+">"+templatedescription+"</td><td rowspan="+line+">"+creatorname+"</td><td rowspan="+line+">"+createtime+"</td><td rowspan="+line+">"+managerweight+"&nbsp;%</td><td rowspan="+line+">"+selfweight+"</td><td rowspan="+line+">"+otherweight+"</td></tr>";
+								if(template_id!=null && template_id!="" && template_id!="null"){
+									$("#onetemplate").append(stroneline);
+								}
+								$(xmlindex).find("index").each(function(j){
+									eachindexname = $(this).find("name").text();
+									eachindexweight = $(this).find("weight").text();
+									strmoreline += "<tr class='content'><td>"+eachindexname+"</td><td style='border-right-style:none;'>"+eachindexweight+"&nbsp;%</td></tr>";
+								});
+								if(template_id!=null && template_id!="" && template_id!="null"){
+									$("#onetemplate").append(strmoreline);
+								}
+							},
+						dataType:'xml'});
+						
+						$.post('/performanceTemplateList',
+							{'otherWeight':"0"},
+							function(xml){
+								$(xml).find("item").each(function(m){
+									var template_id     	  = $(this).find("template_id").text();
+									var templatename     	  = $(this).find("templatename").text();
+									$("#templateselect").append("<option value='"+template_id+"'>"+templatename+"</option>");
+								});
+							},
+							'xml');
+				}
+				
+				function updateDeptUserToSelect() {
+					$("#forchoose option").remove();
+					$.ajax({
+						type:'post',
+						async: false,
+						url:'/systemUserSearch',
+		                data:{'userId':$("#user").val()},
+		                success:function(xml){
+		                	var body = $(xml).find("appraiser").text().split(";");
+		                	for(var n=0;n<(body.length-1);n++){
+		                		$("#choosed").append("<option value=\""+body[n].split(",")[0]+"\">"+body[n].split(",")[1]+"</option>");
+		                	}
+		                },
+		                dataType:'xml'});
+					$.post('/getUserByDept',
+						{'userDeptId':$("#userDept").val()},
+						function(xml){
+							$(xml).find("item").each(function(){
+								var userid = $(this).find("userId").text();
+								var username = $(this).find("userName").text();
+								//排除已经有选择的，显示剩下可选的
+								var flag = true;
+								$("#choosed option").each(function(){
+									if(userid == $(this).val()){
+										flag = false;
+									}
+								});
+								if(flag && (userid != $("#user").val())){
+									$("#forchoose").append("<option value=\""+userid+"\">"+username+"</option>");
+								}
+							});
+						},
+						'xml');
+				}
+				
+				
+				//选择互评人的操作函数
+				$("#goright").click(function(){
+					$("#forchoose option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#choosed").append(option);
+						$(this).remove();
+					});
+				});
+				$("#goleft").click(function(){
+					$("#choosed option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#forchoose").append(option);
+						$(this).remove();
+					});
+				}); 
+				
+         
+			});
+        </script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="350">
+									<div style="width:350px" class="biao" align="left">
+										当前位置：首页 &gt;&nbsp;
+										<strong>指定绩效考核模板</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td><img src="images/bg_fh.gif"/></td>
+						   						<td width="5"></td>
+						    					<td><a href="launchPerformanceAssess.html" >返回</a></td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>指定绩效考核模板</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td style="border-bottom-style:none;">
+									<input type="radio" name="radio" id="byPosition"
+										value="byPosition" />
+									根据职位指定
+								</td>
+								<td>
+									<label for="dept">
+										部门
+									</label>
+									<select name="dept" id="dept" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+									<label for="position">
+										职位
+									</label>
+									<select name="position" id="position" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="radio" id="byUser" value="byUser" />
+									<label for="byUser">
+										根据人员指定
+									</label>
+								</td>
+								<td>
+									<label for="userDept">
+										部门
+									</label>
+									<select name="userDept" id="userDept" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+									<label for="user">
+										用户
+									</label>
+									<select name="user" id="user" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+								</td>
+							</tr>
+								
+							<tr>
+								<td><label class="required">*</label>选择模板</td>
+								<td><select name="templatename" id="templateselect" class="wideSelText" ></select></td>
+							</tr>
+							<tr id="chooseother" style="display:none">
+								<td><label class="required">*</label>选择互评人</td>
+								<td>
+									<table border='0' cellspacing='0' cellpadding='0' class='wideSelText' align="center">
+										<tr>
+											<td style="border-right-style:none;">待选择
+												<select class="doubleSelText" id='forchoose' multiple='multiple' size="10"></select>
+											</td>
+											<td style="border-style:none;">
+												
+											</td>
+											<td style="border-right-style:none;">
+												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button'  value='>>>>' id='goright'/>
+												&nbsp;&nbsp;&nbsp;&nbsp;
+												<input type='button'  value='&lt&lt&lt&lt' id='goleft'/>
+											</td>
+											<td style="border-style:none;">
+												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											</td>
+											<td style="border-right-style:none;">已选择
+												<select class="doubleSelText" id='choosed' multiple='multiple' size="10"></select>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" style="border-bottom-style:none;">
+									<table class="sTable" id="onetemplate">
+										<tr>
+											<th>当前模板名称</th>
+											<th>模板描述</th>
+											<th>创建人</th>
+											<th>创建时间</th>
+											<th>主管评分比例</th>
+											<th>自评分比例</th>
+											<th>互评分比例</th>
+											<th colspan="2">考评指标及权重</th>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr id="finalRow">
+								<td colspan='2'>
+									<input type='button' class="bt" value='指定' id='submit' />
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+		</div>
+
+	</body>
+</html>
+

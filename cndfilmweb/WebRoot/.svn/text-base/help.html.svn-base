@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--帮助</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+			
+
+
+				var url = "/help";
+
+
+				function init(){
+					//$("#footer").showFooter();
+					//$(this).navi();
+				}
+
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5"></td>
+							<td align="right">
+								<span class="welcome"></span>
+							</td>
+							<td width="80" align="center"></td>
+							<td width="80" align="center"></td>
+							<td width="80" align="center"></td>
+						</tr>
+					</table>
+				</div>
+
+				<ul id="menu">
+					<li>
+						<ul>
+							<li></li>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<ul>
+							<li></li>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<ul>
+							<li></li>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<ul>
+							<li></li>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<ul>
+							<li></li>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<ul>
+							<li></li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<ul>
+							<li></li>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+					</li>
+				</ul>
+
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										<strong></strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									&nbsp;
+								</td>
+							</tr>
+						</table>
+
+
+
+					</div>
+
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>用户帮助</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<div>
+							<table border="1" class="sTable">
+								<caption>
+									工具下载
+								</caption>
+								<tr>
+									<td>
+										工 具
+									</td>
+									<td>
+										描 述
+									</td>
+									<td>
+										下载地址
+									</td>
+								</tr>
+								<tr>
+									<td>
+										控制台认证控件
+									</td>
+									<td>
+										获取电子钥匙中的信息
+									</td>
+									<td>
+										<a href="fileDownloadServlet.do?filename=controller.exe">下载</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										电子钥匙驱动（windows xp）
+									</td>
+									<td>
+										安装后用电子钥匙登陆 （适用于windows xp 、windows 2000操作系统）
+									</td>
+									<td>
+										<a href="fileDownloadServlet.do?filename=MWCSP3.30.exe">下载</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										电子钥匙驱动（windows 7）
+									</td>
+									<td>
+										安装后用电子钥匙登陆 （适用于win7操作系统）
+									</td>
+									<td>
+										<a href="fileDownloadServlet.do?filename=MWCSP V3.50.exe">下载</a>
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="3">
+										<input class="bt" type="button" value="返回"
+											onclick="javascript:history.back()"></input>
+									</td>
+								</tr>
+							</table>
+						</div>
+
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer">
+				<div class="yejiao">
+					<table width="1000" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td>
+								<table width="300" height="50" border="0" cellspacing="0"
+									cellpadding="0">
+									<tr>
+										<td align="right">
+											<img src="images/sq_img_10.png" />
+										</td>
+										<td width="10">
+											&nbsp;
+										</td>
+										<td width="4" bgcolor="#999999">
+											&nbsp;
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<table width="700" height="50">
+									<tr>
+										<td align="left">
+											©2011北京赛搏长城信息科技有限公司研制开发
+										</td>
+									</tr>
+									<tr>
+										<td align="left">
+											北邮教学部监制
+										</td>
+									</tr>
+									<tr>
+										<td>
+											Ver1.00 build 110930
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>
+

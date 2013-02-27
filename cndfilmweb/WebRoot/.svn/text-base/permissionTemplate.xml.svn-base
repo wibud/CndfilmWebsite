@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<permission>
+	<userInfo title="用户信息">
+		<read title="查询">0</read>
+		<update title="修改">0</update>
+		<readIdNo title="查看身份证号">0</readIdNo>
+	</userInfo>
+	<deptInfo  title="部门信息">
+		<read title="查询">0</read>
+		<update  title="修改">0</update>
+	</deptInfo>
+	<projectInfo title="项目信息">
+		<read title="查询">0</read>
+		<update title="修改">0</update>
+	</projectInfo>
+	<versionInfo title="版本信息">
+		<read title="查询">0</read>
+		<create title="上传">0</create>
+		<beta title="测试版本下载">0</beta>
+		<gm title="正式发布版本下载">0</gm>
+		<chstat title="修改版本状态">0</chstat>
+	</versionInfo>
+	<ticketApplyInfo title="表单申请管理">
+		<read title="查询请假加班信息">0</read>
+	    <accept title="受理订票">0</accept>
+	    <overtime title="受理加班">0</overtime>
+	    <vacancy title="受理请假">0</vacancy>
+	</ticketApplyInfo>
+	<afterSaleInfo title="售后信息">
+		<read title="查询">0</read>
+	</afterSaleInfo>
+	<workAttence title="考勤管理">
+		<read title="查询考勤">0</read>
+		<creat title="导入考勤">0</creat>
+		<update title="修改考勤">0</update>
+	</workAttence>
+	<commerceProject title="项目实施">
+	     <read title="查询项目信息">0</read>
+	     <applyproject title="申请项目">0</applyproject>
+	     <mperson title="财务审批权">0</mperson>
+	</commerceProject>
+	<assetManager title="资产管理">
+	     <internalAsset title="内部资产管理">0</internalAsset>
+	     <externalAsset title="外部资产管理">0</externalAsset>
+	</assetManager>
+	<performanceInfo title="绩效考核信息">
+	     <templateShow title="模板管理">0</templateShow>
+	     <launchShow title="发起考核">0</launchShow>
+	     <allResultShow title="所有成绩查询">0</allResultShow>
+	</performanceInfo>
+	<performanceObjectInfo title="绩效考核对象管理">
+	     <launchObject title="考核发起对象(部门)">0</launchObject>
+	     <assignObject title="模板指定对象(部门)">0</assignObject>
+	</performanceObjectInfo>
+</permission>

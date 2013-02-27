@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--查找订票信息</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+
+				Array.prototype.unique = function() {  
+                   var data = [];  
+                   var a = {}; //声明一个对象，javascript的对象可以当哈希表用  
+                   for (var i = 0; i < this.length; i++) {  
+                       if(!a[this[i]]){  
+                          a[this[i]] = true;  
+                          data[data.length] = this[i];  
+                   }  
+                }  
+                return data;  
+                };  
+                
+                initDeptList();
+	                     
+	             //根据部门信息的改变动态显示姓名选项
+	             $("#userDept").change(function(){
+	            	   var deptId=$('#userDept').val();
+	                   $("#userName option").remove();
+	            		//列出符合部门和职位的员工
+	            	   $.post('/systemUserSearch',
+	            		       {'userDeptId':deptId},
+	            		       function(xml){
+	            				$("#userName").append(" <option value=\"\" selected=\"selected\"></option>");
+	            				$(xml).find("item").each(function(){
+											$("#userName").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+										});
+	            			    },
+	            		'xml');
+	            	});
+                $("#notice").hide();
+
+				$('#confirm').click(function(){
+					var userId       = $("#userName option:selected").val();
+					var deptId        = $("#userDept option:selected").val();  
+					var applyTime	   = $("#applyTime").val();
+					/*var overtime ="";
+					var hour="";*/
+					var bmJudgement = $("#bmJudgement option:selected").text();
+					var applyStartTime =$("#applyStartTime").val();
+					var applyEndTime =$("#applyEndTime").val();
+					/*if($("#overtime").val()!=""){
+					   if($("#hour option:selected").text()!=""){
+					        overtime=$("#overtime").val();
+					        hour=$("#hour option:selected").text()+"点";
+					        applyStartTime = overtime+" "+hour;
+					        applyEndTime = overtime+" "+hour;
+					   }
+					}*/
+					
+					if(($("#applyStartTime").val()!="" && $("#applyEndTime").val()=="") || ($("#applyStartTime").val()=="" && $("#applyEndTime").val()!="")){
+					    $("#notice").show();
+					    return;
+					}
+					
+					var tmp="userId="+userId+"&deptId="+deptId+"&applyTime="+applyTime+"&applyStartTime="+applyStartTime+"&applyEndTime="+applyEndTime+"&bmJudgement="+bmJudgement;
+					tmp=encodeURI(tmp);
+					
+		
+				    location.href="/overtimeSearchList.html?"+tmp;
+				});
+				
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+					
+			});
+			function initDeptList() {
+            	var onlyMyself = true;     // 只能查看自己的信息
+                // 显示自己负责的部门列表
+                $.ajax({url:'/getDeptListByManagerId',
+	                   data: {},
+	                   success: function(xml){
+							$(xml).find("item").each(function(){
+									$("#userDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+									onlyMyself = false;
+							});
+	   	                 },
+	   	                 
+	   	                async: false,
+	                    dataType: 'xml'
+	            });
+	            // 显示权限中设置的可以查看的部门列表,取交集
+                $.post('/getPermission',
+						{},
+						function(xml) {
+							readableDeptString = $(xml).find("permission").find("ticketApplyInfo").find("read").text();
+							if(readableDeptString == 0 || readableDeptString == 1){
+								//$("#userDept").attr("disabled", "disabled");
+								return;
+							}					
+							if (readableDeptString!=null && readableDeptString!="") {
+								deptList = readableDeptString.split(";");
+							    
+							    for(var i = 0, len = deptList.length-1; i< len; i++) {
+							          deptId = deptList[i].split(",")[0];
+							          deptName = deptList[i].split(",")[1];
+							          dup = false;
+									  $("#userDept option").each(function(){
+											if(deptId == $(this).val()) {
+												dup = true;
+											}
+									  });
+									  if(!dup) {
+										$("#userDept").append("<option value=\""+deptId+"\">"+deptName+"</option>");
+									  	onlyMyself = false;
+									  }
+							    }
+							}
+							
+						},
+						'xml'
+				);
+				
+				if(onlyMyself == true) {
+					var userId = "";
+					var userName = "";
+					var deptId = "";
+					var deptName = "";
+					$.ajax({url: "/currentUserDetail",
+							data: {},
+							success: function(xml){
+								userId   = $(xml).find("userId").text();
+								userName   = $(xml).find("userName").text();
+								deptId   = $(xml).find("userDeptId").text();
+								deptName   = $(xml).find("userDeptName").text();
+							},
+							async: false,
+							dataType: 'xml'
+					});
+					$("#userDept").append("<option value=\""+deptId+"\" selected='selected'>"+deptName+"</option>");
+					$("#userName").append("<option value=\""+userId+"\" selected='selected'>"+userName+"</option>");
+					$("#userDept").attr("disabled", "disabled");
+					$("#userName").attr("disabled", "disabled");
+				}			
+			}		
+
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+				<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：加班管理 &gt;&nbsp;
+										<strong>查询加班单</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>查找加班申请信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td width="30%">部门</td>
+								<td width="70%">
+								    <select name="userDept" id="userDept" class="wideSelText">
+								    <option value="" selected="selected"></option>
+							        </select>
+							    </td>
+							</tr>
+							
+							<tr>
+								<td class="width_5">姓名</td>
+								<td class="width_15">
+								<select name="userName" id="userName" class="wideSelText">
+								    <option value="" selected="selected"></option>
+							    </select>
+							    </td>
+							</tr>
+							
+							<tr>
+								<td class="width_5">申请时间</td>
+								<td class="width_15"><input readonly="readonly" id="applyTime" onclick="setday(this)" class="wideSelText"/>
+							    </td>
+							</tr>
+							<tr>
+							<td>加班时间</td>
+						    <td><input readonly="readonly" id="applyStartTime" onclick="setday(this)" class="doubleSelText"/>至<input readonly="readonly" id="applyEndTime" onclick="setday(this)" class="doubleSelText"/>
+								   <p/><label id="notice" class="required">*时间范围输入不完整</label>
+						    </td>
+							</tr>
+						    <tr>
+								<td class="width_5">审批状态</td>
+								<td class="width_15">
+								    <select name="bmJudgement" id="bmJudgement" class="wideSelText">
+								    <option value="" selected="selected"></option>
+								    <option value="等待部门主管审批">等待部门主管审批</option>
+								    <option value="等待分管领导审批">等待分管领导审批</option>
+								    <option value="等待人事部审批">等待人事部审批</option>
+								    <option value="人事部审批通过">人事部审批通过</option>
+								    <option value="部门主管审批不通过">部门主管审批不通过</option> 
+								    <option value="分管领导审批不通过">分管领导审批不通过</option>
+								    <option value="人事部审批不通过">人事部审批不通过</option>
+							        </select>
+							     </td>
+							</tr>
+							<tr><td colspan="2"><input class="bt" type="button" id="confirm" value="确定"  ></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				 <div id="bg_di"></div>
+			</div>
+           <div id="bg_yejiao">
+		    <div id="footer"></div>
+		  </div>
+		</div>
+	</body>
+</html>

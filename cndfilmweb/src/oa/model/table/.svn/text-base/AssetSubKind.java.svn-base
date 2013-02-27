@@ -1,0 +1,45 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="subKindID")
+@Entity
+@Table(name="tb_assetSubKind")
+public class AssetSubKind {
+	@Id
+	private String subKindID;		        
+	private String subKind;	       
+	private String majKindID;
+	private String recentNum;
+	public String getSubKindID() {
+		return subKindID;
+	}
+	public void setSubKindID(String subKindID) {
+		this.subKindID = subKindID;
+	}
+	public String getSubKind() {
+		return subKind;
+	}
+	public void setSubKind(String subKind) {
+		this.subKind = subKind;
+	}
+	public String getMajKindID() {
+		return majKindID;
+	}
+	public void setMajKindID(String majKindID) {
+		this.majKindID = majKindID;
+	}
+	public String getRecentNum() {
+		return recentNum;
+	}
+	public void setRecentNum(String recentNum) {
+		this.recentNum = recentNum;
+	}	
+	
+	
+	
+}

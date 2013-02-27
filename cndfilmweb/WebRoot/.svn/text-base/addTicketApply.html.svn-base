@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+   <title>OA系统--订票申请</title>
+   <!--导入JavaScript  -->
+   <script type="text/javascript" src="./scripts/js/page.js"></script>
+   <script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+   </script>
+   <script type="text/javascript">
+       $(document).ready(function(){
+	       init();
+	       //添加成员
+	       $("#addticketInfo").dblclick(function(){
+					$("#addticketInfo option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#removeticketInfo").append(option);
+						$(this).remove();
+					});
+				});  
+			//删除成员  
+			$("#removeticketInfo").dblclick(function(){
+					$("#removeticketInfo option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#addticketInfo").append(option);
+						$(this).remove();
+					});
+				});  
+			
+			  var userId = "";
+			  var userName = "";
+			  var userDept = "";
+			  var depature = "";
+			  var destination = "";
+			  var depatureTime = "";
+			  var trafficWay = "";
+			  var trafficType = "";
+			  var bookReason = "";
+			  var telephone = "";
+			  var userEmail = "";
+			  var DMEmail = "";
+			  var SMEmail = "";
+			  var ticketInfo = "";
+			  var personInCharge="";
+			  var secondManager="";
+		      var bookingType=$('#bookingType').val();
+		      var clientName="";
+		      var clientInfo="";
+		      var applyId="";
+		      
+		      $.post('/currentUserDetail',
+					{},
+					function(xml){
+				       applyId=$(xml).find("userId").text();
+				    },
+				    'xml');
+		   
+		      $('#client1').hide();
+	          $('#client2').hide();
+		      $.post('/systemDeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){							      
+									$("#userDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});							
+	   	                 },
+	                'xml');
+	                
+	          //根据部门信息的改变动态显示姓名选项
+	          $("#userDept").change(function(){
+	            	  var deptId=$('#userDept').val();
+	            	  
+	                 //根据部门编号找到部门的负责人编号，再根据负责人编号找到负责人的姓名和邮箱
+	                 $.post('/systemDeptSearch',
+	                        {'deptId':deptId},
+	                        function(xml){
+	                             $(xml).find("item").each(function(){
+	                                       var headerId1=$(this).find("personInCharge").text();
+	                                       var headerId2=$(this).find("secondManager").text();
+	                                       personInCharge=$(this).find("personInCharge").text();
+	                                       secondManager=$(this).find("secondManager").text();
+	                                       $.post('/systemUserSearch',
+	                                              {'userId':headerId1}, 
+	                                              function(xml){
+	                                                 $(xml).find("item").each(function(){
+	                                                             DMEmail=$(this).find("userEmail").text();
+	                                                  }); 
+	                                              },
+	                                       'xml'); 
+	                                       $.post('/systemUserSearch',
+	                                              {'userId':headerId2}, 
+	                                              function(xml){
+	                                                 $(xml).find("item").each(function(){
+	                                                             SMEmail=$(this).find("userEmail").text();
+	                                                  }); 
+	                                              },
+	                                       'xml');
+	                                }); 
+	                            },
+	                   'xml');  
+	            		
+	                  $("#userName option").remove();
+	                  //列出符合部门的员工
+	            	  $.post('/systemUserSearch',
+	            		       {'userDeptId':deptId},
+	            		       function(xml){
+	            				  $("#userName").append(" <option value=\"\" selected=\"selected\">——姓名——</option>");
+	            				  $(xml).find("item").each(function(){
+											$("#userName").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+										});
+	            			    },
+	            		'xml');
+	          });    
+	          
+	          $("#bookingType").change(function(){
+	                
+	                if($('#bookingType').val()=="2"){
+	                    $('#client1').show();
+	                    $('#client2').show();
+	                }else{
+	                    $('#client1').hide();
+	                    $('#client2').hide();
+	                }
+	          });
+	          
+	              
+		    $('#confirm').click(function(){
+	    	      userId = $('#userName').val();
+	    	      userName= $('#userName option:selected').text();
+			      userDept = $('#userDept option:selected').text();
+			      depature = $('#Depature').val();
+			      destination = $('#Destination').val();
+			      depatureTime = $('#DepatureTime').val();
+			      trafficWay = $('#trafficWay').val();
+			      trafficType = $('#trafficType').val();
+			      bookReason = $('#bookReason').val();
+		          telephone = $('#telephone').val();
+		          clientName = $('#clientName').val();
+		          clientInfo = $('#clientInfo').val();
+		          ticketInfo = $('#ticketInfo').val();
+			      var isEmail="";
+			      
+			      /*var ticketInfoWay=$('#ticketInfoWay').val();
+			      var ticketInfoDay=$('#ticketInfoDay').val();
+			      var ticketInfoHour=$('#hour').val();
+			      var ticketInfoMinut=$('#minut').val();
+			      
+			      ticketInfo="候选出行方式："+ticketInfoWay+"；候选出行时间："+ticketInfoDay+"日"+ticketInfoHour+"时"+ticketInfoMinut+"分";*/
+			  
+			  
+			  if($('#userName').val() == ""){
+						alert("订票人的姓名不能为空");
+						return;
+                    }
+			  if($('#userDept').val() == ""){
+						alert("订票人的部门名称不能为空");
+						return;
+                    }
+			  if($('#Depature').val() == ""){
+						alert("订票人的出发地不能为空");
+						return;
+                    }
+			  if($('#Destination').val() == ""){
+						alert("订票人的目的地不能为空");
+						return;
+                    }
+			  if($('#DepatureTime').val() == ""){
+						alert("订票人的出发时间不能为空");
+						return;
+                    }
+			  if($('#traffic_way').val() == ""){
+						alert("订票人的出行方式不能为空");
+						return;
+                    }
+			  /*if($('#traffic_type').val() == ""){
+						alert("订票人的票务类型不能为空");
+						return;
+                    }*/
+					
+			  /*if($('#userEmail').val() == ""){
+						alert("申请人的邮箱信息不能为空");
+						return;
+                    }
+			  if($('#headerEmail').val() == ""){
+						alert("部门主管的邮箱不能为空");
+						return;
+                    }*/
+		   
+		      if($('#isEmail').attr("checked") == "checked"){
+		                isEmail="true";
+		                alert("发送邮件通知部门主管");
+		            }
+		            
+		   $.post('/addTicketApply', {'userId':userId,'userName':userName,'userDept':userDept,'depature':depature,'destination':destination,'depatureTime':depatureTime,'trafficWay':trafficWay,'trafficType':trafficType,'ticketInfo':ticketInfo,'bookReason':bookReason,'telephone':telephone,'DMEmail':DMEmail,'SMEmail':SMEmail,'personInCharge':personInCharge,'secondManager':secondManager,'isEmail':isEmail,'clientName':clientName,'clientInfo':clientInfo,'applyId':applyId}, callback, 'xml');
+			  
+			  function callback(databack){			         
+				     var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+						    alert("添加成功！");
+							location.href='ticketInfoList.html';
+						}
+					}
+		   });	
+		   
+		   function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   }
+	   });
+   </script>
+   
+</head>
+
+   <body>
+		<div id="container2">
+		  <div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">np<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		    <div id="content" class="c-1000">
+	          <div id="main">
+	            <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：<a href="ticketInfoList.html" style="color: black;">订票管理</a> &gt;&nbsp;
+										<strong>添加订票</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>订票申请单</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r7">
+	              <div >
+					<table id="table2" class="sTable" border="0" cellpadding="0" cellspacing="0">
+					  <tr>
+					  <td width="30%">订票类型：</td>
+					  <td width="70%"><select id="bookingType" style="width:180px">
+					      <option value="1">员工申请订票</option>
+					      <option value="2">替客户申请订票</option>
+					      </select></td>
+					  </tr>
+					   <tr>
+					   <td  ><label class="required">*</label>订票人部门：</td>
+					   <td width="70%"><select id="userDept" style="width:180px">
+							          <option value="" selected="selected">——部门——</option>
+									  </select></td>
+					  </tr>
+                      <tr>
+                      <td><label class="required">*</label>订票人姓名：</td>
+					  <td><select id="userName" style="width:180px">
+					                  <option value="" selected="selected">——姓名——</option>
+					                  </select></td>
+					  </tr>
+					  <tr id="client1">
+				      <td><label class="required">*</label>客户姓名：</td>
+				      <td><input id="clientName" type="text" size="30"/></td>
+				      </tr>
+				      <tr id="client2">
+				      <td><label class="required">*</label>客户详情：<p/>（填写客户的详细信息，包括公司、部门、职位和订票所需的身份证信息等）</td>
+				      <td><textarea id="clientInfo" cols="25" rows="4"></textarea></td>
+				      </tr>
+                      <tr>
+                      <td width="30%"><label class="required">*</label>出发地</td>
+                      <td width="70%"><input id="Depature" type="text" size="30"/></td>
+                      </tr>
+                      <tr>
+					  <td><label class="required">*</label>目的地</td>
+					  <td><input id="Destination" type="text" size="30"/></td>
+					  </tr>
+					  <tr>
+					  <td><label class="required">*</label>出行日期：</td>
+					  <td><input readonly="readonly" id="DepatureTime" type="text" size="30" onclick="setday(this)"/>
+					  </td>				
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>出行方式</td>
+                      <td>
+					  <select id="trafficWay" style="width:180px">
+					  <option value="" selected="selected"></option>
+                      <option value="11">飞机-单程</option>
+                      <option value="12">飞机-双程</option>
+                      <option value="21">普通火车-单程</option>
+                      <option value="22">普通火车-双程</option>
+					  <option value="31">高铁-单程</option>
+					  <option value="32">高铁-双程</option>
+					  <option value="41">动车-单程</option>
+					  <option value="42">动车-双程</option>
+					  <option value="51">长途汽车-单程</option>
+					  <option value="52">长途汽车-双程</option>
+	                  </select></td>
+                      </tr>
+                      <tr>
+                      <td>票务类型<p/>(填写出行的车次和航班)</td>
+                      <td><input id="trafficType" type="text" size="30"></input></td>
+                      </tr>
+                      <tr>
+                      <td>联系电话</td>
+                      <td><input id="telephone" type="text" size="30"/></td>
+                      </tr>
+                      <tr>
+                      <td>候选方案:<p/>(填写候选的出行方案和时间范围)</td> 
+					  <td><textarea id="ticketInfo" rows="3" cols="25"></textarea></td>
+                      </tr>
+                      <tr>
+                      <td>订票理由</td>
+                      <td><textarea id="bookReason" cols="25" rows="3"></textarea></td>
+                      </tr>
+				      <tr>
+				      <td colspan="2"><input type="checkbox" id="isEmail" value="true"/>邮件通知部门主管</td>
+				      </tr>
+				      </table>
+				      <br/>
+				      <input class="bt" type="button" id="confirm" value="确定"/>
+					  <input class="bt" type="button" value="返回" onclick="javascript:location.href='ticketInfoList.html'"/>
+				  </div>    
+			    </div>
+			  </div>
+			  <div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+   </body>
+</html>

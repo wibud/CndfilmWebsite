@@ -1,0 +1,360 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--采购资产管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript">
+		
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+				
+				 
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				
+				//=============入库登记=============
+				$.fn.showData1 = function(){
+						
+					//获取部门以及该部门的成员
+					$.post('/systemDeptList',{},
+						function(xml){
+							$("#dept1").append("<option value=\"\">"+"—部门—"+"</option>");
+							$(xml).find("item").each(function(){
+								$("#dept1").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");									
+							});
+																		
+							$.post('/gotUserbyDept',
+									{'dept': $('#dept1').val()},
+									function(xml){
+										$("#person1").append("<option value=\"\">"+"—人员—"+"</option>");
+										$(xml).find("item").each(function(){
+											$("#person1").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+										});										
+									},
+							'xml');
+							},
+						'xml');
+																		
+					 //人员随着部门改变而改变
+				 	$('#dept1').change(function(){
+						$("#person1 option").remove();
+						var dept = $('#dept1').val();
+						$.post('/gotUserbyDept',
+								{'dept':dept},
+								function(xml){
+								$("#person1").append("<option value=\"\">"+"—人员—"+"</option>");
+								$(xml).find("item").each(function(){
+								$("#person1").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+								});
+						},
+					'xml');
+				
+					});
+					//提交入库
+					$("#submit1").click(function(){
+						var assetNo		=$("#assetNo1").val();
+						var assetName	=$("#assetName1").val();
+						var assetDept	=$("#dept1").val();
+						var assetOwner	=$("#person1").val();
+						var assetInTime	=$("#assetInTime1").val();
+						var assetInFrom	=$("#assetInFrom1").val();
+						var assetOutTime="";
+						var assetOutTo  ="";
+						var mark		="在库中";
+						//判读资产编码是否合法
+						$.post('/assetPurchasedListAll',{'page':page},callback,'xml');
+						function callback(databack){
+							var judge=0;
+							$(databack).find('item').each(function(i){
+								if(assetNo==$(this).find('assetNo').text()){
+									alert("资产编号重复！");judge=1;
+								}
+							});
+							if(judge)return;
+							var array=[assetNo,assetName,assetDept,assetOwner,assetInTime,assetInFrom];
+							for(i=0;i<6;i++){
+								if(array[i]==""){
+									alert("请填入完整信息！");return;
+								}
+							}
+							$.post('/assetPurchasedIn',{'assetNo':assetNo,'assetName':assetName,'assetDept':assetDept,
+									'assetOwner':assetOwner,'assetInTime':assetInTime,'assetInFrom':assetInFrom,'assetOutTime':assetOutTime,'assetOutTo':assetOutTo,'mark':mark},callback,'xml');
+							function callback(databack){
+								var recode = $(databack).find("recode").text();
+								if(recode != 0){
+									alert($(databack).find("errormsg").text());
+								}else {
+										alert("入库成功！");
+										location.href="AssetPurchased.html";
+								}
+							}
+						}
+					});			
+				};		
+				//=============出库登记=============
+				$.fn.showData2 = function(){
+					
+					//提交出库
+					$("#submit2").click(function(){
+						var assetNo=$("#assetNo2").val();
+						var assetOutTime=$("#assetOutTime2").val();
+						var assetOutTo=$("#assetOutTo2").val();
+						var mark="已出库"
+						//判读资产编码是否合法
+						$.post('/assetPurchasedListAll',{'page':page},callback,'xml');
+						function callback(databack){
+							var judge=0;
+							$(databack).find('item').each(function(i){
+								if(assetNo==$(this).find('assetNo').text()){
+									if($(this).find('mark').text()=="已出库")judge=1;
+									else judge=2;
+								}
+							});
+							if(judge==0){alert("没有资产对应此编号！");return;}
+							if(judge==1){alert("资产已出库！");return;}
+							if(assetOutTime==""){alert("请填入完整信息！");return;}
+							if(assetOutTo==""){alert("请填入完整信息！");return;}
+							$.post('/assetPurchasedOut',{'assetNo':assetNo,'assetOutTime':assetOutTime,'assetOutTo':assetOutTo,'mark':mark},callback,'xml');
+							function callback(databack){
+								var recode = $(databack).find("recode").text();
+								if(recode != 0){
+									alert($(databack).find("errormsg").text());
+								}else {
+										alert("出库成功！");
+										location.href="AssetPurchased.html";
+								}
+							}
+						}
+					});
+				};
+				
+				//===============查询================
+				$.fn.showData5 = function(){
+					//获取部门以及该部门的成员
+					$.post('/systemDeptList',{},
+						function(xml){
+							$("#dept5").append("<option value=\"\">"+"—部门—"+"</option>");
+							$(xml).find("item").each(function(){
+								$("#dept5").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");									
+							});
+																		
+							$.post('/gotUserbyDept',
+									{'dept': $('#dept5').val()},
+									function(xml){
+										$("#person5").append("<option value=\"\">"+"—人员—"+"</option>");
+										$(xml).find("item").each(function(){
+											$("#person5").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+										});										
+									},
+							'xml');
+							},
+						'xml');																		
+						 //人员随着部门改变而改变
+				 	$('#dept5').change(function(){
+						$("#person5 option").remove();
+						var dept = $('#dept5').val();
+						$.post('/gotUserbyDept',
+								{'dept':dept},
+								function(xml){
+									$("#person5").append("<option value=\"\">"+"—人员—"+"</option>");
+									$(xml).find("item").each(function(){
+										$("#person5").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+									});
+								},
+						'xml');				
+					});
+					//提交查询
+					$("#submit5").click(function(){
+						var assetNo			=$("#assetNo5").val();
+						var assetName		=$("#assetName5").val();
+						var assetDept		=$("#dept5").val();
+						var assetOwner		=$("#person5").val();
+						var assetInTime		=$("#assetInTime5").val();
+						var assetInFrom		=$("#assetInFrom5").val();
+						var assetOutTime	=$("#assetOutTime5").val();
+						var assetOutTo		=$("#assetOutTo5").val();
+						var mark			=$("#mark5").val();
+						$.post('/assetPurchasedList',{'assetNo':assetNo,'assetName':assetName,'assetDept':assetDept,
+							'assetOwner':assetOwner,'assetInTime':assetInTime,'assetInFrom':assetInFrom,'assetOutTime':assetOutTime,'assetOutTo':assetOutTo,'mark':mark},callback,'xml');
+						function callback(databack){
+							$("#search").hide();
+							$("#tabs-5").append("<table border=\"1\" id=\"list\"class=\"listTable\"><caption>搜索结果</caption><tr><th>序号</th><th>资产编号</th><th>资产名称</th><th>归属部门</th><th>持有人</th><th>入库时间</th><th>来源</th><th>出库时间</th><th>去向</th></tr></table>");
+							$(databack).find('item').each(function(i){
+								
+								var assetNo			=$(this).find("assetNo").text();
+								var assetName		=$(this).find("assetName").text();
+								var assetDept		=$(this).find("assetDept").text();
+								var assetOwner		=$(this).find("assetOwner").text();
+								var assetInTime		=$(this).find("assetInTime").text();
+								var assetInFrom		=$(this).find("assetInFrom").text();
+								var assetOutTime	=$(this).find("assetOutTime").text();
+								var assetOutTo		=$(this).find("assetOutTo").text();
+								var mark			=$(this).find("mark").text();
+								
+								$("#list").append("<tr><td>"+(i+1)+"</td><td>"+assetNo+"</td><td>"+assetName+"</td><td>"+assetDept+"</td><td>"+assetOwner+"</td><td>"+assetInTime+"</td><td>"+assetInFrom+"</td><td>"+assetOutTime+"</td><td>"+assetOutTo+"</td></tr>");
+							});
+							$("#list").append("<tr><td colspan=\"9\"><input type=\"button\" id=\"searchBack\" value=\"返回\"></input></td></tr>");
+							$("#searchBack").click(function(){
+								$("#search").show();
+								$("#list").remove();
+							});
+						}					
+					});					
+				};
+				
+
+				$(this).showData1();
+				$(this).showData2();
+				$(this).showData5();
+				function init(){
+					
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+				
+			});
+				
+				
+		</script>
+
+	</head>
+<body>
+	<div id="container">
+		<div id="header"></div>
+			<div id="content">
+				<div id="main">
+					<div id="content_r">			
+						<div>
+					 	<table border="1" class="listTable">
+					 		<caption>采购资产</caption>
+					 	</table>
+						</div>
+					  	<div id="tabs">
+				            <ul>
+				                <li><a href="#tabs-1">入库登记</a></li>
+				                <li><a href="#tabs-2">出库登记</a></li>
+				                <li><a href="#tabs-5">查看采购资产</a></li>
+				            </ul>
+				            <div id="tabs-1">
+				              	<table id="afterSaleTable" border="1" class="listTable">
+										<tr>
+											<th>资产编号</th><td><input type="text" id="assetNo1"></input></td>								
+										</tr>
+										<tr>
+											<th>资产名称</th><td><input type="text" id="assetName1"></input></td>								
+										</tr>
+										<tr>
+											<th>资产归属</th>
+											<td class="width_15">
+											<select name="dept1" id="dept1" class="width_6" >
+							        		</select>
+							       			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        		<select name="person1" id="person1" class="width_6" >
+							        		</select>
+							    		    </td>								
+										</tr>
+										<tr>
+											<th>资产入库时间</th><td><input type="text" id="assetInTime1" readonly="readonly" onclick="setday(this)"></input></td>								
+										</tr>
+										<tr>
+											<th>资产来源</th><td><input type="text" id="assetInFrom1"></input></td>								
+										</tr>
+										<tr>
+											<td colspan="2"><input type="button" id="submit1" value="提交"></input></td>								
+										</tr>
+								</table>
+								<div align="right" id="pageNav1"></div>
+				           </div>
+				           <div id="tabs-2">
+				              <table id="versionTable" border="1" class="listTable">
+									<tr>
+										<th>资产编号</th><td><input type="text" id="assetNo2"></input></td>
+									</tr>
+									<tr>
+										<th>资产出库时间</th><td><input type="text" id="assetOutTime2" readonly="readonly" onclick="setday(this)"> </input></td>
+									</tr>
+									<tr>
+										<th>资产去向</th><td><input type="text" id="assetOutTo2"></input></td>
+									</tr>
+									<tr>
+										<td colspan="2"><input type="button" id="submit2" value="提交"></input></td>								
+									</tr>
+								</table>
+								<div align="right" id="pageNav3"></div>
+				           </div>				            
+				            <div id="tabs-5">	
+				            	<table border="1" id="search" class="listTable">
+				            		<caption>任意条件查询</caption>
+										<tr>
+											<th>资产编号</th><td><input type="text" id="assetNo5"></input></td>								
+										</tr>
+										<tr>
+											<th>资产名称</th><td><input type="text" id="assetName5"></input></td>								
+										</tr>
+										<tr>
+											<th>资产归属</th>
+											<td class="width_15">
+											<select name="dept5" id="dept5" class="width_6" >
+							        		</select>
+							       			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        		<select name="person5" id="person5" class="width_6" >
+							        		</select>
+							    		    </td>								
+										</tr>
+										<tr>
+											<th>资产入库时间</th><td><input type="text" id="assetInTime5" readonly="readonly" onclick="setday(this)"></input></td>								
+										</tr>
+										<tr>
+											<th>资产来源</th><td><input type="text" id="assetInFrom5"></input></td>								
+										</tr>
+										<tr>
+										<tr>
+											<th>资产出库时间</th><td><input type="text" id="assetOutTime5" readonly="readonly" onclick="setday(this)"></input></td>								
+										</tr>
+										<tr>
+											<th>资产去向</th><td><input type="text" id="assetOutTo5"></input></td>								
+										</tr>						
+										<tr>
+											<th>资产出入库情况</th>
+											<td>
+											<select id="mark5">
+												<option></option>
+												<option>在库中</option>
+												<option>已出库</option>
+											</select>
+										</tr>
+										<tr>
+											<td colspan="2"><input type="button" id="submit5" value="提交"></input></td>								
+										</tr>
+								</table>			              
+				           </div>
+				            
+				        </div>
+						</div>
+					</div>
+				</div>
+
+         </div>
+	</body>
+</html>
+
+	

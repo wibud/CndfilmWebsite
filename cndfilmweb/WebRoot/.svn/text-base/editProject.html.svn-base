@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改项目信息</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var projectId = href.split("projectId=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+				var name,deptId,managerId,des;
+				//获取项目信息
+				$.post('/getProjectById',
+						{'projectId':projectId},
+						function(xml) {
+							$(xml).find("item").each(function() {
+								name = $(this).find("name").text();
+								deptId = $(this).find("deptId").text();
+								managerId = $(this).find("managerId").text();
+								strMember = $(this).find("member").text();
+								des = $(this).find("des").text();
+								var member = strMember.split(";");
+								var memberId,memberName;
+								for(var i = 0, len = member.length-1; i< len; i++)
+							     {
+							          memberId = member[i].split(",")[0];
+							          memberName = member[i].split(",")[1];
+							          $("#removeMember").append("<option value=\""+memberId+"\">"+memberName+"</option>");
+							      }
+								$("#name").val(name);
+								$("#des").val(des);
+							});
+						},
+						'xml'
+				);
+				
+				
+				//初始化dept,manager,memberDept,addMember列表
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#dept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");							
+									$("#memberDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});
+							$("#dept option[value='"+deptId+"']").attr("selected","selected");
+							$("#memberDept option[value='"+deptId+"']").attr("selected","selected");
+							$.post('/getUserByDept',
+				                    {'userDeptId':$('#dept').val()},
+				                    function(xml){
+										$(xml).find("item").each(function(){
+													var id =$(this).find("userId").text();
+													var name = $(this).find("userName").text();
+													dup = false;
+													//添加待选人员
+													$("#removeMember option").each(function(){
+														if(id == $(this).val()) {
+															dup = true;
+														}
+													});
+													if(!dup) {
+														$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+													}
+													$("#manager").append("<option value=\""+id+"\">"+name+"</option>");
+											});
+											$("#manager option[value='"+managerId+"']").attr("selected","selected");
+				   	                 },
+				                     'xml');							
+	   	                 },
+	                     'xml');
+	           //根据部门信息的改变动态显示姓名选项          
+	           $('#dept').change(function(){
+	          			$("#manager option").remove();
+	            		var dept = $('#dept').val();
+	            		$.post('/getUserByDept',
+	                    {'userDeptId':dept},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#manager").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+								});
+							$("#manager option[value='"+managerId+"']").attr("selected","selected");
+	   	                 },
+	                     'xml');
+	            });     
+	             //根据部门动态更新待选人员
+	              $('#memberDept').change(function(){
+		           			$("#addMember option").remove();
+		            		var dept = $('#memberDept').val();
+		            		var dup;
+		            		$.post('/getUserByDept',
+		                    {'userDeptId':dept},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+									var id =$(this).find("userId").text();
+									var name = $(this).find("userName").text();
+									dup = false;
+									$("#removeMember option").each(function(){
+										if(id == $(this).val()) {
+											dup = true;
+										}
+									});
+									if(!dup) {
+										$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+									}
+								});
+		   	                 },
+		                     'xml');
+	            }); 
+				
+				//添加成员
+	            $("#addMember").dblclick(function(){
+					$("#addMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#removeMember").append(option);
+						$(this).remove();
+					});
+				});  
+				//删除成员  
+				$("#removeMember").dblclick(function(){
+					$("#removeMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#addMember").append(option);
+						$(this).remove();
+					});
+				});  
+
+
+				   //点击确定按钮，对编辑后的数据进行提交
+			        $("#comfirm").click(function(){
+					    var name       = $('#name').val();
+						var dept      = $('#dept').val();
+						var manager  = $('#manager').val();
+						var member = "";
+						var des     = $('#des').val();
+
+					    $("#removeMember option").each(function() {
+                    	var id = $(this).val();
+                    	var name = $(this).text();
+                    	member += id + "," + name + ";";
+                   		});
+                   		
+						if($('#name').val() == ""){
+							alert("项目名不能为空");
+							return;
+		                }
+
+	                    $.post('/editProject', {'projectId':projectId,'name':name,'dept':dept,'manager':manager,'member':member,'des':des}, callback, 'xml');
+
+	                    function callback(xml){
+							var $xml = $(xml);
+							var recode = Number($xml.find("recode").text());
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+							alert("修改成功！");
+							location.href="projectInfoList.html";					        
+						}
+					});
+
+					$("#back").click(
+						function(){location.href="projectInfoList.html?page="+prePage;}
+					);
+
+					function init(){
+
+						$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$(this).navi();
+					}
+
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner3.jpg)">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：项目管理 &gt;&nbsp;
+										<strong>修改项目信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改项目信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td><label class="required">*</label>项目名称<br /></td>
+								<td class="width_15"><input type="text" id="name" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>所属部门</td>
+								<td class="width_15">
+								<select name="dept" id="dept" class="wideSelText"></select>
+								</td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>负责人</td>
+								<td class="width_15">
+								<select name="manager" id="manager" class="wideSelText"></select>
+								</td>
+							</tr>
+							<tr>
+								<td>选择成员</td>
+								<td align="center">
+									<table  border="0" cellspacing="0" cellpadding="0">
+									<tr>
+									<td style="border:0" colspan="3">
+									<select name="memberDept" id="memberDept" class="wideSelText">
+							        </select>
+							        </td>
+							        </tr>
+							        <tr>
+							        <td style="border:0">
+									<select id="addMember" multiple="multiple" title="双击以添加" style="width:130px" >							       
+							        </select>
+							        </td>
+							        <td style="border:0">
+							   		<img src="images/arrow_two_head.png" style="float:left"></img>
+							   		</td>
+							   		<td style="border:0">
+							   		<select id="removeMember" multiple="multiple" title="双击以删除" style="width:130px">
+							        </select>
+							        </td>
+							        </tr>
+							       </table>
+							    </td>
+							</tr>
+							<tr>
+								<td>备注</td>
+								<td><textarea id="des" class="wideSelText"></textarea></td>
+							</tr>
+							<tr><td colspan="2">
+							                    <input class="bt" type="button" value="确定" id="comfirm"></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:location.href='projectInfoList.html'"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+			<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

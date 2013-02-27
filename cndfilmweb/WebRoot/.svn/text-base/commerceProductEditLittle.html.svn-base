@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>修改产品信息</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/myTime.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+<link type="text/css" rel="stylesheet" href="./style/css/global.css" />
+
+<script type="text/javascript">
+$(document).ready(function(){
+          var href = location.href;
+		
+		//    var tmp  = (href.split("?"))[1].split("&"); 
+		    var allrandom  =(href.split("allrandom="))[1].split("&")[0];
+		    var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];
+		    $("#allrandom").val(allrandom);				
+			 var page = href.split("page1=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				var commerceproject_id =(href.split("commerceproject_id="))[1].split("&")[0];
+				var commerceproject_name = (href.split("commerceproject_name="))[1].split("&")[0];   
+				$("#commerceproject_id").val(commerceproject_id);				
+				$("#commerceproject_name").val(commerceproject_name);
+				$.post('/searchCommerceProductById',
+	                    {'allrandom':allrandom},
+					function(xml){
+	
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+							 commerceproject_id			= $(xml).find("commerceproject_id").text();
+                             commerceproject_name      	= $(xml).find("commerceproject_name").text();
+						    var allrandom    				= $(xml).find("allrandom").text();
+						    var product_type   			= $(xml).find("product_type").text();
+						    var softwareVession   				= $(xml).find("softwareVession").text();
+						    var product_number 		= $(xml).find("product_number").text();
+						    var commerceprojectAuthnumber				=  $(xml).find("commerceprojectAuthnumber").text();
+						    var product_id					=  $(xml).find("product_id").text();
+						    var authtext			=  $(xml).find("authtext").text();
+						  
+			/*			       
+							   $("#commerceproject_name").text(commerceproject_name);
+							   $("#allrandom").text(allrandom);
+							   $("#product_type").text(product_type);
+							   $("#softwareVession").text(softwareVession);
+							   $("#product_number").text(product_number);
+							   $("#product_id").text(product_id);
+							   $("#commerceprojectAuthnumber").text(commerceprojectAuthnumber);
+							   $("#authtext").text(authtext);
+							   $("#commerceproject_id").text(commerceproject_id);
+							 register();
+							 */
+			                   $("#commerceproject_name").val(commerceproject_name);
+							   $("#allrandom").val(allrandom);
+							   $("#product_type").val(product_type);
+							   $("#softwareVession").val(softwareVession);
+							   $("#product_number").val(product_number);
+							   $("#product_id").val(product_id);
+							   $("#commerceprojectAuthnumber").val(commerceprojectAuthnumber);
+							   $("#authtext").val(authtext);
+							   $("#commerceproject_id").val(commerceproject_id);
+           	
+			    var tmp = "commerceproject_id="+commerceproject_id;
+				 var tmp2 = "allrandom="+allrandom+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&product_type="+product_type+"&softwareVession="+softwareVession+"&product_number="+product_number+"&commerceprojectAuthnumber="+commerceprojectAuthnumber+"&product_id="+product_id;
+
+			    		                     	  						      
+	                    }, 
+	                     'xml'
+            	);	
+                    $("#softwareVession").change(function() {
+								    	var money = $("#softwareVession").val(); 
+								    	
+								    	var reg = /(([0-9]+\\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\\.[0-9]+)|([0-9]*[1-9][0-9]*))/;
+										if(!money.match(reg)){
+												alert("请确认输入正浮点数格式数据！");
+												$("#softwareVession").val(null);
+												return;
+											}
+							    	});
+	
+							    	$("#product_number").change(function() {
+								    	var money = $("#product_number").val(); 
+								    	
+								    	var reg = new RegExp(/^[0-9]+$/);
+										if(!money.match(reg)){
+												alert("请确认输入正整数格式数据！");
+												$("#product_number").val(null);
+												return;
+											}
+							    	});
+				    	$("#product_id").change(function() {
+								    	var money = $("#product_id").val(); 
+								    	
+								    	var reg = new RegExp(/\w+/);
+										if(!money.match(reg)){
+												alert("请确认输入正整数格式数据！");
+												$("#product_id").val(null);
+												return;
+											}
+							    	});
+		
+			});
+			
+			function Ok(){
+		var href = location.href;
+		
+		//    var tmp  = (href.split("?"))[1].split("&"); 
+            var allrandom  =(href.split("allrandom="))[1].split("&")[0];
+		    var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];		    $("#allrandom").val(allrandom);				
+		//	$("#commerceproject_name").val(commerceproject_name);
+			 var page = href.split("page1=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				 var commerceproject_id =(href.split("commerceproject_id="))[1].split("&")[0];
+				 var commerceproject_name = (href.split("commerceproject_name="))[1].split("&")[0]; 
+				 $("#commerceproject_id").val(commerceproject_id);				
+				$("#commerceproject_name").val(commerceproject_name);  
+				$.post('/searchCommerceProductById',
+	                    {'allrandom':allrandom},
+					function(xml){
+	
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+							 commerceproject_id			= $(xml).find("commerceproject_id").text();
+                             commerceproject_name      	= $(xml).find("commerceproject_name").text();
+						    var allrandom    				= $(xml).find("allrandom").text();
+						    var product_type   			= $(xml).find("product_type").text();
+						    var softwareVession   				= $(xml).find("softwareVession").text();
+						    var product_number 		= $(xml).find("product_number").text();
+						    var commerceprojectAuthnumber				=  $(xml).find("commerceprojectAuthnumber").text();
+						    var product_id					=  $(xml).find("product_id").text();
+						    var authtext			=  $(xml).find("authtext").text();
+				/*		  
+						       
+							   $("#commerceproject_name").text(commerceproject_name);
+							   $("#allrandom").text(allrandom);
+							   $("#product_type").text(product_type);
+							   $("#softwareVession").text(softwareVession);
+							   $("#product_number").text(product_number);
+							   $("#product_id").text(product_id);
+							   $("#commerceprojectAuthnumber").text(commerceprojectAuthnumber);
+							   $("#authtext").text(authtext);
+							   $("#commerceproject_id").text(commerceproject_id);
+							 register();
+					*/		 
+			                   $("#commerceproject_name").val(commerceproject_name);
+							   $("#allrandom").val(allrandom);
+							   $("#product_type").val(product_type);
+							   $("#softwareVession").val(softwareVession);
+							   $("#product_number").val(product_number);
+							   $("#product_id").val(product_id);
+							   $("#commerceprojectAuthnumber").val(commerceprojectAuthnumber);
+							   $("#authtext").val(authtext);
+							   $("#commerceproject_id").val(commerceproject_id);
+         	                     	  						      
+	                    }, 
+	                     'xml'
+            	);	
+				
+						var allrandom     = $('#allrandom').val();
+					     commerceproject_id     = $('#commerceproject_id').val();
+			        	
+					     commerceproject_name     = $('#commerceproject_name').val();
+						var product_type   = $('#product_type').val();
+						var softwareVession    = $('#softwareVession').val();
+						var product_number  = $('#product_number').val();
+						var commerceprojectAuthnumber  =$('#commerceprojectAuthnumber').val();
+						var product_id   = $('#product_id').val();
+						
+						
+						
+						if($('#commerceproject_name').val() == ""){
+						alert(" 项目名称不能为空！");
+						return;
+						}
+						
+						if($('#product_type').val() ==  ""){
+						alert(" 产品型号不能为空！");
+						return;
+						}
+						
+						if($('#softwareVession').val() ==  ""){
+						alert(" 软件版本不能为空！");
+						return;
+						}
+						
+	
+						if($('#product_number').val() ==  ""){
+						alert(" 产品数量不能为空！");
+						return;
+						}
+
+
+	                    $.post('/editCommerceProductDetail', {'allrandom':allrandom,'commerceproject_id':commerceproject_id,'commerceproject_name':commerceproject_name,'product_type':product_type,'softwareVession':softwareVession,'product_number':product_number,'commerceprojectAuthnumber':commerceprojectAuthnumber,'product_id':product_id}, callback, 'xml');
+
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								alert("修改成功！");
+				
+					var tmp1 = "commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;									
+					window.parent.JqueryDialog.SubmitCompleted("", true, true , "commerceProjectDetail.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi);
+
+										}
+						}
+					
+	
+		}
+			
+			
+		</script>
+  </head>
+  
+ 
+  <body style="margin:0px 0px 0px 80px;padding:0px;" bgcolor="#f2ffe2">
+    <table width="600" height="300" border="0" cellspacing="0" bgcolor="#f2ffe2" id="indexscore">
+  										<tr  style="display:none;">
+								<td class="width_5">项目ID</td>
+								<td class="width_15"><input type="text" id="commerceproject_id" class="wideSelText" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">产品随机ID</td>
+								<td class="width_15"><input type="text" id="allrandom" class="wideSelText" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							<tr >
+								<td class="width_5">项目名称</td>
+								<td class="width_15"><input type="text" id="commerceproject_name" class="wideSelText" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							<tr >
+								<td class="width_5">产品类型</td>
+								<td class="width_15"><select name="product_type" id="product_type" class="wideSelText">
+								        <option value="网络安全管理与检查系统">网络安全管理与检查系统</option>
+								        <option value="一体化安全防护设备（固定式）">一体化安全防护设备（固定式）</option>
+								         <option value="一体化安全防护设备（加固式）">一体化安全防护设备（加固式）</option>
+								        <option value="NetHarwk防火墙">NetHarwk防火墙</option>
+								         <option value="网域星云防火墙（Power V 系列）">网域星云防火墙（Power V 系列）</option>
+								        <option value="天融信防火墙">天融信防火墙</option>
+								         <option value="天融信入侵检测">天融信入侵检测</option>
+								         <option value="启明星辰入侵检测">启明星辰入侵检测</option>								         
+								        <option value="赛博兴安漏洞扫描">赛博兴安漏洞扫描</option>
+								        <option value="绿盟漏洞扫描">绿盟漏洞扫描</option>
+								         <option value="榕基漏洞扫描">榕基漏洞扫描</option>
+								        <option value="北信源补丁分发系统（军用版）">北信源补丁分发系统（军用版）</option>
+								        <option value="瑞星防病毒系统（2008版）">瑞星防病毒系统（2008版）</option>
+								        <option value="瑞星防病毒系统（2009版）">瑞星防病毒系统（2009版）</option>
+								        <option value="瑞星防病毒系统（2010版）">瑞星防病毒系统（2010版）</option>
+								        <option value="江民防病毒系统">江民防病毒系统</option>
+							        </select></td>
+							</tr>
+							
+							<tr >
+								<td class="width_5">软件版本</td>
+								<td class="width_15"><input type="text" id="softwareVession" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">产品数量</td>
+								<td class="width_15"><input type="text" id="product_number" class="wideSelText"></input></td>
+							</tr>
+							
+							<tr>
+								<td class="width_5">授权点数</td>
+								<td class="width_15"><input type="text" id="commerceprojectAuthnumber" class="wideSelText"></input></td>
+							</tr>
+						<tr>
+								<td class="width_5">产品序列号</td>
+								
+								   <td class="width_15"><textarea id="product_id" class="wideSelText"></textarea>
+								   </td>
+								 
+							    
+							</tr>	
+							
+										</table>
+  </body>
+</html>

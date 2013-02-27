@@ -1,0 +1,172 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="project_id")
+@Entity
+@Table(name="tb_project")
+public class Project {
+	@Id
+	private String project_id;		//项目ID
+	private String name;			//项目名称
+	private String manager;			//负责人
+	private String dept;			//所属部门
+	private String member;		//成员
+	private String create_on;		//创建时间
+	private String create_by;		//创建人
+	private String status;			//版本状态
+	private String des;
+	private String currentStep;
+	private String curStepEndTime;
+	private String deStartTime;
+	private String deEndTime;
+	private String reStartTime;
+	private String reEndTime;
+	private String projectStep;
+	private String stepCount;
+	private String reStartCount;
+	private String reEndCount;
+	
+	private String updateEveryProgress;
+	private String updateEveryCount;
+	private String updateEveryDescription;
+	
+	public String getUpdateEveryProgress() {
+		return updateEveryProgress;
+	}
+	public void setUpdateEveryProgress(String updateEveryProgress) {
+		this.updateEveryProgress = updateEveryProgress;
+	}
+	public String getUpdateEveryCount() {
+		return updateEveryCount;
+	}
+	public void setUpdateEveryCount(String updateEveryCount) {
+		this.updateEveryCount = updateEveryCount;
+	}
+	public String getUpdateEveryDescription() {
+		return updateEveryDescription;
+	}
+	public void setUpdateEveryDescription(String updateEveryDescription) {
+		this.updateEveryDescription = updateEveryDescription;
+	}
+	public String getProject_id() {
+		return project_id;
+	}
+	public void setProject_id(String project_id) {
+		this.project_id = project_id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getManager() {
+		return manager;
+	}
+	public void setManager(String manager) {
+		this.manager = manager;
+	}
+	public String getMember() {
+		return member;
+	}
+	public void setMember(String member) {
+		this.member = member;
+	}
+	public String getDept() {
+		return dept;
+	}
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+	public String getCreate_on() {
+		return create_on;
+	}
+	public void setCreate_on(String create_on) {
+		this.create_on = create_on;
+	}
+	public String getCreate_by() {
+		return create_by;
+	}
+	public void setCreate_by(String create_by) {
+		this.create_by = create_by;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public void setDes(String des) {
+		this.des = des;
+	}
+	public String getDes() {
+		return des;
+	}
+	public void setCurrentStep(String currentStep) {
+		this.currentStep = currentStep;
+	}
+	public String getCurrentStep() {
+		return currentStep;
+	}
+	public void setCurStepEndTime(String curStepEndTime) {
+		this.curStepEndTime = curStepEndTime;
+	}
+	public String getCurStepEndTime() {
+		return curStepEndTime;
+	}
+	public void setDeStartTime(String deStartTime) {
+		this.deStartTime = deStartTime;
+	}
+	public String getDeStartTime() {
+		return deStartTime;
+	}
+	public void setDeEndTime(String deEndTime) {
+		this.deEndTime = deEndTime;
+	}
+	public String getDeEndTime() {
+		return deEndTime;
+	}
+	public void setReStartTime(String reStartTime) {
+		this.reStartTime = reStartTime;
+	}
+	public String getReStartTime() {
+		return reStartTime;
+	}
+	public void setReEndTime(String reEndTime) {
+		this.reEndTime = reEndTime;
+	}
+	public String getReEndTime() {
+		return reEndTime;
+	}
+	public void setStepCount(String stepCount) {
+		this.stepCount = stepCount;
+	}
+	public String getStepCount() {
+		return stepCount;
+	}
+	public void setProjectStep(String projectStep) {
+		this.projectStep = projectStep;
+	}
+	public String getProjectStep() {
+		return projectStep;
+	}
+	public void setReStartCount(String reStartCount) {
+		this.reStartCount = reStartCount;
+	}
+	public String getReStartCount() {
+		return reStartCount;
+	}
+	public void setReEndCount(String reEndCount) {
+		this.reEndCount = reEndCount;
+	}
+	public String getReEndCount() {
+		return reEndCount;
+	}
+}

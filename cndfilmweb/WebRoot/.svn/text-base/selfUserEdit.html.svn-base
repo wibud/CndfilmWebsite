@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改个人信息
+		</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+				var userDeptId;
+				var userPostId;
+	          $.post("/currentUserDetail",
+						{},
+						function(xml){
+							var userId            = $(xml).find("userId").text();
+							var userName          = $(xml).find("userName").text();
+						    var userSex           = $(xml).find("userSex").text();
+						    var userDeptName      = $(xml).find("userDeptName").text();
+						    var userPostName      = $(xml).find("userPostName").text();
+						    var userPlaceInfo     = $(xml).find("userPlaceInfo").text();
+						    var idNumber      	   = $(xml).find("idNumber").text();
+						    var userAddress       = $(xml).find("userAddress").text();
+						    var userTel           = $(xml).find("userTel").text();
+						    var userMobile        = $(xml).find("userMobile").text();
+						    var userEmail         = $(xml).find("userEmail").text();
+						    var userIp            = $(xml).find("userIp").text();
+						    var userDesc          = $(xml).find("userDesc").text();
+						    userDeptId      = $(xml).find("userDeptId").text();
+						    userPostId      = $(xml).find("userPostId").text();
+						    var password		= $(xml).find("password").text();
+							
+						    userDesc=userDesc.replaceAll("<br/>","\n");                 
+							
+							
+							$("#userName").val(userName);
+							$("#userSex").val(userSex);
+							$("#userPlaceInfo").val(userPlaceInfo);
+							$("#userAddress").val(userAddress);
+							$("#idNumber").val(idNumber);
+							$("#userTel").val(userTel);
+							$("#userMobile").val(userMobile);
+							$("#userEmail").val(userEmail);
+							$("#userIp").val(userIp);
+							$("#userDesc").val(userDesc);
+							$("#userDeptName").val(userDeptName);
+							$("#userPostName").val(userPostName);
+							$("#password").val(password);
+				        
+	           
+	           
+	           
+	                     //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+			        $("#comfirm").click(function(){
+					   
+						var userName          = $("#userName").val();
+						var userSex           = $("#userSex").val();
+						var userDeptName        = $("#userDeptName").val();
+						var userPostName      = $("#userPostName").val();
+						var userPlaceInfo     =$("#userPlaceInfo").val();
+						var idNumber      	  = $("#idNumber").val();
+				        var userAddress       = $("#userAddress").val();
+					    var userTel           = $("#userTel").val();
+					    var userMobile        = $("#userMobile").val();
+					    var userEmail         = $("#userEmail").val();
+					    var userIp            = $("#userIp").val();
+						var userDesc          = $("#userDesc").val();
+						
+						userDesc=userDesc.replaceAll("\n|\r\n","<br/>");
+						
+						if($('#userName').val() == ""){
+							alert("用户名不能为空");
+							return;
+		                }
+						var regId = /(^(\d{15}|\d{17}[\dxX])$)/;
+						if (idNumber!="" && !idNumber.match(regId)) {
+							alert("身份证号码有误,请重新填写!");
+							return;
+						}
+	                    $.post('/selfUserEdit', {'userId':userId,'userName':userName,'idNumber':idNumber,'userSex':userSex,'userDeptId':userDeptId,'userPostId':userPostId,'userPlaceInfo':userPlaceInfo,'userAddress':userAddress,'userTel':userTel,'userMobile':userMobile,'userEmail':userEmail,'userIp':userIp,'userDesc':userDesc}, callback, 'xml');
+
+	                    function callback(xml){
+							var $xml = $(xml);
+
+							//这个函数从后台得到xml里面的数据
+							var recode = Number($xml.find("recode").text());
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+
+													
+							alert("修改成功！");
+							location.href="systemUserList.html";
+
+						}
+							function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								location.href="systemUserList.html";
+							}
+						}
+	                     
+						
+						
+					});
+			});
+					
+				
+				
+				function init(){
+	
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+
+			
+		});
+		
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" id="toHomePage" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：用户管理 &gt;用户信息管理&gt;&nbsp;
+										<strong>修改个人信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改个人信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="width_5">
+									<label class="required">
+										*
+									</label>
+									姓名
+								</td>
+								<td>
+									<input type="text" id="userName" class="wideSelText"></input>
+								</td>
+							</tr>
+
+							<tr>
+								<td class="width_5">
+									部门
+								</td>
+
+								<td>
+									<input type="text" id="userDeptName" class="wideSelText"
+										readonly="readonly" style="background: #DDEEEE;"></input>
+								</td>
+
+							</tr>
+							<tr>
+								<td>
+									职位
+								</td>
+								<td>
+									<input type="text" id="userPostName" class="wideSelText"
+										readonly="readonly" style="background: #DDEEEE;"></input>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									工位信息
+								</td>
+								<td>
+									<input type="text" id="userPlaceInfo" class="wideSelText"></input>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									身份证号码
+								</td>
+								<td>
+									<input type="text" id="idNumber" class="wideSelText"></input>
+								</td>
+							</tr>
+
+							<tr>
+								<td>
+									家庭住址
+								</td>
+								<td>
+									<input type="text" id="userAddress" class="wideSelText"></input>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									固话
+								</td>
+								<td>
+									<input type="text" id="userTel" class="wideSelText"></input>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									移动电话
+								</td>
+								<td>
+									<input type="text" id="userMobile" class="wideSelText"></input>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									邮箱
+								</td>
+								<td>
+									<input type="text" id="userEmail" class="wideSelText"></input>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									IP
+								</td>
+								<td>
+									<input type="text" id="userIp" class="wideSelText"></input>
+								</td>
+							</tr>
+							<tr>
+								<td class="width_5">
+									备注
+								</td>
+								<td>
+									<textarea id="userDesc" class="wideSelText"></textarea>
+								</td>
+							</tr>
+
+							<tr>
+								<td colspan="3">
+									<input class="bt" type="button" value="确定" id="comfirm"></input>
+									<input class="bt" type="button" value="返回"
+										onclick="javascript:history.back()"></input>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

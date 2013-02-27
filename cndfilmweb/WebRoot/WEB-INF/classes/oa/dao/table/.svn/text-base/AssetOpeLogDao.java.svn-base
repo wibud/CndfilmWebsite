@@ -1,0 +1,132 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.lang.Integer;
+import oa.dao.BaseDao;
+import oa.model.table.AssetOpeLog;
+import oa.util.ResultList;
+//import oa.bean.asset.AssetBean;
+
+@SuppressWarnings("unchecked")
+public class AssetOpeLogDao extends BaseDao {
+	private static final Logger log = LoggerFactory
+			.getLogger(AssetOpeLogDao.class);
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public AssetOpeLog findByPropertyReturnOnly(String propertyName,
+			String value) {
+		log.debug("finding AssetOpeLog instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<AssetOpeLog> user = super.find(null,
+					"oa.model.table.AssetOpeLog", propertyName, value);
+			if (java.lang.Integer.parseInt(user.getCount()) == 0)
+				return null;
+
+			else
+				return user.get(0);
+
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public void save(AssetOpeLog transientInstance) {
+		log.debug("saving AssetOpeLog instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(AssetOpeLog persistentInstance) {
+		log.debug("deleting AssetOpeLog instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(AssetOpeLog instance) {
+		log.debug("update AssetOpeLog instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public AssetOpeLog findById(String id) {
+		log.debug("getting AssetOpeLog instance with id: " + id);
+		try {
+			AssetOpeLog instance = (AssetOpeLog) super.get(
+					"oa.model.table.AssetOpeLog", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetOpeLog> findByExample(Integer pageNo,
+			AssetOpeLog instance) {
+		log.debug("find AssetOpeLog instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.AssetOpeLog", instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetOpeLog> findByProperty(Integer pageNo,
+			String propertyName, String value) {
+		log.debug("finding AssetOpeLog instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.AssetOpeLog",
+					propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetOpeLog> findByCondition(Integer pageNo,
+			String conditions) {
+		log.debug("finding AssetOpeLog instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.AssetOpeLog", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetOpeLog> findAll(Integer pageNo) {
+		log.debug("finding all AssetOpeLog instances");
+		try {
+			return super.find(pageNo, "oa.model.table.AssetOpeLog");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+}

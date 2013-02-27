@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--出差申请审批</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+				var bizTripId = href.split("bizTripId=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var flag	=href.split("flag=")[1].split("&")[0].split("#")[0];
+				
+				$.post('/businessTripDetail',
+						{'bizTripId':bizTripId},
+						function(xml){
+							 var bizTripId 			= $(xml).find("bizTripId").text();
+						     var userId 			= $(xml).find("userId").text();
+							 var userName 			= $(xml).find("userName").text();
+							 var deptId 			= $(xml).find("deptId").text();
+							 var deptName			= $(xml).find("deptName").text();
+							 var createTime			= $(xml).find("createTime").text();
+							 var leaveTime 			= $(xml).find("leaveTime").text();
+							 var backTime 			= $(xml).find("backTime").text();
+							 var destination 		= $(xml).find("destination").text();
+							 var bizTripReason 		= $(xml).find("bizTripReason").text();
+							 var followPerson 		= $(xml).find("followPerson").text();
+							 var vehicle 			= $(xml).find("vehicle").text();
+							 var managerJudgement 	= $(xml).find("managerJudgement").text(); 
+							 var bmJudgement 		= $(xml).find("bmJudgement").text();
+							 var remark 			= $(xml).find("remark").text();
+							 var bmIdea 			= $(xml).find("bmIdea").text();
+							 var managerIdea 		= $(xml).find("managerIdea").text();
+							 var status = "";
+							 var fPerson = "";
+						     if(managerJudgement == "-1" || bmJudgement == "-1"){
+							 	status = "审批未通过，请修改";
+							 }else if(managerJudgement == "1" && bmJudgement == "1"){
+							 	status = "审批通过";
+							 }else if(managerJudgement == "0"){
+							 	status = "等待部门主管审批";
+							 }else{
+							 	status = "部门主管审批通过，等待总经理/副总经理审批";
+							 }
+							bizTripReason=bizTripReason.replaceAll("\n|\r\n","<br/>");
+		                    remark=remark.replaceAll("\n|\r\n","<br/>");
+		                    bmIdea=bmIdea.replaceAll("\n|\r\n","<br/>");
+		                    managerIdea=managerIdea.replaceAll("\n|\r\n","<br/>");
+		                    var person = followPerson.split(";");
+		                    for(var i=0;i<person.length-1;i++){
+		                    	fPerson += person[i].split(",")[1]+"\n";
+		                    }
+		                    $("#userName").val(userName);
+							$("#deptName").val(deptName);
+							$("#createTime").val(createTime);
+							$("#leaveTime").val(leaveTime);
+							$("#backTime").val(backTime);
+							$("#destination").val(destination);
+							$("#bizTripReason").val(bizTripReason);
+							$("#followPerson").val(fPerson);
+							$("#vehicle").val(vehicle);
+							$("#remark").val(remark);
+							$("#status").val(status);
+						},
+						'xml'
+				);
+				
+				$('#comfirm').click(function(){
+					var managerJudgement    = $('#managerJudgement').val();
+					var managerIdea    		= $('#managerIdea').val();  
+                    if($('#managerJudgement').val() == ""){
+						alert("审批不能为空");
+						return;
+                    }
+                    if($('#managerJudgement').val() == "-1"){
+                    	if($('#managerIdea').val() == ""){
+                    		alert("审批意见不能为空");
+                    		return;
+                    	}
+                    }
+                    managerIdea=managerIdea.replaceAll("\n|\r\n","<br/>");
+                    $.post('/businessTripEdit', {'bizTripId':bizTripId,'managerJudgement':managerJudgement,'managerIdea':managerIdea}, callback, 'xml');
+
+					function callback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							alert("审批成功");
+		                	if(flag == 1){
+								location.href="businessTripList.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+						}
+					}
+				});
+				
+				$('#back').click(function(){
+					if(flag == 1){
+						location.href = "businessTripList.html?page="+prePage;
+					}else{
+						location.href = "javascript:history.back()";
+					}
+				});
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+		});
+
+        </script>
+
+	</head>
+	<body>
+      <div id="container2">
+	  <div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		 <div id="content">
+	          <div id="main">
+	          <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left" style="width:310px">
+										当前位置：日常管理&gt;出差管理&gt;&nbsp;
+										<strong>出差审批</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>出差审批</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r7">
+					<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+					   <tr>
+					   <td>申请人姓名：</td>
+					   <td style="text-align:center"><input id="userName" type="text" style="width:200px" readonly="readonly"></input></td>
+					   </tr>
+					   <tr>
+					   <td>申请人部门：</td>
+					   <td style="text-align:center"><input id="deptName" type="text" style="width:200px" readonly="readonly"></input></td>
+					  </tr>
+					  <tr>
+					  <td>申请时间：</td>
+					  <td style="text-align:center"><input id="createTime" type="text" style="width:200px" readonly="readonly"></input></td>
+                      </tr>
+                      <tr>
+                      <td>出差时间：</td>
+                      <td style="text-align:center"><input id="leaveTime" type="text" style="width:200px" readonly="readonly"></input></td>
+                      </tr>
+                      <tr>
+                      <td>预期返回时间：</td>
+                      <td style="text-align:center"><input id="backTime" type="text" style="width:200px" readonly="readonly"></input></td>
+                      </tr>
+                      <tr>
+					  <td>出差目的地：</td>
+					  <td style="text-align:center"><input id="destination" type="text" style="width:200px" readonly="readonly"></input></td>
+					  </tr>
+					  <tr>
+					  <td>出差事由：</td>
+					  <td style="text-align:center"><textarea rows="3" id="bizTripReason" style="width:200px" readonly="readonly"></textarea></td>				
+                      </tr>
+                      <tr>
+                      <td>随行人员：</td>
+                      <td style="text-align:center"><textarea rows="3" id="followPerson" style="width:200px" readonly="readonly"></textarea></td>
+                      </tr>
+                      <tr>
+                      <td>交通工具：</td>
+                      <td style="text-align:center"><input id="vehicle" type="text" style="width:200px" readonly="readonly"></input></td>
+                      </tr>
+                      <tr>
+                      <td>备注：</td>
+                      <td style="text-align:center"><textarea rows="3" id="remark" style="width:200px" readonly="readonly"></textarea></td>
+                      </tr>
+                      <tr>
+                      <td>审批状态：</td>
+                      <td style="text-align:center"><input id="status" type="text" style="width:200px" readonly="readonly"></input></td>
+                      </tr>
+                      <tr>
+					   <td><label class="required">*</label>主管审批</td>
+					   <td class="width_15">
+					   		<select id="managerJudgement" style="width:130px" >
+							     <option value="1" selected="selected">同意</option>
+							     <option value="-1" selected="selected">不同意</option>
+							</select>
+						</td>
+					  </tr>
+                      <tr>
+                      <td>部门主管审批意见</td>
+                      <td style="text-align:center"><textarea rows="3" id="managerIdea" style="width:200px"></textarea></td>
+                      </tr>
+					  </table>
+				      <br/>
+				      <input class="bt" type="button" value="确定" id="comfirm"></input>
+				      <input class="bt" type="button" value="返回" id="back"/>
+			    </div>
+			  </div>
+			  <div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+</body>
+</html>

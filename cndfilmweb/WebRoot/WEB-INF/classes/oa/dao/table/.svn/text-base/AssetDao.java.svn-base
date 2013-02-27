@@ -1,0 +1,139 @@
+package oa.dao.table;
+
+import oa.dao.BaseDao;
+import oa.model.table.Asset;
+import oa.util.ResultList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@SuppressWarnings("unchecked")
+public class AssetDao extends BaseDao{
+	private static final Logger log = LoggerFactory.getLogger(AssetDao.class);
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(Asset instance) {
+		log.debug("saving Asset instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(Asset instance) {
+		log.debug("deleting Asset instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(Asset instance) {
+		log.debug("update Asset instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public Asset findById(String id) {
+		log.debug("getting Asset instance with id: " + id);
+		try {
+			Asset instance = (Asset) super.get("oa.model.table.Asset", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Asset> findByExample(Integer pageNo, Asset asset) {
+		log.debug("find Asset instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Asset", asset);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Asset> findAll(Integer pageNo) {
+		log.debug("finding all Asset instances");
+		try {
+			return super.find(pageNo, "oa.model.table.Asset");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<Asset> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding Asset instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.Asset", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Asset> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding Asset instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.Asset", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	
+	//以一个字段或另一个字段为条件模糊查询
+	public ResultList<Asset> findByProperty(Integer pageNo,String propertyName1,String propertyName2,String value){
+		log.debug("finding Asset instance with property: " + propertyName1
+				+ ", value: " + value+" or "+propertyName2+", value; "+value);
+		try {
+			return super.likefind(pageNo, "oa.model.table.Asset", propertyName1, propertyName2,value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+	
+	/*
+	public List<AssetFixed> findByHQL(Integer pageNo, String hql){
+		log.debug("finding AssetFixed instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding AssetFixed instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+			}
+	*/
+}

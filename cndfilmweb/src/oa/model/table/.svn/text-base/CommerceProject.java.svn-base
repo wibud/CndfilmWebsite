@@ -1,0 +1,185 @@
+package oa.model.table;
+
+
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="commerceproject_id")
+@Entity
+@Table(name="tb_commerceproject")
+public class CommerceProject {
+	@Id
+	private String commerceproject_id;
+	private String commerceproject_name;
+	private String compact_id;
+    private String commerceprojecttype;
+	private String clientfactory;
+	private String clientperson;
+	private String clientTel;
+    private String filepath;
+    private String baogaopath;
+	private String jcOrNot;
+	private String commerceprojectapplier;
+	private String commerceprojectapplier_id;
+	private String commerceprojectactor;
+    private String endtime;
+	private String planActiontime;
+	private String commerceprojectstate;
+	private String commerceprojectapplytime;
+	private String commerceprojectactiontime;
+	private String remark;
+	private String money;
+	private String moneytime;
+	private String mpersonyijian; 
+	private String managers;
+	public String getCommerceproject_id() {
+		return commerceproject_id;
+	}
+	public void setCommerceproject_id(String commerceprojectId) {
+		commerceproject_id = commerceprojectId;
+	}
+	public String getCommerceproject_name() {
+		return commerceproject_name;
+	}
+	public void setCommerceproject_name(String commerceprojectName) {
+		commerceproject_name = commerceprojectName;
+	}
+	public String getCompact_id() {
+		return compact_id;
+	}
+	public void setCompact_id(String compactId) {
+		compact_id = compactId;
+	}
+	
+	public String getClientfactory() {
+		return clientfactory;
+	}
+	public void setClientfactory(String clientfactory) {
+		this.clientfactory = clientfactory;
+	}
+	public String getClientperson() {
+		return clientperson;
+	}
+	public void setClientperson(String clientperson) {
+		this.clientperson = clientperson;
+	}
+	public String getClientTel() {
+		return clientTel;
+	}
+	public void setClientTel(String clientTel) {
+		this.clientTel = clientTel;
+	}
+	
+	public String getCommerceprojectactor() {
+		return commerceprojectactor;
+	}
+	public void setCommerceprojectactor(String commerceprojectactor) {
+		this.commerceprojectactor = commerceprojectactor;
+	}
+
+	public String getPlanActiontime() {
+		return planActiontime;
+	}
+	public void setPlanActiontime(String planActiontime) {
+		this.planActiontime = planActiontime;
+	}
+	public String getCommerceprojectstate() {
+		return commerceprojectstate;
+	}
+	public void setCommerceprojectstate(String commerceprojectstate) {
+		this.commerceprojectstate = commerceprojectstate;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	
+	public void setCommerceprojectapplier(String commerceprojectapplier) {
+		this.commerceprojectapplier = commerceprojectapplier;
+	}
+	public String getCommerceprojectapplier() {
+		return commerceprojectapplier;
+	}
+	public void setCommerceprojectapplier_id(String commerceprojectapplier_id) {
+		this.commerceprojectapplier_id = commerceprojectapplier_id;
+	}
+	public String getCommerceprojectapplier_id() {
+		return commerceprojectapplier_id;
+	}
+	public void setCommerceprojectapplytime(String commerceprojectapplytime) {
+		this.commerceprojectapplytime = commerceprojectapplytime;
+	}
+	public String getCommerceprojectapplytime() {
+		return commerceprojectapplytime;
+	}
+	public void setCommerceprojectactiontime(String commerceprojectactiontime) {
+		this.commerceprojectactiontime = commerceprojectactiontime;
+	}
+	public String getCommerceprojectactiontime() {
+		return commerceprojectactiontime;
+	}
+	
+	public void setJcOrNot(String jcOrNot) {
+		this.jcOrNot = jcOrNot;
+	}
+	public String getJcOrNot() {
+		return jcOrNot;
+	}
+	public String getMoney() {
+		return money;
+	}
+	public void setMoney(String money) {
+		this.money = money;
+	}
+	public String getMoneytime() {
+		return moneytime;
+	}
+	public void setMoneytime(String moneytime) {
+		this.moneytime = moneytime;
+	}
+	public String getMpersonyijian() {
+		return mpersonyijian;
+	}
+	public void setMpersonyijian(String mpersonyijian) {
+		this.mpersonyijian = mpersonyijian;
+	}
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
+	}
+	public String getFilepath() {
+		return filepath;
+	}
+	public void setCommerceprojecttype(String commerceprojecttype) {
+		this.commerceprojecttype = commerceprojecttype;
+	}
+	public String getCommerceprojecttype() {
+		return commerceprojecttype;
+	}
+	public void setEndtime(String endtime) {
+		this.endtime = endtime;
+	}
+	public String getEndtime() {
+		return endtime;
+	}
+	public void setBaogaopath(String baogaopath) {
+		this.baogaopath = baogaopath;
+	}
+	public String getBaogaopath() {
+		return baogaopath;
+	}
+	public void setManagers(String managers) {
+		this.managers = managers;
+	}
+	public String getManagers() {
+		return managers;
+	}
+	
+}

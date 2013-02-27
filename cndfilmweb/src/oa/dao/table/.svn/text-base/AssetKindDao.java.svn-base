@@ -1,0 +1,132 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.lang.Integer;
+import oa.dao.BaseDao;
+import oa.model.table.AssetKind;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class AssetKindDao extends BaseDao {
+	private static final Logger log = LoggerFactory
+			.getLogger(AssetKindDao.class);
+
+	// property constants
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public AssetKind findByPropertyReturnOnly(String propertyName, String value) {
+		log.debug("finding AssetKind instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<AssetKind> user = super.find(null,
+					"oa.model.table.AssetKind", propertyName, value);
+			if (java.lang.Integer.parseInt(user.getCount()) == 0)
+				return null;
+
+			else
+				return user.get(0);
+
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public void save(AssetKind transientInstance) {
+		log.debug("saving FAssetKind instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(AssetKind persistentInstance) {
+		log.debug("deleting FAssetKind instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(AssetKind instance) {
+		log.debug("update AssetKind instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public AssetKind findById(String id) {
+		log.debug("getting AssetKind instance with id: " + id);
+		try {
+			AssetKind instance = (AssetKind) super.get(
+					"oa.model.table.AssetKind", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetKind> findByExample(Integer pageNo,
+			AssetKind instance) {
+		log.debug("find AssetKind instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.AssetKind", instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetKind> findByProperty(Integer pageNo,
+			String propertyName, String value) {
+		log.debug("finding AssetKind instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.AssetKind", propertyName,
+					value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetKind> findByCondition(Integer pageNo,
+			String conditions) {
+		log.debug("finding AssetKind instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.AssetKind", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AssetKind> findAll(Integer pageNo) {
+		log.debug("finding all AssetKind instances");
+		try {
+			return super.find(pageNo, "oa.model.table.AssetKind");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+}

@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统-项目详情</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		
+			<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+		
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	    	init();	
+	    	    	
+	    	var href = location.href;
+		
+		    var tmp  = (href.split("?"))[1].split("&"); 
+		    var allrandom  =tmp[0].split("=")[1];
+		 //   var commerceproject_name  =tmp[1].split("=")[1];
+		    $("#allrandom").val(allrandom);				
+		//	$("#commerceproject_name").val(commerceproject_name);
+			 var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				   
+				$.post('/searchCommerceProductById',
+	                    {'allrandom':allrandom},
+					function(xml){
+				//		$("#content_r table tr:gt(0)").remove();
+				//		var id = 1;
+				//		count = $(xml).find("result").attr("count");
+				//		pageCount = $(xml).find("result").attr("pageCount");
+				//		var startWith = $(xml).find("result").attr("startWith");
+
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+							var commerceproject_id			= $(xml).find("commerceproject_id").text();
+                            var commerceproject_name      	= $(xml).find("commerceproject_name").text();
+						    var allrandom    				= $(xml).find("allrandom").text();
+						    var product_type   			= $(xml).find("product_type").text();
+						    var softwareVession   				= $(xml).find("softwareVession").text();
+						    var product_number 		= $(xml).find("product_number").text();
+						    var commerceprojectAuthnumber				=  $(xml).find("commerceprojectAuthnumber").text();
+						    var product_id					=  $(xml).find("product_id").text();
+						    var authtext			=  $(xml).find("authtext").text();
+						  
+						       
+							   $("#commerceproject_name").text(commerceproject_name);
+							   $("#allrandom").text(allrandom);
+							   $("#product_type").text(product_type);
+							   $("#softwareVession").text(softwareVession);
+							   $("#product_number").text(product_number);
+							   $("#product_id").text(product_id);
+							   $("#commerceprojectAuthnumber").text(commerceprojectAuthnumber);
+							   $("#authtext").text(authtext);
+							   $("#commerceproject_id").text(commerceproject_id);
+							 register();
+			           
+           	
+			    var tmp = "commerceproject_id="+commerceproject_id;
+				 var tmp2 = "allrandom="+allrandom+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&product_type="+product_type+"&softwareVession="+softwareVession+"&product_number="+product_number+"&commerceprojectAuthnumber="+commerceprojectAuthnumber+"&product_id="+product_id;
+		//		var strInfo ="<td>"+ (i+1)+"</td><td>"+product_type+
+		 //                                "</td><td>"+softwareVession+"</td><td>"+product_number+"</td><td>"+commerceprojectAuthnumber+"</td><td>"+product_id+"</td>";
+								
+		//		var strDownload = null;
+						//		strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+								
+						/*		if((permission&1) && (path!="")){
+									strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+								}else{
+									strDownload = "<td><img src='./images/download1.jpg'/></td>";
+								}
+						*/	
+					//	var strDetail= null;
+					//	strDetail = "<td><a href='/CommerceProductDetail.html?"+tmp2+"'><img src='./images/search.jpg'  title='详情' /></a></td>";
+		
+		//		var strEdit1 = null;
+		//		strEdit1 = "<td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'commerceProductEdit.html?"+tmp2+"&page1="+page+"\')\"></input></td>";
+		//		var strEdit2 = null;
+		//		strEdit2 = "<td><input type='image' src='./images/edit.gif' title='上传授权证书' onclick=\"javascript: location.href=encodeURI(\'authortextSubmit.html?"+tmp2+"&page1="+page+"\')\"></input></td>";
+		//		var strEdit3 = null;
+		//		strEdit3 = "<td><input type='image' src='./images/edit.gif' title='再次授权' onclick=\"javascript: location.href=encodeURI(\'commerceProjectApplyAuthorAgain.html?"+tmp2+"&page1="+page+"\')\"></input></td>";
+			
+		//		var strDownload = null;
+		//						strDownload = "<td><input type='image' src='./images/download.gif' title='下载授权证书' onclick=\"javascript: location.href=encodeURI(\'downloadAuthorXml?filePath="+authtext+"\')\"></input></td>";
+						/*	
+								if(permission&256 || permission&16 || permission&8) {
+									strEdit = "<td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'editVersion.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+								}else{
+									strEdit = "<td><img src='./images/edit1.jpg'/></td>";
+								}
+						*/		
+		//		var strDel = null;
+		//		strDel = "<td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+	/*	/		
+								if(permission & 4){
+									strDel = "<td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+								}else{
+									strDel = "<td><img src='./images/del1.jpg'/></td>";
+								}
+						*/		
+	            //       		$("#content_r2 table").append("<tr class='content' id='"+allrandom+"'>"+ strInfo+strEdit1+strEdit2+strEdit3+strDel+strDownload +"</tr>");
+		     //                   id++;
+	         //               });
+				//			$("#pageNav").showPageNav(page2, pageCount, count, url);
+	                        //调用注册按钮的事件
+					$('#comfirm').click(function(){
+						
+							$("#allrandom").val(allrandom);	
+							
+						var tmp1="allrandom="+allrandom;
+			//			tmp1=encodeURI(tmp1);		
+						 location.href="/authortextSubmit.html?"+tmp1;						
+					});
+					
+					$('#comfirm1').click(function(){
+						
+				//		    $("#commerceproject_id").val(commerceproject_id);				
+				//			$("#commerceproject_name").val(commerceproject_name);	
+				//			$("#allrandom").val(allrandom);
+							
+						var tmp1="allrandom="+allrandom+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/commerceProjectApplyAuthorAgain.html?"+tmp2;						
+					});				
+			$('#comfirm2').click(function(){
+						
+					//	 var commerceproject_id  =tmp[0].split("=")[1];
+					//	    var commerceproject_name  =tmp[1].split("=")[1];
+					//	    $("#commerceproject_id").val(commerceproject_id);				
+					//		$("#commerceproject_name").val(commerceproject_name);	
+							
+			//			var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/commerceProductEdit.html?"+tmp2;						
+					});
+			//			}, 'xml'
+			//			);
+			    		                     	  						      
+	                    }, 
+	                     'xml'
+            	);	
+			
+				
+		//		$(this).showData(url,page);
+					 function register(){
+			               //点击"删除"按钮，弹出是否删除的询问对话框
+			               $(".delete").each(function(index){
+								var $this = $(this);
+								var id = $this.parents('.content').attr('id');
+
+								$this.click(function(){
+									if(confirm("您确定删除吗？")){
+										$.post('/deleteCommerceProduct', {'allrandom':allrandom}, delCallback, 'xml');
+				                	}
+				               });
+			               });
+
+					 }
+					 
+		/*			$('#comfirm').click(function(){
+						
+							$("#allrandom").val(allrandom);	
+							
+						var tmp1="allrandom="+allrandom;
+			//			tmp1=encodeURI(tmp1);		
+						 location.href="/authortextSubmit.html?"+tmp1;						
+					});
+					
+					$('#comfirm1').click(function(){
+						
+				//		    $("#commerceproject_id").val(commerceproject_id);				
+				//			$("#commerceproject_name").val(commerceproject_name);	
+				//			$("#allrandom").val(allrandom);
+							
+	//					var tmp1="allrandom="+allrandom+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+	//					 location.href="/commerceProjectApplyAuthorAgain.html?"+tmp2;						
+					});				
+					$('#comfirm2').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+			//			var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/chooseactor.html?"+tmp1;						
+					});
+					$('#comfirm3').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+		//				var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+		//				tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/actorComfirm.html?"+tmp1;						
+					});
+					$('#comfirm5').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+	//					var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+				//		tmp1=encodeURI(tmp1);	
+						 location.href="/commerceProjectEnd.html?"+tmp1;						
+					});
+		/*	<input id="comfirm7" type="button"  value="再次授权" / >
+			
+			$('#comfirm7').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+				//		tmp1=encodeURI(tmp1);	
+						 location.href="/commerceProjectApplyAuthorAgain.html?"+tmp1;						
+					});
+					*/
+					
+				    function init(){
+				    	$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$("#sidebar").showSideBar();
+						$(this).navi();
+				    }	
+				    	
+								       	
+		
+		});		 
+
+			
+		
+			
+	</script>
+  </head>
+  
+  <body>
+   <div id="container">
+			<div id="header"></div>
+			
+			<div id="content">
+				<div id="main">
+					<div id="content_r">
+					<div align="left">
+						<table class="di" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							
+								<td>
+									
+									<input width="80" align="center" id="comfirm" type="button"  value="上传授权文件" / >
+									<input width="80" align="center" id="comfirm1" type="button"  value="再次授权" / >							
+									<input width="80" align="center" type="button" value="修改产品信息" id="comfirm2" />
+									
+
+									<input type="button" value="返回" onclick="javascript:history.back()"></input>
+								</td>
+							</tr>
+						</table>
+						</div>
+				<table class="listTable2">				
+					<caption>
+							产品详情
+							</caption>
+							
+						<tr>
+								<td><div>项目名称</div></td>
+								<td class="width_15">
+								  <label id="commerceproject_name"></label>
+							    </td>
+							</tr>
+						<tr>
+								<td><div>产品类型</div></td>
+								<td class="width_15">
+								  <label id="product_type"></label>
+							    </td>
+							</tr>
+				
+								
+                            <tr>
+								<td><div>软件版本</div></td>
+								<td class="width_15">
+								  <label id="softwareVession"></label>
+							    </td>
+							</tr>
+						
+
+                            <tr>
+								<td><div>产品数量</div></td>
+								<td class="width_15">
+								  <label id="product_number"></label>
+							    </td>
+							</tr>
+
+
+							
+                            <tr>
+								<td><div>授权点数</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectAuthnumber"></label>
+							    </td>
+							</tr>
+
+							
+                            <tr>
+								<td><div>产品序列号</div></td>
+								<td class="width_15">
+								  <label id="product_id"></label>
+							    </td>
+							</tr>
+
+						
+									
+					</table>
+				
+					</div>	
+					</div>
+					
+					
+				</div>
+
+            </div>
+            	
+            <div id="footer"></div>
+
+         </div>
+  </body>
+</html>

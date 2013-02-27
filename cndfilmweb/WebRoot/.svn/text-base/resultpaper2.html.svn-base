@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		    <script type="text/javascript" src="./scripts/js/jquery.js"></script>
+		    <link rel="stylesheet" href=".style/css/thickbox.css" type="text/css" media="screen" />
+			<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+            <script type="text/javascript" src="./scripts/js/thickbox.js"></script>
+            
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	    	init();	
+	    	    	
+	    	var href = location.href;
+			var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];
+		    var tmp  = (href.split("?"))[1].split("&"); 
+		    var commerceproject_id  =tmp[0].split("=")[1];
+		    var commerceproject_name  =tmp[1].split("=")[1];
+		    var filepath  =tmp[2].split("=")[1];
+		    
+		    $("#commerceproject_id").val(commerceproject_id);				
+			$("#commerceproject_name").val(commerceproject_name);
+			$("#filepath").val(filepath);
+			 var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+			
+			    var filepath1 = filepath.split(";");
+				for(var i = 0, len = filepath1.length-1; i< len; i++){
+				var npath = filepath1[i];
+							     		//	 var strInfo ="<td>"+(i+1)+"</td><td><a href="+filepath1[i]+">文件"+(i+1)+"</a></td>";
+						alert(npath);	     
+//		$("#pjtable").append("<tr class='content' id='"+i+"'><td>"+(i+1)+"</td><td><img src=OpenResultServlet.do?filepath="+npath+">图片"+(i+1)+"</img></td></tr>");
+		$("#pjtable").append("<tr class='content' id='"+i+"'><td><a href="+npath+" title='反馈文档' class="thickbox" rel="gallery-plants">图片"+(i+1)+"</a></td></tr>");
+							      }; 						      	                		                 		                     	  						      
+	
+				    function init(){
+				    	$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$("#sidebar").showSideBar();
+						$(this).navi();
+				    }	
+				 $("#back").click(
+					function(){
+							if(laizi == "list"){
+								location.href="commerceProjectList.html?page="+prePage;
+							}else{
+							    location.href="javascript:history.back()";
+							}
+					});   	
+		
+		});		 
+
+		
+			
+	</script>
+		
+  </head>
+  
+  <body>
+   <div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>查看反馈文档</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+										
+							<tr>
+							
+							<td>
+								<input type="button" value="返回" class="bt" id="back"></input>
+						</td>	</tr>
+						</table>
+						</div>
+				</td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>反馈文档链接地址</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table id="pjtable" class="listTable" >
+													
+							<tr>
+										
+								<th>反馈文档链接</th>
+								
+							</tr>
+						</table>
+						</div>	
+						<div id="sq_di">
+						<div id="pageNav">
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer">
+			</div>
+		</div>
+
+	</body>
+</html>

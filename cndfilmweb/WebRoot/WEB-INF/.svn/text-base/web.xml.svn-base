@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	
+	<welcome-file-list>
+		<welcome-file>login.html</welcome-file>
+	</welcome-file-list>
+	
+	<error-page>
+		<error-code>404</error-code>
+		<location>/notExist.html</location>
+	</error-page>
+	
+	<!-- Spring配置文件位置 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name> 
+		<param-value>
+			/WEB-INF/classes/executorAndScheduler.xml,
+			/WEB-INF/classes/aop.xml,
+			/WEB-INF/classes/applicationContext.xml
+		</param-value>
+	</context-param>
+	
+	
+	<!-- Spring的Listener，以提供Spring支持 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	
+	<!-- Servlet配置，主要用来初始化  -->
+	<servlet>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>oa.init.InitServlet</servlet-class>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<servlet-class>oa.util.FileDownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<url-pattern>/fileDownloadServlet.do</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>fileDownloadServlet2</servlet-name>
+		<servlet-class>oa.util.FileDownloadServlet2</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileDownloadServlet2</servlet-name>
+		<url-pattern>/fileDownloadServlet2.do</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>OpenResultServlet</servlet-name>
+		<servlet-class>oa.util.OpenResultServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OpenResultServlet</servlet-name>
+		<url-pattern>/OpenResultServlet.do</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>VersionDownloadServlet</servlet-name>
+		<servlet-class>oa.util.VersionDownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>VersionDownloadServlet</servlet-name>
+		<url-pattern>/VersionDownloadServlet.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Struts2的过滤器，以提供Struts支持 -->
+	<filter>
+		<filter-name>StrutsPrepareFilter</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareFilter</filter-class>
+	</filter>
+	
+	<!-- 设置字符编码 -->
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>oa.filter.EncodingFilter</filter-class>
+	</filter>
+	
+	<!-- 检查用户登录和用户权限的过滤器 -->
+	<filter>
+		<filter-name>UserCheckFilter</filter-name>
+		<filter-class>oa.filter.UserCheckFilter</filter-class>
+	</filter>
+	
+	<!-- 检查用户是否有执行该Action的权限的过滤器 -->
+	<filter>
+		<filter-name>ActionCheckFilter</filter-name>
+		<filter-class>oa.filter.ActionCheckFilter</filter-class>
+	</filter>
+	
+	<!-- Struts2的过滤器，以提供Struts支持 -->
+	<filter>
+		<filter-name>StrutsExecuteFilter</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsExecuteFilter</filter-class>
+	</filter>
+
+
+	<!-- 每个过滤器过滤的URL -->
+	<!-- 过滤顺序：上面的先执行，下面的后执行 -->
+	<filter-mapping>
+		<filter-name>StrutsPrepareFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
+  	<filter-mapping>
+
+ 	 	<filter-name>UserCheckFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ActionCheckFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> 	 
+	<filter-mapping>
+		<filter-name>StrutsExecuteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+</web-app>

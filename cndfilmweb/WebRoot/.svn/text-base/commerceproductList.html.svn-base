@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		
+			<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+		
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+			init();	
+	    	var href = location.href;
+		    var page = href.split("page=")[1];
+		    if(page) {
+		    	page = page.split("&")[0].split("#")[0];
+		    }
+		    if(!page || page<1) {
+		    	page=1;
+		    }
+			var pageCount = 0;
+			var count = 0;
+			
+			var url = "/allCommerceprojectList";
+
+			$.fn.showData = function(url,page2){
+				page = page2;
+				urlT = url+"?page="+page2;
+				$(this).handlerData(
+					urlT,
+					function(xml){
+						$("#content_r table tr:gt(0)").remove();
+						var id = 1;
+						count = $(xml).find("result").attr("count");
+						pageCount = $(xml).find("result").attr("pageCount");
+						var startWith = $(xml).find("result").attr("startWith");
+
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+						$(xml).find("item").each(function(i){
+							var commerceproject_id			= $(this).find("commerceproject_id").text();
+                            var commerceproject_name      	= $(this).find("commerceproject_name").text();
+						    var compact_id    				= $(this).find("compact_id").text();
+						    var clientfactory   			= $(this).find("clientfactory").text();
+						    var clientperson   				= $(this).find("clientperson").text();
+						    var clientTel 		= $(this).find("clientTel").text();
+						    var commerceprojectAuthnumber   = $(this).find("commerceprojectAuthnumber").text();
+						    var jcOrNot				=  $(this).find("jcOrNot").text();
+						    var commerceprojectapplier					=  $(this).find("commerceprojectapplier").text();
+						    var commerceprojectactor			=  $(this).find("commerceprojectactor").text();
+						    var planActiontime					=  $(this).find("planActiontime").text();
+						    var commerceprojectstate					=  $(this).find("commerceprojectstate").text();
+						    var commerceprojectapplier_id			= $(this).find("commerceprojectapplier_id").text();
+						    
+                            var commerceprojectAuthstate      		= $(this).find("commerceprojectAuthstate").text();
+						    var commerceprojectapplytime    	= $(this).find("commerceprojectapplytime").text();
+						    var commerceprojectactiontime   			= $(this).find("commerceprojectactiontime").text();
+						    var remark   		= $(this).find("remark").text();
+						    var mperson 		= $(this).find("mperson").text();
+						    var mperson_id   = $(this).find("mperson_id").text();
+						    var money				=  $(this).find("money").text();
+						    var moneytime					=  $(this).find("moneytime").text();
+						    var mpersonyijian			=  $(this).find("mpersonyijian").text();
+					
+						    var permission			=  Number($(this).find("permission").text());
+						    var statusStr = null;
+
+						    var des						= 	$(this).find("des").text();
+							
+						    var col = Number(id)+Number(startWith);
+						    var member = commerceprojectactor.split(";");
+							   //显示原有成员列表
+							 	var memberId,memberName;
+								for(var i = 0, len = member.length-1; i< len; i++)
+							     {
+							          memberId = member[i].split(",")[0];
+							          memberName = member[i].split(",")[1];
+							  $("#member1").append("<li value=\""+memberId+"\">"+memberName+"</li>");
+							      };
+					
+                //           var member1    = $("#member").text());
+						    var tmp = "commerceproject_id="+commerceproject_id;
+							
+							var strInfo ="<td>"+ (i+1)+"</td><td>"+commerceproject_name+
+	                                 "</td><td>"+commerceprojectapplier+"</td><td>"+mperson+"</td><td>"+commerceprojectactor+"</td><td>"+commerceprojectAuthnumber+
+	                                 "</td><td>"+commerceprojectAuthstate+"</td><td>"+commerceprojectstate+"</td>";
+				/*			
+							var strDownload = null;
+							if((permission&1) && (path!="")){
+								strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+							}else{
+								strDownload = "<td><img src='./images/download1.jpg'/></td>";
+							}
+					*/		
+							var strDetail = null;
+							strDetail = "<td><a href='/commerceProjectDetail.html?"+tmp+"&page1="+page+"'><img src='./images/search.jpg'  title='详情' /></a></td>";
+
+							var strEdit = null;
+							if(permission&256 || permission&16 || permission&8) {
+								strEdit = "<td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'editVersion.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+							}else{
+								strEdit = "<td><img src='./images/edit1.jpg'/></td>";
+							}
+							var strDel = null;
+							if(permission & 4){
+								strDel = "<td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+							}else{
+								strDel = "<td><img src='./images/del1.jpg'/></td>";
+							}
+							
+                      		$("#content_r table").append("<tr class='content' id='"+commerceproject_id+"'>"+ strInfo + strDetail +strEdit+strDel+"</tr>");
+	                        id++;
+                        });
+						pageNav(page2,pageCount,count,url,"#pageNav");
+                        //调用注册按钮的事件
+					
+					});
+			};
+			$(this).showData(url,page);
+
+		    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/deleteCommerceProduct', {'allrandom':allrandom}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+			}		       	
+		    function init(){
+		    	$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+		    }
+		});
+
+	</script>
+		
+  </head>
+   
+  <body>
+    <div id="container">
+			<div id="header"></div>
+			
+			<div id="content">
+				<div id="main">
+					<div id="content_r">
+									
+						<table border="1" class="listTable">
+							<caption>实施工程师完善产品信息</caption>
+							
+							<tr>
+								<th>序号</th>							
+								<th>产品类型</th>
+								<th>软件版本</th>
+								<th>产品数量</th>
+								<th>产品编码</th>
+						
+								<th colspan="2"><input type="button" value="修改或完善项目信息" onclick="javascript:history.back()"></input>
+								<input type="button" value="删除该产品" onclick="javascript:history.back()"></input>
+								</th>
+							</tr>
+						</table>
+					
+				<input type="button" value="返回" onclick="javascript:history.back()"></input>
+					</div>
+				</div>
+
+            </div>
+            	
+            <div id="footer"></div>
+
+         </div>
+  </body>
+</html>

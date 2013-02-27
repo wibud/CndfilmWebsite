@@ -1,0 +1,38 @@
+<div class="yejiao">
+	<table width="1000" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td>
+				<table width="300" height="50" border="0" cellspacing="0"
+					cellpadding="0">
+					<tr>
+						<td align="right">
+							<img src="images/sq_img_10.png" />
+						</td>
+						<td width="10">
+							&nbsp;
+						</td>
+						<td width="4" bgcolor="#999999">
+							&nbsp;
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td>
+				<table width="700" height="50">
+					<tr>
+						<td align="left">
+							©2011北京赛搏长城信息科技有限公司研制开发
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Ver1.00 build 110930
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+
+</div>

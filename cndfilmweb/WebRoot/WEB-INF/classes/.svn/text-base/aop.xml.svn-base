@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+	default-autowire="byName">
+	
+	<!-- AOP -->
+	<aop:aspectj-autoproxy/>
+	
+	<!-- AOP Pointcut -->
+	<bean id="systemArchitecture" class="oa.aop.pointcut.SystemArchitecture"/>
+	<bean id="systemManagerPointcut" class="oa.aop.pointcut.SystemManagerPointcut"/>
+	<bean id="userManagerPointcut" class="oa.aop.pointcut.UserManagerPointcut"/>
+	<bean id="certificationManagerPointcut" class="oa.aop.pointcut.CertificationManagerPointcut"/>
+	<bean id="versionManagerPointcut" class="oa.aop.pointcut.VersionManagerPointcut"/>
+	
+	<!-- AOP Advice -->
+	<bean id="systemManagerAdvice" class="oa.aop.advice.manager.SystemManagerAdvice"/>
+	<bean id="userManagerAdvice" class="oa.aop.advice.manager.UserManagerAdvice"/>
+	<bean id="baseAdvice" class="oa.aop.advice.base.BaseAdvice"/>
+	<bean id="certificationManagerAdvice" class="oa.aop.advice.manager.CertificationManagerAdvice"/>
+	<bean id="versionManagerAdvice" class="oa.aop.advice.manager.VersionManagerAdvice"/>
+	
+</beans>

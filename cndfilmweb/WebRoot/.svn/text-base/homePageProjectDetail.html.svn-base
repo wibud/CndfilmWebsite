@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--项目开发计划与进度列表</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript">
+		
+		//兼容IE8/IE9/Chrome/FireFox的获取YYYY-MM-DD格式的当前日期的函数
+		function getCurTime() {
+			var now = new Date();
+			var year = now.getFullYear();
+			var month = now.getMonth()+1;
+			if(month < 10) month = "0" + month;
+			var day = now.getDate();
+			if(day < 10) day = "0" + day;
+			var now = year +"-"+ month +"-"+ day;
+			return now;
+		}
+		
+		//兼容IE8/IE9/Chrome/FireFox的获取两个YYYY-MM-DD格式日期天数差的函数
+		function daysBetween(DateOne,DateTwo) {
+    		var OneMonth = DateOne.substring(5,DateOne.lastIndexOf ('-')); 
+			var OneDay = DateOne.substring(DateOne.length,DateOne.lastIndexOf ('-')+1); 
+			var OneYear = DateOne.substring(0,DateOne.indexOf ('-'));
+			var TwoMonth = DateTwo.substring(5,DateTwo.lastIndexOf ('-')); 
+			var TwoDay = DateTwo.substring(DateTwo.length,DateTwo.lastIndexOf ('-')+1); 
+			var TwoYear = DateTwo.substring(0,DateTwo.indexOf ('-'));
+			var cha=((Date.parse(OneMonth+'/'+OneDay+'/'+OneYear)- Date.parse(TwoMonth+'/'+TwoDay+'/'+TwoYear))/86400000);   
+			return Math.abs(cha); 
+		}
+		
+		
+			$(document).ready(function(){
+				init();
+				//计划进度条初始化
+				var loadingScroll = { 
+						doScroll : function(designId,textId,textId2,textId3,Minus1,Minus2,start,end,curtime) { 
+							var loading = document.getElementById(designId); 
+							var pointW=Math.floor((Minus1/Minus2)*100);
+							loading.style.width = pointW*3 + "px";
+							$('#'+textId).prepend(pointW + "%");
+						} 
+					};
+				//进度进度条初始化	
+				var loadingScroll2 = { 
+						doScroll2 : function(realId,textId2,realstarttimeId,percent,start) { 
+							var loading = document.getElementById(realId); 
+							var pointW=Math.floor(percent);
+							loading.style.width = pointW*3 + "px";							
+							loading.style.width = pointW*3 + "px";
+							$('#'+textId2).prepend(percent + "%");
+						} 
+					};
+				var i=0;
+				var page=1;
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp = (href.split("?"))[1].split("&");
+				var url="/projectDetail";
+				var projectId = tmp[0].split("=")[1];
+				//获取权限
+				var permission = 0;
+				$.post('/getPermission',
+						{},
+						function(xml2) {
+							permission = $(xml2).find("permission").find("projectInfo").find("update").text();
+							if(permission == 0 ){
+								$("#addProject").attr("disabled", "disabled");
+							}
+						},
+					'xml');	
+				$.post(url,{"projectId":projectId},
+				function (xml){
+								var project_id		= $(xml).find("project_id").text();
+	                            var pjName      	= $(xml).find("name").text();
+							    var pjDept    		= $(xml).find("dept").text();
+							    var pjManagerId		= $(xml).find("managerId").text();
+							    var pjManagerName   = $(xml).find("managerName").text();
+							    var pjCreatTime 	= $(xml).find("create_on").text();
+							    var pjCreator       = $(xml).find("create_by").text();
+							    var currentStep   	= $(xml).find("currentStep").text();
+							    var curStepEndTime	= $(xml).find("curStepEndTime").text();
+							    var reStartCount    =Number($(xml).find("reStartCount").text());
+								var reEndCount      =Number($(xml).find("reEndCount").text());
+								var projectStep     =$(xml).find("projectStep").text().split("$");
+								var deStartTime     =$(xml).find("deStartTime").text().split(",");
+								var deEndTime       =$(xml).find("deEndTime").text().split(","); 
+								var stepCount		=Number($(xml).find("stepCount").text());
+								var reStartTime     =$(xml).find("reStartTime").text().split(",");
+								var reEndTime		=$(xml).find("reEndTime").text().split(",");
+								var percent    		=$(xml).find("updateEveryProgress").text().split(",");
+								var id = 1;
+								
+								//把null转化为0
+								if(isNaN(stepCount))stepCount=0;
+								if(isNaN(reStartCount))reStartCount=0;
+								if(isNaN(reEndCount))reEndCount=0;
+								var k=0;
+								for(k;k<stepCount;k++){
+								Number(percent[k]);
+								if(isNaN(percent[k]))percent[k]=0;
+								}
+								
+								var pjbar="<table id=\"prog"+id+"\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"table2\"><tr><td width=\"5\" valign=\"middle\"  ><img src=\"images/bg_15.gif\" width=\"5\" height=\"15\" /></td><td valign=\"middle\"><div id=\"design"
+									+id+"\" class=\"jhjd\" style=\"overflow:hidden;\"></div></td><td width=\"5\" valign=\"middle\" ><img src=\"images/bg_14.gif\" width=\"5\" height=\"15\" /></td><td width=\"5\" valign=\"middle\" ></td><td id=\"text"
+									+id+"\" width=\"30\" valign=\"middle\" ></td></tr></table>";
+
+							    var tmp = "project_id="+project_id+"&pjName="+pjName+"&pjDept="+pjDept+"&pjManager="+pjManagerName+"&pjCreatTime="+pjCreatTime+"&pjCreator="+pjCreator+"&percent="+percent+"&stepCount="+stepCount;
+							    var tmp1 =  "projectId="+project_id;
+								var ii = 1+stepCount;
+								var weikaishi;
+								if(stepCount=="0"||stepCount==null){
+									weikaishi="项目未开始";
+								}else weikaishi="";
+								
+								var flag1=0;
+								if(stepCount!="0"&&stepCount!=null&&(reEndTime.length-1)==stepCount){
+									for(var i=0;i<stepCount;i++){
+										if(percent[i]!=100)
+											flag1++;
+									}
+									if(flag1==0)
+										weikaishi="项目已完成";
+								}
+								
+								var strInfo		="<tr class='content' id='"+project_id+"'><td rowspan="+ii+" style='word-break:break-all;border-right-style:dotted; border-right-color:#ffa03b;'>"+pjName+
+  	                                 			"</td><td rowspan="+ii+" style='white-space: nowrap;border-right-style:dotted; border-right-color:#ffa03b;'>"+pjDept+"</td><td rowspan="+ii+" style='border-right-style:dotted; border-right-color:#ffa03b;'>"+pjManagerName+"</td><td rowspan="+1+" style='white-space: nowrap;border-right-style:dotted; border-right-color:#ffa03b;'>"+weikaishi+
+  	                                			 "</td><td style='border-right-style:dotted; border-right-color:#ffa03b;'></td>";
+   	                                
+   	                            var strEditInfo 	= "<td><input type='image' src='./images/oa_edit_g.gif' \></input></td><td><input type='image' src='./images/oa_detail.png' title='查看' onclick=\"javascript: location.href=encodeURI(\'pjProgressList.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/oa_delete_g.png'></input></td></tr>";
+  	                            var flagflag = permission.indexOf(pjDept);
+  	                            if (flagflag>0) {
+									strEditInfo = "<td><input class='edit' type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'editProject.html?"+tmp1+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/oa_detail.png' title='查看' onclick=\"javascript: location.href=encodeURI(\'pjProgressList.html?"+tmp+"&page1="+page+"\')\"></input></td><td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td></tr>";
+								}
+								var status			=parseInt($(xml).find("status").text());
+								if(status==1){	
+  	                                var strEditProg	="<td><input  type='image' src='./images/oa_edit.gif'  title='修改' onclick=\"javascript: location.href=encodeURI(\'pjModifyPlan.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input  type='image' src='./images/oa_edit.gif' title='更新' onclick=\"javascript: location.href=encodeURI(\'pjUpdateProgress.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+								}else{
+									var strEditProg	="<td><input  type='image' disabled='disabled' src='./images/oa_edit_g.gif'  title='修改' onclick=\"javascript: location.href=encodeURI(\'pjModifyPlan.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input  type='image' disabled='disabled' src='./images/oa_edit_g.gif' title='更新' onclick=\"javascript: location.href=encodeURI(\'pjUpdateProgress.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+								}
+								$("#list").append(strInfo+strEditProg+strEditInfo);
+								
+								for(i=0;i<stepCount;i++){
+								var pjbar2="<table id=\"prog2"+id+"\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"table2\"><tr><td width=\"5\" valign=\"middle\"  ><img src=\"images/bg_19.gif\" width=\"5\" height=\"15\" /></td><td valign=\"middle\"><div id=\"real"
+									+id+"\" class=\"jhjd2\" style=\"overflow:hidden;\"></div></td><td width=\"5\" valign=\"middle\" ><img src=\"images/bg_18.gif\" width=\"5\" height=\"15\" /></td><td width=\"5\" valign=\"middle\" ></td><td id=\"text2"
+									+id+"\" width=\"30\" valign=\"middle\" ></td></tr></table>";
+//								}
+//								$("#sortTable").append("<tr class='append'><td>"+currentStep+"</td><td colspan=8 align=\"left\">"+pjbar+"</td></tr>");
+								//调用取得一定格式当前时间的函数
+								var now = getCurTime();
+								
+								var Year1 	=deEndTime[i].split("-")[0];
+								var Month1 	=deEndTime[i].split("-")[1]-1;
+								var Date1 	=deEndTime[i].split("-")[2];
+								var jihuawancheng = new Date();
+								jihuawancheng.setFullYear(Year1,Month1,Date1);
+								var now1 =new Date();
+								var xianzaiyear1 = now1.getYear();
+								var xianzaiMonth1 = now1.getMonth();
+								var xianzaiDate1 = now1.getDate();
+								var xianzai = new Date();
+								xianzai.setFullYear(xianzaiyear1,xianzaiMonth1,xianzaiDate1);
+								if(percent[i]!=100){
+								if(deEndTime[i]>now){
+									var juli = jihuawancheng - xianzai;
+									var yujing = "<td style='white-space: nowrap;border-right-style:dotted; border-right-color:#ffa03b;'>距计划完成时间还有"+daysBetween(now,deEndTime[i])+"天</td>";
+								}else if(deEndTime[i] < now){
+									var juli = xianzai - jihuawancheng;
+									var yujing = "<td style='white-space: nowrap;color:red;border-right-style:dotted; border-right-color:#ffa03b;'>已延期"+daysBetween(now,deEndTime[i])+"天</td>";
+								}else{
+									var yujing = "<td style='white-space: nowrap;border-right-style:dotted; border-right-color:#ffa03b;'>计划今天须完成此阶段</td>";
+								}
+								}else var yujing ="<td style='border-right-style:dotted; border-right-color:#ffa03b;'>阶段已完成</td>";
+								$("#list").append("<tr class='append'>"+yujing+"<td style='word-break:break-all;border-right-style:dotted; border-right-color:#ffa03b;'>"+projectStep[i]+"</td><td colspan=8 align=\"left\">"+pjbar2+"</td></tr>");
+								
+								var designId = "design" + id;
+								var textId = "text" + id;
+								var textdestarttimeId = "textdestarttime" + id;
+								var textdeendtimeId = "textdeendtime" + id;
+								
+								var now=new Date();
+								var curTime = "当前:"+now.toLocaleDateString();
+								if(document.getElementById(designId)){
+									loadingScroll.doScroll(designId,textId,textdestarttimeId,textdeendtimeId, Minus1, Minus2,deStartTime[reStartCount-1],deEndTime[reStartCount-1],curTime);
+								}
+
+								var realId = "foll" + id;
+								var textId2 = "text2" + id;
+								var realstarttimeId = "realstarttime" + id;
+								var dragBar	="dragBar"+id;
+								var realId	="real"+id;
+								if(document.getElementById(realId)){
+									loadingScroll2.doScroll2(realId,textId2,realstarttimeId, percent[i],reStartTime[reStartCount-1]);
+								}				    		    
+	                        id++;
+	                        }
+							    		    
+								register();						
+						},
+						'xml');
+						function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+				//注册按钮
+				function register() {
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/deleteProject', {'projectId':id}, delCallback, 'xml');
+		                	}
+		                });
+	               });
+	            }
+				 
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="projectInfoList.html?page="+page;
+					}
+				}
+			});
+        </script>
+	</head>
+<body>
+		<div id="container">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div style="width:300px" class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>项目详情</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td><img src="images/sq_img_09.png" width="15" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="addProject.html" id="addProject">添加项目</a></td>
+							<td width="10">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="javascript:history.back()" >返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>项目开发计划与进度</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table id="list" class="listTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+							<tr>
+								<th style="white-space: nowrap">项目名称</th>
+								<th style="white-space: nowrap">所属部门</th>
+								<th style="white-space: nowrap">负责人</th>
+								<th style="white-space: nowrap">提醒</th>
+								<th style="white-space: nowrap">阶段名称</th>
+								<th style="white-space: nowrap">计划设置</th>
+								<th style="white-space: nowrap">进度设置</th>
+								<th colspan="2" style="white-space: nowrap">基本信息</th>
+								<th style="white-space: nowrap">删除</th>
+							</tr>
+						</table>
+						</div>
+						<div id="sq_di">
+                     		
+                  		</div>
+					</div>
+				  <div id="bg_di"></div>
+            	</div>
+		 		 <div id="footer">
+		          </div>
+				</div>
+        
+		</body>
+</html>
+
+
+		

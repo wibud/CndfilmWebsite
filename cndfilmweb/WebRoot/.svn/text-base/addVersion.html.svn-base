@@ -1,0 +1,592 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+			<title>OA系统--上传版本</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+      <script type="text/javascript">
+			$(document).ready(function(){
+
+				init();
+				var currentUserId = "";
+				var currentUserName = "";
+				$.ajax({
+					url:"/currentUserDetail",
+					async:false,
+					method:"post",
+					success: function(xml){
+						currentUserName = $(xml).find("userName").text();
+						currentUserId = $(xml).find("userId").text();
+					},
+					dataTyep: "xml"
+				});
+				
+				
+			    //初始化memberDept,addMember列表
+				$.ajax({
+					url: '/DeptList',
+	                data: {},
+	                async: false,
+	                success: function(xml){
+							$(xml).find("item").each(function(){							      
+									$("#memberDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+									$("#dept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});
+	   	                 },
+	                dataType: 'xml'
+	            });
+	            $.ajax({
+	            	url: '/getUserByDept',
+	            	async: false,
+				    data: {'userDeptId':$("#memberDept").val()},
+				    success: function(xml){
+								$(xml).find("item").each(function(){
+											var id =$(this).find("userId").text();
+											var name = $(this).find("userName").text();
+											dup = false;
+											//添加待选人员
+											$("#removeMember option").each(function(){
+												if(id == $(this).val()) {
+													dup = true;
+												}
+											});
+											if(!dup) {
+												$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+											}
+									});
+				   	          },
+				    dataType: 'xml'
+				});
+	            //初始化操作系统选项
+	            $.ajax({
+	            	url:'/osList',
+	            	data:{},
+	            	async: false,
+	            	success:function(xml) {
+	            			var cnt = 0;
+	            			$(xml).find("item").each(function(){
+	            				$("#osList").append("<input type='checkbox' value='"+$(this).find("os_name").text()+"'/>"+$(this).find("os_name").text());
+	            				if(++cnt % 3 == 0) {
+	            					$("#osList").append("<br />");
+	            				}
+	            			});
+	            		},
+	            		dataType:'xml'
+	            });
+	            //初始化产品类型列表
+	            $.ajax({
+	            	url: '/productTypeList',
+	            	data: {},
+	            	async: false,
+	            	success: function(xml){
+	            				$(xml).find("item").each(function(){							      
+									$("#productType").append("<option value=\""+$(this).find("top_level").text()+"\">"+$(this).find("top_level").text()+"</option>");
+								});
+	            			},
+	            	dataType: 'xml'		
+	            });
+
+		    	//获取参数
+				var href = location.href;
+				href = decodeURI(href);
+				var version_id = href.split("version_id=")[1];
+				if (version_id) {
+					version_id = version_id.split("&")[0].split("#")[0];
+					//若是重新发布版本,则显示原有信息
+			    	$.post('/getVersionById',
+		                    {'versionId':version_id},
+		                    function(xml){
+									$(xml).find("result").each(function(i){
+										var version_id			= $(this).find("version_id").text();
+									    var versionName    		= $(this).find("versionName").text();
+									    var number   			= $(this).find("number").text();
+									    var versionType 		= $(this).find("versionType").text();
+									    var productType			= $(this).find("productType").text();
+									    var deptId				= $(this).find("deptId").text();
+									    var deptName			= $(this).find("deptName").text();
+									    var managerId 			= $(this).find("managerId").text();
+									    var managerName   		= $(this).find("managerName").text();
+									    var strMember			= $(this).find("member").text();
+									    var os					= $(this).find("os").text();
+									   
+									   $("#versionName").val(versionName);
+									   $("#number").val(number);
+									   $("#dept option[value='"+deptId+"']").attr("selected","selected");
+									   //显示原来的版本类型和产品类型
+									   $("#versionType option[value='"+versionType+"']").attr("selected","selected");
+									   $("#productType option[value='"+productType+"']").attr("selected","selected");
+									   	//显示原有成员列表
+									   var member = strMember.split(";");
+									 	var memberId,memberName;
+										for(var i = 0, len = member.length-1; i< len; i++) {
+									          memberId = member[i].split(",")[0];
+									          memberName = member[i].split(",")[1];
+									          $("#removeMember").append("<option value=\""+memberId+"\">"+memberName+"</option>");
+									      }
+									    //显示适用操作系统
+									    var osName = os.split("/");
+									    $(":checkbox").each(function(){
+									    	var value = $(this).attr("value");
+									    	if($.inArray(value,osName) >= 0) {
+									    		$(this).attr("checked", "checked");
+									    	}
+									    });
+		   	               	});
+		   	               },
+		                   'xml'
+		              );
+		              $("#productType").attr("disabled", "disabled");
+		              $("#versionType").attr("disabled", "disabled");
+		              $("#versionName").attr("disabled", "disabled");
+		              $("#number").attr("disabled", "disabled");
+		              $("#dept").attr("disabled", "disabled");
+		              $("#osList input").attr("disabled", "disabled");
+				}
+				
+				$('#comfirm').click(function(){
+
+					var versionName  	= $("#versionName").val();
+					var deptName    = $("#dept option:selected").text();
+					var deptId 		= $("#dept").val();
+					var number    	= $("#number").val();  
+					var update		= $("#update").text();
+					var versionType = $("#versionType option:selected").val();
+					var productType = $("#productType option:selected").val();
+					
+					if( versionName == "" ) {
+						alert("版本名称不能为空！");
+						return;
+					}
+					if( number == ""){
+						alert("版本号不能为空!");
+						return;
+                    }
+                    if($("#updateReport").val() == $("#fileToUpload").val()) {
+                    	alert("版本文件和更新说明文件不能为同一文件!");
+                    	return;
+                    }
+                    
+					var strMember = "";
+                    $("#removeMember option").each(function() {
+                    	var id = $(this).val();
+                    	var name = $(this).text();
+                    	strMember += id + "," + name + ";";
+                    });
+                    var os = "";
+                    $("#osList input:checked").each(function(){
+	            					var value = $(this).attr("value");
+	            					os += value+"/";
+	            				});
+	            				
+	            	if(os == ""){
+						alert("请选择适用操作系统!");
+						return;
+                    }else{
+                    	os = os.slice(0, os.length-1);
+                    }
+                    
+					//添加后将version_id放在errormsg中
+                    $.post("/addVersion", {"versionId":version_id, "versionName":versionName,"deptName":deptName,"deptId":deptId,"number":number,"versionType":versionType,"productType":productType,"update":update,"os":os,"member":strMember}, callback, "xml");
+
+					function callback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							var folderName = $(databack).find("errormsg").text();
+							fileUpload(folderName, "app", "fileToUpload");
+						}
+					}
+					
+					if($("#mail").attr("checked") == "checked"){
+						//发送邮件
+						var testManagerId;
+						$.ajax({
+							url:"/getTestManagerId",
+							async:false,
+							method:"post",
+							success: function(xml){
+								testManagerId = $(xml).find("result");
+							},
+							dataType: "xml"
+						});
+						var content = currentUserName +"上传了一个版本，版本的名称叫 "+ $("#versionName").text() +" "+number +"，请您及时处理。";
+						$.ajax({
+							url:"/sendMail",
+							async: false,
+							method: "post",
+							data: {'mailTo':testManagerId,'subject':"一个新上传的版本",'content':content},
+							success: function(databack){
+										var recode = $(databack).find("recode").text();
+										if(recode != 0){
+											alert($(databack).find("errormsg").text());
+										}
+									  },
+							dataType: 'xml'
+						});
+					}
+				});
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+	            //动态更新待选成员列表
+	             $('#memberDept').change(function(){
+		           			$("#addMember option").remove();
+		            		var dept = $('#memberDept').val();
+		            		if(dept == -1) {
+		            			return;
+		            		}
+		            		var dup;
+		            		$.post('/getUserByDept',
+		                    {'userDeptId':dept},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+									var id =$(this).find("userId").text();
+									var name = $(this).find("userName").text();
+									dup = false;
+									$("#removeMember option").each(function(){
+										if(id == $(this).val()) {
+											dup = true;
+										}
+									});
+									if(currentUserId == id) {
+										dup = true;
+									}
+									if(!dup) {
+										$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+									}
+								});
+		   	                 },
+		                     'xml');
+	            });    
+	       	    $("#fileToUpload").change(function() {
+			    	var filepath = $('#fileToUpload').val();
+			    	var reg = new RegExp(/\.*(\.rar|\.zip|\.tar\.gz|\.tar\.bz2|\.img|\.bz|\.iso|\.tgz|\.tar)$/);
+					if(!filepath.match(reg)){
+							alert("请选择rar,zip,tar,tar.gz,tar.bz2,img,iso,tgz格式的文件！");
+							$('#fileToUpload').val(null);
+							return;
+						}
+		    	});     
+	            function fileUpload(folderName, type, id){
+            		//starting setting some animation when the ajax starts and completes
+			     	 $("#loading")
+			        .ajaxStart(function(){
+			            $(this).show();
+			        })
+			        .ajaxComplete(function(){
+			            $(this).hide();
+			        });
+					var filepath = $("#" + id).val();
+					if(!filepath){
+						alert("请选择文件");
+						return false;
+					}
+					
+					$.ajaxFileUpload({
+						url:			"fileUploadAction",
+						secureuri:		false,
+						fileElementId:	id,
+						dataType:		"xml",
+						data: {//加入的文本参数  
+						            "folderName": folderName, 
+						            "type"		: type
+						        },  
+						success:		function(xml, status){
+											var recode = $(xml).find("result").text();
+						        			if(recode != 0){
+						        				alert($(xml).find("errormsg").text());
+						        			} else {
+						        				//上传测试报告
+						        				if (type != "updateReport") {
+													var filepath = $('#updateReport').val();
+													if(filepath) {
+														fileUpload(folderName, "updateReport", "updateReport");
+														return;
+													}
+												}
+											
+						        				alert("上传成功！");
+						        				location.href="versionList.html";
+						        			}
+										},
+						error:			function(data, status, e){
+											$.post('/deleteVersion', {'versionId':folderName}, function(xml){}, 'xml');
+											alert("上传出错！");
+										}
+						});
+						return false;
+				     
+				};
+				  //添加成员
+	            $("#addMember").dblclick(function(){
+					$("#addMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#removeMember").append(option);
+						$(this).remove();
+					});
+				});  
+				//删除成员  
+				$("#removeMember").dblclick(function(){
+					$("#removeMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#addMember").append(option);
+						$(this).remove();
+					});
+				});  
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页 &gt;&nbsp;
+										<strong>上传新版本</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>上传新版本</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									产品类型
+								</td>
+								<td>
+									<select id="productType" class="wideSelText"></select>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									版本类型
+								</td>
+								<td>
+									<select id="versionType" class="wideSelText">
+										<option value="安装包">安装包</option>
+										<option value="升级包">升级包</option>
+										<option value="补丁包">补丁包</option>
+									</select>
+								</td>
+							</tr>													
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									版本名称
+								</td>
+								<td>
+									<input type="text" name="versionName" id="versionName" class="wideSelText" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									版本号
+								</td>
+								<td>
+									<input type="text" name="number" id="number" class="wideSelText" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									所属部门
+								</td>
+								<td>
+									<select name="dept" id="dept" class="wideSelText" >
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									适用操作系统
+								</td>
+								<td>
+									<div id="osList"></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									选择文件
+								</td>
+								<td>
+									<img id="loading" src="images/loading.gif" style="display: none" />
+									<input type="file" id="fileToUpload" name="file" class="wideSelText" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									更新内容
+								</td>
+								<td>
+									<textarea rows="5" id="update" class="wideSelText"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									提交更新报告
+								</td>
+								<td id="testReport">
+									<div id="uploadTestReport">
+									<img id="loading" src="images/loading.gif" style="display: none" />
+									<input type="file" id="updateReport" name="file" class="wideSelText" />
+									</div>
+									<div id="downloadTestReport">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td align="center">
+									测试成员
+								</td>
+								<td align="center">
+									<table  border="0" cellspacing="0" cellpadding="0">
+									<tr>
+									<td style="border:0" colspan="3">
+									<select name="memberDept" id="memberDept" class="wideSelText">
+										<option value="-1">&nbsp;</option>
+							        </select>
+							        </td>
+							        </tr>
+							        <tr>
+							        <td style="border:0">
+									<select id="addMember" multiple="multiple" title="双击以添加" style="width:130px" >							       
+							        </select>
+							        </td>
+							        <td style="border:0">
+							   		<img src="images/arrow_two_head.png" style="float:left"></img>
+							   		</td>
+							   		<td style="border:0">
+							   		<select id="removeMember" multiple="multiple" title="双击以删除" style="width:130px">
+							        </select>
+							        </td>
+							        </tr>
+							       </table>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<input type="checkbox" id="mail" name="mail" />
+									邮件通知
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<input class="bt" type="submit" id="comfirm" value=" 上传 " />
+									<input class="bt" type="button" value="返回"
+										onclick="javascript:history.back()"></input>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

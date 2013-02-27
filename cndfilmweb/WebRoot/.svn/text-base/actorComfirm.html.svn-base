@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	    	init();	
+	    	var href = location.href;
+//			href = decodeURI(href);
+		   var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];
+		    var tmp  = (href.split("?"))[1].split("&");
+			var page = href.split("page=")[1];
+			if(page){
+			   page = page.split("&")[0].split("#")[0];
+			}
+			if(!page || page<1){
+			   page=1;
+			}
+
+	            var commerceproject_id  = tmp[0].split("=")[1];				
+				var commerceproject_name  = tmp[1].split("=")[1];
+
+		    	$("#commerceproject_id").val(commerceproject_id);				
+				$("#commerceproject_name").val(commerceproject_name);
+
+
+
+				$("#comfirm").click(function(){
+		        	
+		               var commerceproject_name      	= $('#commerceproject_name').val();
+					    var commerceproject_id    		= $('#commerceproject_id').val();
+					    var commerceprojectactiontime     =$('#commerceprojectactiontime').val();
+                      $.post('/actorComfirm', {'commerceproject_id':commerceproject_id,'commerceproject_name':commerceproject_name,
+		   	            'commerceprojectactiontime':commerceprojectactiontime}, callback, 'xml');
+
+				   });
+//		   	             
+
+			                    function callback(xml){
+									var $xml = $(xml);
+									var recode = Number($xml.find("recode").text());
+									if(recode){
+										alert($xml.find("errormsg").text());
+										return ;
+									}
+									alert("确认成功！");
+							     	tmp1="commerceproject_id="+commerceproject_id;
+									location.href="commerceProjectDetail.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						        
+								}
+							
+			    	
+
+
+
+	    	    	
+		    function init(){
+		    	$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+		    }
+
+		});
+
+	</script>
+		
+		
+  </head>
+  
+  <body>
+	 <div id="container">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000" >
+				<div id="main">
+					<div id="content_top" align="center" >
+						<table width="980" border="0" cellspacing="0" cellpadding="0" >
+						  <tr>
+						    <td width="250"><div class="biao" align="left" style="width:300px">当前位置：项目操作&gt;&nbsp;<strong>实施工程师确认</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+										
+							<tr>
+							 <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+							 <td><a href="javascript:history.back()" >返回</a></td>
+						</tr>
+						</table>
+						</div>
+				</td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0" >
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>实施工程师确认项目信息</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r6">
+						<table class="sTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+											    	<tr  style="display:none;">
+								<td class="width_5">项目ID</td>
+								<td class="width_15"><input type="text" id="commerceproject_id" class="width_15" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							
+							
+							<tr>
+								<td>项目名称</td>
+								<td class="width_15"><input type="text" id="commerceproject_name" class="width_15" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							    
+							        
+							        
+							<tr>
+								<td>实施时间<label class="required">*</label></td>
+								<td class="width_15"><input type="text" id="commerceprojectactiontime" class="width_15" onclick="setday(this)" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							    
+													
+	                        <tr>
+	                        <td colspan="2"><input type="button" id="comfirm" class="bt" value=" 确 定 "></input>
+							                    <input type="button" value=" 返 回 " class="bt" onclick="javascript:history.back()"></input>
+							
+							    </td>
+							</tr>
+	
+	</table>
+				</div>	
+						<div id="sq_di">
+						<div id="pageNav">
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer">
+			</div>
+		</div>
+
+  </body>
+</html>

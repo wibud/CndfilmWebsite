@@ -1,0 +1,10 @@
+#common configure
+oa.devMode=true
+oa.initialized=true
+oa.serverIP=192.168.6.120
+oa.datasource.user=root
+
+#database configure
+oa.datasource.jdbcUrl=jdbc:mysql://${oa.serverIP}:3306/OA
+oa.datasource.password=root
+

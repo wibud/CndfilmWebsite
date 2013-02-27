@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+	<script type="text/javascript">
+		showIncludeFile();
+		showIncludeAjaxingFile();
+	</script>
+	<script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		initDialog();
+	});
+	function initDialog() {
+		$("#approveDialog").dialog({ buttons: {
+									
+									"确定": function() {
+												$( this ).dialog( "close" );
+												approveResult = $("#approveResult").val();
+												postApprove(approveId, approveType, approveResult);
+											},	
+									"取消": function() {
+												$( this ).dialog( "close" );
+											}
+									}, 
+									modal: true, 
+									autoOpen: false });
+		$("#backApplyDialog").dialog({ buttons: {
+										"确定": function() {
+													backTime = $("#backTime").val();
+													if (backTime == null || backTime == "") {
+														alert("请填写返回时间!");
+														return;
+													}
+													
+													feedBack = $("#feedBack").val(); 
+													if (feedBack == null || feedBack == "") {
+														alert("请填写反馈结果!");
+														return;
+													}
+													$( this ).dialog( "close" );
+													postBackApply(approveId, backTime, feedBack);
+												},	
+										"取消": function() {
+													$( this ).dialog( "close" );
+												}
+										}, 
+										modal: true, 
+										autoOpen: false });
+	}
+	</script>	
+	</head>
+
+	<body>
+		<div id="dialogs">
+			<div id="approveDialog" title="外出审批">
+				<table align="center">
+					<tr>
+						<td>
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<select id="approveResult" class="doubleSelText">
+								<option id="审批通过">
+									审批通过
+								</option>
+								<option id="审批不通过">
+									审批不通过
+								</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							&nbsp;
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="backApplyDialog" title="返回申请">
+				<table align="center">
+					<tr>
+						<td>
+							<label class="required">
+								*
+							</label>
+							返回时间
+						</td>
+						<td>
+							<input class="doubleSelText" id="backTime" readonly="readonly"
+								onclick="setday(this)" size="30" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							&nbsp;
+						</td>
+						<td>
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="30%">
+							<label class="required">
+								*
+							</label>
+							反馈结果
+						</td>
+						<td width="70%">
+							<textarea class="doubleSelText" id="feedBack" cols="25" rows="4"></textarea>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>

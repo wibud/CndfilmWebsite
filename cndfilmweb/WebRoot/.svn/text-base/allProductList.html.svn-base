@@ -1,0 +1,258 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		
+			<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+		
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	    	init();	
+	    	var href = location.href;
+		    var page = href.split("page=")[1];
+		    if(page)
+		    	page = page.split("&")[0].split("#")[0];
+		    if(!page || page<1)
+		    	page=1;
+			var pageCount = 0;
+			var count = 0;
+
+			var url = "/allCommerceproductList";
+
+			var editProjectPermission;
+			var editProductPermission;
+			var applynewPermission;
+			var operationPermission;
+			var delProductPermission;
+			$.post('/getPermission',{},
+				function(xml){
+				editProjectPermission=Number($(xml).find("permission").find("commerceProject").find("editproject").text());
+				editProductPermission=Number($(xml).find("permission").find("commerceProject").find("editproduct").text());
+				applynewPermission=Number($(xml).find("permission").find("commerceProject").find("applynew").text());
+				operationPermission=Number($(xml).find("permission").find("commerceProject").find("operation").text());
+				delProductPermission=Number($(xml).find("permission").find("commerceProject").find("delProduct").text());
+
+					$(this).showData(url,page);
+				},
+			'xml');
+			$.fn.showData = function(url,page2){
+				page = page2;
+				urlT = url+"?page="+page2;
+				$(this).handlerData(
+					urlT,
+					function(xml){
+						$("#content_r table tr:gt(0)").remove();
+						var id = (page2-1)*20 + 1;
+						count = $(xml).find("result").attr("count");
+						pageCount = $(xml).find("result").attr("pageCount");
+						var startWith = $(xml).find("result").attr("startWith");
+
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+						$(xml).find("item").each(function(i){
+							var commerceproject_id			= $(this).find("commerceproject_id").text();
+                            var commerceproject_name      	= $(this).find("commerceproject_name").text();
+						    var allrandom    				= $(this).find("allrandom").text();
+						    var product_type   			= $(this).find("product_type").text();
+						    var softwareVession   				= $(this).find("softwareVession").text();
+						    var product_number 		= $(this).find("product_number").text();
+						    var product_id   = $(this).find("product_id").text();
+						    var commerceprojectAuthnumber  =$(this).find("commerceprojectAuthnumber").text();
+						    var authtext       =$(this).find("authtext").text();
+						   
+
+						    var tmp = "allrandom="+allrandom+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&product_type="+product_type+"&softwareVession="+softwareVession+"&product_number="+product_number+"&commerceprojectAuthnumber="+commerceprojectAuthnumber+"&product_id="+product_id;
+							var strInfo ="<td>"+ (i+1)+"</td><td>"+commerceproject_name+"</td><td>"+product_type+
+	                                 "</td><td>"+softwareVession+"</td><td>"+product_number+"</td><td>"+commerceprojectAuthnumber+"</td><td>"+product_id+"</td>";
+							
+			/*				
+							var strDownload = null;
+							if((permission&1) && (path!="")){
+								strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+							}else{
+								strDownload = "<td><img src='./images/download1.jpg'/></td>";
+							}
+				*/			
+						//	var strDetail = null;
+						//	strDetail = "<td><a href='/CommerceProductDetail.html?"+tmp+"&page1="+page+"'><img src='./images/search.jpg'  title='详情' /></a></td>";
+							
+							var strEdit = null;
+					//		strEdit = "<td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'commerceProductEdit.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+							
+							if(editProductPermission==1) {
+								strEdit = "<td><input type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'commerceProductEdit.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+							}else{
+								strEdit = "<td><img src='./images/oa_edit_g.gif' title='修改'/></td>";
+							}
+							
+					//		var strEdit2 = null;
+						//	strEdit2 = "<td><input type='image' src='./images/bg_shang.png' title='上传授权证书' onclick=\"javascript: location.href=encodeURI(\'authortextSubmit.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+						
+						//  	var strDownload = null;
+	 					//	strDownload = "<td><input type='image' src='./images/bg_xia.png' title='下载授权证书' onclick=\"javascript: location.href=encodeURI(\'fileDownloadServlet.do?filepath="+authtext+"\')\"></input></td>";
+	 					
+							var strDel = null;
+					//		strDel = "<td><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+							
+							if(delProductPermission==1){
+								strDel = "<td><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+							}else{
+								strDel = "<td><img src='./images/oa_delete_g.png' title='删除'/></td>";
+							}
+							
+                      		$("#content_r table").append("<tr class='content' id='"+allrandom+"'>"+ strInfo + strEdit+ strDel +"</tr>");
+	                        id++;
+                        });
+						pageNav(page2,pageCount,count,url,"#pageNav");
+                        //调用注册按钮的事件
+						register();
+					}
+				);
+			};
+			$(this).showData(url,page);
+						       	
+		    function init(){
+		    	$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+		    }
+
+		    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/deleteCommerceProduct', {'allrandom':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+		    }
+		    //返回成功与否的判断与跳转
+		    function delCallback(databack){
+				var recode = $(databack).find("recode").text();
+				if(recode != 0){
+					alert($(databack).find("errormsg").text());
+				}else {
+					location.href="allProductList.html?page="+page;
+				}
+			}
+			
+			/*
+               //点击下载，记录日志
+               $(".download").each(function(index){
+					var $this = $(this);
+					var id = $this.parents('.content').attr('id');
+
+					$this.click(function(){
+							$.post('/writeVersionDlLog', {'versionId':id}, dlCallback, 'xml');
+	                	});
+	               });
+			 */
+				//返回成功与否的判断与跳转
+/*		    function dlCallback(databack){
+				var recode = $(databack).find("recode").text();
+				if(recode != 0){
+					alert($(databack).find("errormsg").text());
+				}
+			}
+			*/			
+		});
+
+	</script>
+		
+  </head>
+   
+  <body>
+    	<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+				<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：项目实施&gt;&nbsp;<strong>项目列表</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						     <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="javascript:history.back()" >返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>产品列表</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r">
+						<table id="content_r" class="listTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+				
+							
+							<tr>
+								<th>序号</th>
+								<th>项目名称</th>
+								<th>产品类型</th>
+								<th>软件版本</th>
+								<th>产品数量</th>
+								<th>授权点数</th>
+						        <th>产品编码</th>
+						<th colspan="3">操作</th>
+							</tr>
+						</table>
+						</div>
+						<div id="sq_di">
+                     		<div id="pageNav">
+                    		</div>
+                  		</div>
+					</div>
+				  <div id="bg_di"></div>
+            	</div>
+		 		 <div id="footer">
+		          </div>
+				</div>
+        
+		</body>
+</html>

@@ -1,0 +1,195 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.bean.formapply.OutBoundBean;
+import oa.dao.DatabaseAnno;
+import oa.util.CommonUtil;
+
+@DatabaseAnno(id = "outBoundId")
+@Entity
+@Table(name = "tb_outbound")
+public class OutBound {
+	@Id
+	private String outBoundId;
+	private String userId;
+	private String userName;
+	private String deptId;
+	private String deptName;
+	private String outTime;
+	private String outReason;
+	private String outApprove;
+	private String backTime;
+	private String feedBack;
+	private String backApprove;
+	private String personInCharge;
+	private String secondManager;
+	private String outApproveBy;
+	private String backApproveBy;
+	private String outApproveTime;
+	private String backApproveTime;
+
+	/*
+	 * 返回一个OutBoundBean
+	 */
+	public OutBoundBean toBean() {
+		OutBoundBean outBoundBean = new OutBoundBean();
+		outBoundBean.setOutBoundId(CommonUtil.noNullString(outBoundId));
+		outBoundBean.setUserId(CommonUtil.noNullString(userId));
+		outBoundBean.setUserName(CommonUtil.noNullString(userName));
+		outBoundBean.setDeptId(CommonUtil.noNullString(deptId));
+		outBoundBean.setDeptName(CommonUtil.noNullString(deptName));
+		outBoundBean.setOutTime(CommonUtil.noNullString(outTime));
+		outBoundBean.setOutReason(CommonUtil.noNullString(outReason));
+		outBoundBean.setOutApprove(CommonUtil.noNullString(outApprove));
+		outBoundBean.setBackTime(CommonUtil.noNullString(backTime));
+		outBoundBean.setFeedBack(CommonUtil.noNullString(feedBack));
+		outBoundBean.setBackApprove(CommonUtil.noNullString(backApprove));
+		outBoundBean.setPersonInCharge(CommonUtil.noNullString(personInCharge));
+		outBoundBean.setSecondManager(CommonUtil.noNullString(secondManager));
+		outBoundBean.setOutApproveBy(CommonUtil.noNullString(outApproveBy));
+		outBoundBean.setOutApproveTime(CommonUtil.noNullString(outApproveTime));
+		outBoundBean.setBackApproveBy(CommonUtil.noNullString(backApproveBy));
+		outBoundBean.setBackApproveTime(CommonUtil.noNullString(backApproveTime));
+		return outBoundBean;
+	}
+
+	public String getOutBoundId() {
+		return outBoundId;
+	}
+
+	public void setOutBoundId(String outBoundId) {
+		this.outBoundId = outBoundId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getOutTime() {
+		return outTime;
+	}
+
+	public void setOutTime(String outTime) {
+		this.outTime = outTime;
+	}
+
+	public String getOutReason() {
+		return outReason;
+	}
+
+	public void setOutReason(String outReason) {
+		this.outReason = outReason;
+	}
+
+	public String getOutApprove() {
+		return outApprove;
+	}
+
+	public void setOutApprove(String outApprove) {
+		this.outApprove = outApprove;
+	}
+
+	public String getBackTime() {
+		return backTime;
+	}
+
+	public void setBackTime(String backTime) {
+		this.backTime = backTime;
+	}
+
+	public String getFeedBack() {
+		return feedBack;
+	}
+
+	public void setFeedBack(String feedBack) {
+		this.feedBack = feedBack;
+	}
+
+	public String getBackApprove() {
+		return backApprove;
+	}
+
+	public void setBackApprove(String backApprove) {
+		this.backApprove = backApprove;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
+
+	public String getPersonInCharge() {
+		return personInCharge;
+	}
+
+	public void setPersonInCharge(String personInCharge) {
+		this.personInCharge = personInCharge;
+	}
+
+	public String getSecondManager() {
+		return secondManager;
+	}
+
+	public void setSecondManager(String secondManager) {
+		this.secondManager = secondManager;
+	}
+
+	public String getOutApproveBy() {
+		return outApproveBy;
+	}
+
+	public void setOutApproveBy(String outApproveBy) {
+		this.outApproveBy = outApproveBy;
+	}
+
+	public String getBackApproveBy() {
+		return backApproveBy;
+	}
+
+	public void setBackApproveBy(String backApproveBy) {
+		this.backApproveBy = backApproveBy;
+	}
+
+	public String getOutApproveTime() {
+		return outApproveTime;
+	}
+
+	public void setOutApproveTime(String outApproveTime) {
+		this.outApproveTime = outApproveTime;
+	}
+
+	public String getBackApproveTime() {
+		return backApproveTime;
+	}
+
+	public void setBackApproveTime(String backApproveTime) {
+		this.backApproveTime = backApproveTime;
+	}
+	
+}

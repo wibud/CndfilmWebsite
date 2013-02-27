@@ -1,0 +1,53 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="operationtime")
+@Entity
+@Table(name="tb_operationrecord")
+public class OperationRecord {
+ @Id
+ private String operationtime;
+ private String operationperson;
+ private String operationpersonid;
+ private String operationaction;
+ private String operationdesc;
+ 
+public String getOperationtime() {
+	return operationtime;
+}
+public void setOperationtime(String operationtime) {
+	this.operationtime = operationtime;
+}
+public String getOperationperson() {
+	return operationperson;
+}
+public void setOperationperson(String operationperson) {
+	this.operationperson = operationperson;
+}
+
+public String getOperationpersonid() {
+	return operationpersonid;
+}
+public void setOperationpersonid(String operationpersonid) {
+	this.operationpersonid = operationpersonid;
+}
+public String getOperationdesc() {
+	return operationdesc;
+}
+public void setOperationdesc(String operationdesc) {
+	this.operationdesc = operationdesc;
+}
+public String getOperationaction() {
+	return operationaction;
+}
+public void setOperationaction(String operationaction) {
+	this.operationaction = operationaction;
+}
+
+ 
+}

@@ -1,0 +1,150 @@
+package oa.dao.table;
+
+import oa.dao.BaseDao;
+import oa.model.table.CommerceProjectAuthapply;
+import oa.util.ResultList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class CommerceProjectAuthApplyDao extends BaseDao{
+
+	private static final Logger log = LoggerFactory.getLogger(CertificationDao.class);
+
+	public final String COMMERCEPROJECT_ID="commerceproject_id";
+	public final String COMMERCEPROJECT_NAME="commerceproject_name";
+	public final String TOAUTHNUMBER="toAuthnumber";
+	public final String AUTHAPPLIER="authapplier";
+	public final String AUTHAPPLIER_ID="authapplier_id";
+	public final String AUTHACTOR="authactor";
+	public final String AUTHACTOR_ID="authactor_id";
+	public final String AUTHAPPLYTIME="authapplytime";
+	public final String AUTHRESOURCE="authresource";
+	public final String REMARK="remark";
+	
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(CommerceProjectAuthapply instance) {
+		log.debug("saving CommerceProjectAuthapply instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public  void delete(CommerceProjectAuthapply instance) {
+		log.debug("deleting CommerceProjectAuthapply instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	
+	}
+	public  CommerceProjectAuthapply findCommerceProjectAuthapply(String commerceproject_id) {
+		// TODO Auto-generated method stub
+		CommerceProjectAuthapply key=new CommerceProjectAuthapply();
+		return (key);
+	}
+
+	public  void update(CommerceProjectAuthapply instance) {
+		log.debug("update CommerceProjectAuthapply instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	@SuppressWarnings("unchecked")
+	public CommerceProjectAuthapply findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding CommerceProject instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<CommerceProjectAuthapply> user=super.find(null,"oa.model.table.CommerceProjectAuthapply", propertyName, value);
+			CommerceProjectAuthapply u=user.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+		
+	}
+	public  CommerceProjectAuthapply findById(String commerceproject_id) {
+		log.debug("getting CommerceProjectAuthapply instance with id: " + commerceproject_id);
+		try {
+			CommerceProjectAuthapply keymsg = (CommerceProjectAuthapply)super.get("oa.model.table.CommerceProjectAuthapply", commerceproject_id);
+			return keymsg;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public   ResultList<CommerceProjectAuthapply> findByExample(Integer pageNo, CommerceProjectAuthapply commerceProjectAuthapply) {
+		log.debug("find CommerceProjectAuthapply instances with example");
+		try {
+			return super.find( pageNo, "oa.model.table.CommerceProjectAuthapplyt", commerceProjectAuthapply);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProjectAuthapply> findAll(Integer pageNo) {
+		log.debug("finding all CommerceProjectAuthapply instances");
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProjectAuthapply");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProjectAuthapply> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding CommerceProjectAuthapply instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProjectAuthapply", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property conditions failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProjectAuthapply> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding CommerceProjectAuthapply instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProjectAuthapply", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	
+	
+}

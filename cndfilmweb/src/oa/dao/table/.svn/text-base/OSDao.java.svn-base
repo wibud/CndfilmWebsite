@@ -1,0 +1,145 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.OS;
+import oa.util.ResultList;
+import java.util.List;
+@SuppressWarnings("unchecked")
+public class OSDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(OSDao.class);
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(OS instance) {
+		log.debug("saving OS instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(OS instance) {
+		log.debug("deleting OS instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(OS instance) {
+		log.debug("update OS instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public OS findById(String id) {
+		log.debug("getting OS instance with id: " + id);
+		try {
+			OS instance = (OS) super.get("oa.model.table.OS", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public ResultList<OS> findByExample(Integer pageNo, OS OS) {
+		log.debug("find OS instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.OS", OS);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<OS> findAll(Integer pageNo) {
+		log.debug("finding all OS instances");
+		try {
+			return super.find(pageNo, "oa.model.table.OS");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<OS> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding OS instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.OS", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<OS> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding OS instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.OS", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	
+	
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public OS findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding OS instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<OS> OS=super.find(null,"oa.model.table.OS", propertyName, value);
+			OS u=OS.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * 按属性查询用户不分页
+	 * @param propertyName
+	 * @param value
+	 * @return
+	 */
+	public List<OS> findByProperty(String propertyName,String value){
+		log.debug("finding OS instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find("oa.model.table.OS", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+
+}

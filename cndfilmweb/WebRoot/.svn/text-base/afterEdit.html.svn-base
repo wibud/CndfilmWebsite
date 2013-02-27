@@ -1,0 +1,382 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改售后服务记录</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+
+
+//				var userId,userName,userSex,userDepId,userDes;
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var Record_Id = href.split("Record_Id=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+
+				var Record_Id     = tmp[0].split("=")[1];
+				var laizi = tmp[1].split("=")[1];
+				var currentdealer = "";
+				
+				$.ajax({
+					type:'post',
+					async: false,
+					data: {'recordId':Record_Id},
+					url:'/aftersalerecordlistbyid',
+					success:function(xml){
+						var feedbackpeople      = $(xml).find("feedBackPeople").text();
+	                    var customername      = $(xml).find("customerName").text();
+	                    var customertel      = $(xml).find("customerTel").text();
+	                    var customerunit      = $(xml).find("customerUnit").text();
+	                    var customertype      = $(xml).find("customerType").text();
+	                    var description      = $(xml).find("description").text();
+						var trackpeople    = $(xml).find("trackPeople").text();
+						var currentdealer     = $(xml).find("currentDealer").text();
+						var jieguo          = $(xml).find("jieguo").text();
+						var reporttime     = $(xml).find("reportTime").text();
+						var solvetime     = $(xml).find("solveTime").text();
+						
+						$("#currentDealer").append("<option value=\""+currentdealer+"\">"+currentdealer+"</option>");
+						$("#record_Id").val(Record_Id);
+						$("#trackPeople").val(trackpeople);
+						$("#previousDealer").val(currentdealer);
+						$("#customername").val(customername);
+						$("#customertel").val(customertel);
+						$("#customerunit").val(customerunit);
+						$("#jieguo").val(jieguo);
+						if($("#jieguo").val()=="已解决"){
+							$("#solution").show();
+							$("#solveTime").show();
+						}else{
+							$("#solution").hide();
+							$("#solveTime").hide();
+						}
+					},
+					dataType:'xml'
+				});
+				
+
+/***				$("#feedBackPeople").val(feedbackpeople);
+				$("#customerName").val(customername);
+				$("#customerTel").val(customertel);
+				$("#customerUnit").val(customerunit);
+				$("#description").val(description);
+				$("#trackPeople").val(trackpeople);
+				$("#currentDealer").val(currentdealer);
+				$("#jieguo").val(jieguo);
+				$("#reportTime").val(reporttime);
+				$("#solveTime").val(solvetime);
+***/
+//				$("#userSex option[value='"+userSex+"']").attr("selected","selected");
+//				$("#userName option[value='"+userName+"']").attr("selected","selected");
+
+
+/**				$.post('/systemDeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#userDepId").append("<option value=\""+$(this).find("id").text()+"\">"+$(this).find("name").text()+"</option>");
+								});
+							$("#userDepId option[value='"+userDepId+"']").attr("selected","selected");
+	   	                 },
+	                     'xml');
+**/
+				   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+			        $("#comfirm").click(function(){
+			        	var recordId     = $('#record_Id').val();
+					    var customername     = $('#customername').val();
+						var customertel   = $('#customertel').val();
+						var customerunit    = $('#customerunit').val();
+						var description  = $('#description').val();
+						var currentdealer   = $('#currentDealer').val();
+						var trackpeople   = $('#trackPeople').val();
+						var jieguo   = $('#jieguo').val();
+						var solvetime   = $('#solveTime').val();
+						var liuyan   = $('#liuyan').val();
+						var previousdealer   = $('#previousDealer').val();
+						var solution 		=$('#solution').val();
+						if($('#liuyan').val() == ""){
+						alert("您的处理意见不能为空哦！");
+						return;
+						}
+						
+						if(($('#jieguo').val() == "未解决"||$('#jieguo').val() == "遗留")&&$('#solveTime').val() != ""){
+						alert("问题还没得到解决，请不要填写解决时间哦！");
+						return;
+						}
+						
+						if($('#jieguo').val() == "已解决"&&$('#solveTime').val() == ""){
+						alert("问题解决了记得填写解决时间哦！");
+						return;
+						}
+						
+						if($('#customertel').val() == "已解决"&&$('#solveTime').val() == ""){
+						alert("问题解决了记得填写解决时间哦！");
+						return;
+						}
+						var strm = $('#customertel').val();
+						var regm = /^(\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$/;
+						if (!strm.match(regm) && strm!="")
+						{
+							alert("联系方式格式错误或含有非法字符!\n请检查！");
+							return;
+						}
+						
+						
+				
+						
+
+
+
+	                    $.post('/afterEdit', {'recordId':recordId,'customername':customername,'customertel':customertel,'customerunit':customerunit,'description':description,'currentdealer':currentdealer,'trackpeople':trackpeople,'jieguo':jieguo,'solvetime':solvetime,'liuyan':liuyan,'previousdealer':previousdealer,'solution':solution}, callback, 'xml');
+//	                    $("#pageNav").showPageNav(page2, pageCount, count, url);
+//						alert(liuyan);
+
+//	                    function callback(xml){
+//							var $xml = $(xml);
+
+/****							//这个函数从后台得到xml里面的数据
+							var recode = $xml.find("recode").text();
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+
+							userId    = $xml.find("userId").text();
+							userName  = $xml.find("userName").text();
+							userSex   = $xml.find("userSex").text();
+							userDepId = $xml.find("userDepId").text();
+							userDesc  = $xml.find("userDesc").text();
+
+		                    $("#userId").val(userId);
+							$("#userName").val(userName);
+							$("#userSex").val(userSex);
+							$("#userDepId").val(userDepId);
+							$("#userDesc").val(userDesc);
+*****/
+//						}
+
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								if(laizi == "shouhouzhuye"){
+								location.href="afterSale.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+//								alert($(databack).find("errormsg").text());
+							}else {
+								if(laizi == "shouhouzhuye"){
+								location.href="afterSale.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+							}
+						}
+					});
+
+				$("#back").click(
+					function(){
+							if(laizi == "shouhouzhuye"){
+								location.href="afterSale.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+					});
+
+					function init(){
+
+						$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$(this).navi();
+					}
+				//处理结果为解决时显示填写解决方法
+				$("#jieguo").change(function(){
+					//alert(jieguo=="已解决");alert(jieguo);
+					if($("#jieguo").val()=="已解决"){
+						$("#solution").show();
+						$("#solveTime").show();
+					}else{
+						$("#solution").hide();
+						$("#solveTime").hide();
+					}
+				});	
+					
+					
+					
+					//获取部门以及该部门的成员
+				$.post('/systemDeptList',{},
+							function(xml){
+								$("#dept").append("<option value=\"\">"+"—部门—"+"</option>");
+								$(xml).find("item").each(function(){
+									$("#dept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");									
+									});
+																		
+								$.post('/gotUserbyDept',
+										{'dept': $('#dept').val()},
+										function(xml){
+											$("#currentDealer").append("<option value=\"\">"+"—不选择—"+"</option>");
+											$(xml).find("item").each(function(){
+												$("#currentDealer").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+											});										
+										},
+										'xml');
+							},
+						'xml');
+																		
+				//人员随着部门改变而改变
+				$('#dept').change(function(){
+					$("#currentDealer option").remove();
+					var dept1 = $('#dept').val();
+					$.post('/gotUserbyDept',
+						{'dept':dept1},
+						function(xml){
+							$(xml).find("item").each(function(){
+								$("#currentDealer").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+							});
+							$("#currentDealer").append("<option value=\"\">"+"—不选择—"+"</option>");
+						},
+					'xml');
+				
+				});
+
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner4.jpg)">
+			  	<div id="userInfo">
+                            	<table class="di"  border="0" cellpadding="0" cellspacing="0">
+						 			 <tr>
+						 			  <td width="5" ><img src="images/sq_img_14.png" /></td>
+  		  				 			  <td align="right" ><span id="welcome" class="welcome"></span></td>
+  						 			  <td width="80" align="center"><a href="authUpdatePasswd.html" class="updatePawd">修改密码</a></td>
+ 									  <td width="80" align="center"><a href="#" onclick="logout()" class="updatePawd">安全退出</a></td>
+ 									  <td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+  								     </tr>
+								</table>
+		     	 </div>
+		  </div>
+			<div id="content" class="c-1000">
+				<div id="main">
+                	<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>修改售后服务纪录</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						</table>
+						</div></td>
+						  </tr>
+						</table>             
+                  </div>
+                  
+                  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+			    <td height="28" align="center" valign="middle" class="b_di"><strong>修改售后服务纪录</strong></td>
+			    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+			  </tr>
+			</table>
+			</div>
+<div id="content_r7">
+						<div >
+						<table class="sTable">
+							<tr  style="display:none;">
+								<td class="width_5">售后服务记录标识</td>
+								<td class="width_15"><input type="text" id="record_Id" class="width_15" readonly="readonly" style="background:#DDEEEE;width:222px"></input></td>
+							</tr>
+							<tr  >
+								<td class="width_5">问题跟踪人</td>
+								<td class="width_15"><input type="text" id="trackPeople" class="width_13" readonly="readonly" style="background:#DDEEEE;width:222px"></input></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">之前的处理人</td>
+								<td class="width_15"><input type="text" id="previousDealer" class="width_13" readonly="readonly" style="background:#DDEEEE;width:222px"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">客户联系人</td>
+								<td class="width_15"><input type="text" id="customername" class="width_13" style="width:222px"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5"><label class="required">*</label>客户联系方式</td>
+								<td class="width_15"><input type="text" id="customertel" class="width_13" style="width:222px"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">客户单位</td>
+								<td class="width_15"><input type="text" id="customerunit" class="width_13" style="width:222px"></input></td>
+							</tr>
+							
+							
+							<tr>
+								<td>当前处理人</td>
+								<td class="width_15">
+									<select name="dept" id="dept" class="dept" style="width:104px">
+							        </select>
+							        &nbsp;&nbsp;&nbsp;&nbsp;
+							        <select name="currentDealer" id="currentDealer" class="person" style="width:104px">
+							        </select>
+							     </td>
+							</tr>
+							
+							<tr>
+								<td><label class="required">*</label>处理意见</td>
+								<td class="width_15"><textarea rows="5" cols="30" class="width_13"  id="liuyan"></textarea></td>
+							</tr>
+
+							<tr>
+								<td class="width_5"><label class="required">*</label>解决状态</td>
+								<td>
+									<select name="jieguo" id="jieguo" class="width_13" style="width:226px">
+									<option value="未解决">未解决</option>
+									<option value="已解决">已解决</option>
+									<option value="遗留">遗留</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+							<td>解决方法</td>
+							<td><div><textarea rows="3" cols="30" class="width_13" id="solution"></textarea></div></td>
+							</tr>
+							<tr>
+								<td class="width_5">解决时间 </td>
+								<td class="width_15"><input id="solveTime" class="width_13" readonly="readonly" onclick="setday(this)" style="width:222px"></input></td>
+							</tr>
+							
+
+							<tr><td colspan="2">
+							                    <input class="bt" type="button" value="提交" id="comfirm"></input>
+							                    <input class="bt" type="button" value="返回" id="back"></input>
+							    </td>
+							</tr>
+						</table>
+						</div>
+					 
+				  </div>
+                    </div>
+				<div id="bg_di"></div>
+            </div>
+		  <div id="footer"></div>
+          </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+package oa.dao.table;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.Version;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class VersionDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(VersionDao.class);
+	// property constants
+	public static final String VERSION_ID = "version_id";			//版本标识
+	public static final String PROJECT_ID = "project_id";				//版本名称
+	public static final String NUMBER = "number";			//版本号
+	public static final String MANAGER = "manager";			//版本负责人
+	public static final String UPDATE_INFO = "update_info";				//版本更新信息
+	public static final String BUG = "bug";					//仍存在的问题
+	public static final String UPLOAD_ON = "upload_on";  		//上传时间
+	public static final String PATH = "path";					//文件路径
+	public static final String STATUS = "status";				//版本状态
+	public static final String DES = "des";					//备注
+
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(Version instance) {
+		log.debug("saving Version instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void saveList(List versionList) {
+		log.debug("saving Version List instance");
+		try {
+			super.saveList(versionList);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(Version instance) {
+		log.debug("deleting Version instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(Version instance) {
+		log.debug("update Version instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public Version findById(String id) {
+		log.debug("getting Version instance with id: " + id);
+		try {
+			Version instance = (Version) super.get("oa.model.table.Version", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Version> findByExample(Integer pageNo, Version version) {
+		log.debug("find Version instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Version", version);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Version> findAll(Integer pageNo) {
+		log.debug("finding all Version instances");
+		try {
+			return super.find(pageNo, "oa.model.table.Version");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<Version> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding Version instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.Version", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Version> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding Version instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.Version", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public List<Version> findByHQL(Integer pageNo, String hql){
+		log.debug("finding Version instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding Project instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+
+
+}

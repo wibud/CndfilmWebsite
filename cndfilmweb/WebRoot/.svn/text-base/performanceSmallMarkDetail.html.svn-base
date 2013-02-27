@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>删除进度</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+<script type="text/javascript">
+<!--
+//注：每个嵌入页必须定义该方法，供父窗口调用，并且返回true或false来告之父窗口是否关闭
+	$(document).ready(function(){
+		//得到当前登录用户的ID
+				var loginerId = "";
+				$.ajax({
+					type:'post',
+					async: false,
+					url:'/currentUserDetail',
+					success:function(xml){
+						loginerId = $(xml).find("userId").text();
+					},
+					dataType:'xml'});
+		var href1 = location.href;
+//		href1 = decodeURI(href1);
+		var templateResultId1 = ((href1.split("?"))[1]).split("&")[0];
+		var templateResultId = (templateResultId1.split("="))[1];
+		var markType = href1.split("type=")[1];
+		$.post('/listIdResult',{'templateResultId':templateResultId},decallback,'xml');
+		function decallback(databack){
+//			var templateResultId     	  = $(this).find("templateResultId").text();
+	        var templateId     	  	= $(databack).find("templateId").text();
+	        var managerMark    	 	  = $(databack).find("managerMark").text();
+	        var selfMark    	 	  = $(databack).find("selfMark").text();
+	        var otherMark    	 	  = $(databack).find("otherMark").text();
+	        var totalMark    	 	  = $(databack).find("totalMark").text();
+
+	        var eachIndex = "";
+	        var eachMark = 0;
+	        var totalMark =0;
+	        if(markType == "manager"){
+		        if($.browser.msie){
+		            xmlmanagerMark = new ActiveXObject("Microsoft.XMLDOM");
+					xmlmanagerMark.async = false;
+					xmlmanagerMark.loadXML("<xml>"+managerMark+"</xml>");
+				}else{
+					xmlmanagerMark = new DOMParser().parseFromString("<xml>"+managerMark+"</xml>", "text/xml");
+				}
+				$(xmlmanagerMark).find("index").each(function(){
+					eachIndex = $(this).find("name").text();
+					eachMark = $(this).find("mark").text();
+					if(eachMark == "0") eachMark = "未评价";
+					$("#indexscore").append("<tr valign='top' align='center'><td>"+eachIndex+"</td><td>"+eachMark+"</td></tr>");
+				});
+				totalMark = $(xmlmanagerMark).find("totalmark").text();
+				if(totalMark == "0") totalMark = "暂无";
+				$("#indexscore").append("<tr valign='top' align='center'><td>总分</td><td>"+totalMark+"</td></tr>");
+			}
+			
+			
+			if(markType == "self"){
+	            if($.browser.msie){
+	                xmlselfMark = new ActiveXObject("Microsoft.XMLDOM");
+					xmlselfMark.async = false;
+					xmlselfMark.loadXML("<xml>"+selfMark+"</xml>");
+				}else{
+					xmlselfMark = new DOMParser().parseFromString("<xml>"+selfMark+"</xml>", "text/xml");
+				}
+				$(xmlselfMark).find("index").each(function(){
+					eachIndex = $(this).find("name").text();
+					eachMark = $(this).find("mark").text();
+					if(eachMark == "0") eachMark = "未评价";
+					$("#indexscore").append("<tr valign='top' align='center'><td>"+eachIndex+"</td><td>"+eachMark+"</td></tr>");
+				});
+				totalMark = $(xmlselfMark).find("totalmark").text();
+				if(totalMark == "0") totalMark = "暂无";
+				$("#indexscore").append("<tr valign='top' align='center'><td>总分</td><td>"+totalMark+"</td></tr>");
+	        }
+			
+			if(markType == "other"){
+				if($.browser.msie){
+	            	xmlotherMark = new ActiveXObject("Microsoft.XMLDOM");
+					xmlotherMark.async = false;
+					xmlotherMark.loadXML("<xml>"+otherMark+"</xml>");
+				}else{
+					xmlotherMark = new DOMParser().parseFromString("<xml>"+otherMark+"</xml>", "text/xml");
+				}
+				$(xmlotherMark).find("user[userid=\""+loginerId+"\"]").find("index").each(function(){
+					eachIndex = $(this).find("name").text();
+					eachMark = $(this).find("mark").text();
+					if(eachMark == "0") eachMark = "未评价";
+					$("#indexscore").append("<tr valign='top' align='center'><td>"+eachIndex+"</td><td>"+eachMark+"</td></tr>");
+				});
+				totalMark = $(xmlotherMark).find("user[userid=\""+loginerId+"\"]").find("totalmark").text();
+				if(totalMark == "0") totalMark = "暂无";
+				$("#indexscore").append("<tr valign='top' align='center'><td>总分</td><td>"+totalMark+"</td></tr>");
+			}
+			
+		}
+	});
+	
+
+
+
+
+
+function Ok(){
+	
+	window.parent.JqueryDialog.SubmitCompleted("", true, false , "");
+
+	return false;
+}
+//-->
+</script>
+</head>
+
+<body style="margin:0px;padding:0px;">
+<div id="content" class="c-1000">
+<div id="main">
+<div id="content_r7">
+<table width="512" height="300" border="0" cellpadding="0" cellspacing="0" bgcolor="#f2ffe2" id="indexscore" class="sTable" style="margin:0 auto; border:1px solid #cde2b0; border-width:1px 0 0 1px; ">
+	<tr valign="top">
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">指标</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333;  border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid; width:42%;">评分（各指标满分均为100）</th>
+	</tr>
+
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>

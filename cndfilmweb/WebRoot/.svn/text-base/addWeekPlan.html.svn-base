@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--制定周计划</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript" src="./scripts/js/dyTableForWeekPlan.js"></script>
+        <script type="text/javascript">
+			$(document).ready(function(){
+
+				init();
+				var deptName = null;
+				$.ajax({
+					  type: 'POST',
+					  async: false,
+					  url: "/currentUserDetail",
+					  data: {},
+					  success: function(xml){
+							deptName=$(xml).find("userDeptName").text();
+						},
+					  dataType: 'xml'
+				});
+				$('.comfirm').click(function(){
+					var judgement		=null;
+					if(deptName == "公司高层" || deptName == "公司高管"){
+						judgement		="1";
+					}else{
+						judgement		="0";
+					}
+					var planCount		=0;
+					var planEndTime		=$("#planEndTime").val();
+					var planStartTime	=$("#planStartTime").val();
+					var planProgress	="";
+					var weekPlan		="";
+					var planName		="";
+					var planDetail		="";
+					//var testFinishDetail="";
+					var testStartTime	="";
+					var testEndTime		="";
+					var plan=new Array();
+					var pName=new Array();
+					var pDetail=new Array();
+					var fDetail=new Array();
+					var progress=new Array();
+					var startTime=new Array();
+					var endTime=new Array();
+					planCount+=step;
+					if (planCount<=0) {
+						alert("没有添加任务!");
+						return;
+					}
+					if (planEndTime==""|| planStartTime==""){
+						alert("请完整填写计划时间范围!");
+						return;
+					}
+					if (planEndTime < planStartTime) {
+						alert("请正确填写计划时间范围!");
+						return;
+					}
+					for (i=0;i<planCount;i++) {
+						if ($(".tesk").get(i).value!=""&& $(".tesk").get(i).value!=null) {
+							plan[i]=$(".tesk").get(i).value;
+							progress[i]="0";
+							weekPlan+=plan[i]+",";
+							planProgress+=progress[i]+",";
+						} else {
+							alert("请填写任务目标！");
+							return;
+						}
+						if ($(".name").get(i).value!=""&& $(".name").get(i).value!=null) {
+							pName[i]=$(".name").get(i).value;
+							planName+=pName[i]+",";
+						} else {
+							alert("请填写任务名称！");
+							return;
+						}
+						if ($(".detail").get(i).value!=""&& $(".detail").get(i).value!=null) {
+							pDetail[i]=$(".detail").get(i).value;
+							planDetail+=pDetail[i]+",";
+						} else {
+							alert("请填写任务详情！");
+							return;
+						}
+//						if($(".finishDetail").get(i).value!=""&& $(".finishDetail").get(i).value!=null){
+//							fDetail[i]=$(".finishDetail").get(i).value;
+//							testFinishDetail+=fDetail[i]+",";
+//						}else{
+//							alert("请填写任务完成情况！");
+//							return;
+//						}
+						if($(".testEndTime").get(i).value != "" || $(".testStartTime").get(i).value != "") {
+						// 如果填写了任务时间范围
+							if ($(".testEndTime").get(i).value == "" || $(".testStartTime").get(i).value == "") {
+								alert("请完整填写任务时间范围!");
+								return;
+							}
+							if($(".testStartTime").get(i).value < planStartTime
+								|| $(".testStartTime").get(i).value > planEndTime
+								|| $(".testEndTime").get(i).value < planStartTime
+								|| $(".testEndTime").get(i).value > planEndTime ){
+								alert("任务时间范围应该在周计划时间范围内!");
+								return;
+							}
+							if ($(".testEndTime").get(i).value < $(".testStartTime").get(i).value) {
+								alert("请正确填写任务时间范围!");
+								return;
+							}
+						}
+						startTime[i]=$(".testStartTime").get(i).value;
+						endTime[i]=$(".testEndTime").get(i).value;
+						testStartTime+=startTime[i]+",";
+						testEndTime+=endTime[i]+",";
+					}
+					weekPlan=weekPlan.replaceAll("\n|\r\n","<br/>");
+					planName=planName.replaceAll("\n|\r\n","<br/>");
+					planDetail=planDetail.replaceAll("\n|\r\n","<br/>");
+//					testFinishDetail=testFinishDetail.replaceAll("\n|\r\n","<br/>");
+			
+					$.post('/addWeekPlan',{'testStartTime':testStartTime,'testEndTime':testEndTime,'judgement':judgement,'planCount':planCount,'planEndTime':planEndTime,'planStartTime':planStartTime,'planProgress':planProgress,'weekPlan':weekPlan,'planName':planName,'planDetail':planDetail},callback,'xml');
+					function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode != 0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								location.href="WeekPlanList.html";
+							}
+						}									
+					
+					
+				});
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+			});	
+			
+			
+		</script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：日常管理 &gt;周计划管理&gt;&nbsp;
+										<strong>制定周计划</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>制定周计划</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr><th><label class="required">*</label>计划起止时间</th><td id="area" class="width_15">从&nbsp;<input id="planStartTime" class="width_5" onclick="setday(this)" readonly="readonly"></input>&nbsp;到&nbsp;<input id="planEndTime" class="width_5" onclick="setday(this)" readonly="readonly"></input></td></tr>
+						</table>
+						<br/><br/>	
+								<a href="#" onclick="javascript:mytable.add()"  ><img src="images/bg_jia.png" name="Image25" width="18" height="18" border="0" id="Image25" /></a>
+							   &nbsp;
+							    <a href="#" onclick="javascript:mytable.add()" style="text-decoration:none;color:black">添加任务</a>
+							    &nbsp;
+							    <a href="#" onclick="javascript:mytable.del()" ><img src="images/bg_shan.png" name="Image24" width="18" height="18" border="0" id="Image24" /></a>
+							    &nbsp;
+							    <a href="#" onclick="javascript:mytable.del()" style="text-decoration:none;color:black">删除选定任务</a>
+							    &nbsp;
+							    <a href="#" onclick="javascript:mytable.up()" ><img src="images/bg_shang.png" name="Image23" width="18" height="18" border="0" id="Image23" /></a>
+							    &nbsp;
+							    <a href="#" onclick="javascript:mytable.up()" style="text-decoration:none;color:black">上移选定任务</a>
+							    &nbsp;
+							    <a href="#" onclick="javascript:mytable.down()" ><img src="images/bg_xia.png" name="Image22" width="18" height="18" border="0" id="Image22" /></a>
+							    &nbsp;
+							    <a href="#" onclick="javascript:mytable.down()" style="text-decoration:none;color:black">下移选定任务</a>
+							  	&nbsp;
+							    <a href="#" class="comfirm"><img src="images/bg_ti.gif" name="Image20" width="18" height="18" border="0" id="Image20" /></a>
+							    &nbsp;
+							    <a href="#" class="comfirm" style="text-decoration:none;color:black">提交</a>
+							    &nbsp;
+							    <a href="javascript:history.back()" ><img src="images/bg_fh.gif" name="Image21" width="18" height="18" border="0" id="Image21" /></a>
+							    &nbsp;
+							    <a href="javascript:history.back()" style="text-decoration:none;color:black">返回</a>				
+						<br/><br/>
+						<table id="tbl" class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr><th style=width:50px>序号</th><th><label class="required">*</label>任务名称</th><th><label class="required">*</label>任务详情</th><th><label class="required">*</label>本周任务目标</th><th style=width:350px >目标期限</th></tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

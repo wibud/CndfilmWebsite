@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--绩效考核管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>     
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			String.prototype.replaceAll=function(s1,s2) {
+				return this.replace(new RegExp(s1,"gm"),s2);
+			}; 
+			//初始化页面
+			$(document).ready(function(){
+			
+				init();
+				
+				document.getElementById("check1").checked=true;
+  				document.getElementById("check1").disabled=true;
+  				
+  				$("#managerweight").val("100").attr("disabled", "disabled");
+  				$("#selfweight").val("0").attr("disabled", "disabled");
+  				$("#otherweight").val("0").attr("disabled", "disabled");
+  				
+  				$("#check2").click(function(){
+					if(document.getElementById("check2").checked==true){
+						$("#selfweight").val("").removeAttr("disabled");
+						$("#managerweight").removeAttr("disabled");
+						if(document.getElementById("check3").checked==false){
+							$("#managerweight").val("");
+						}
+					}else{
+						$("#selfweight").val("0").attr("disabled", "disabled");
+						if(document.getElementById("check3").checked==false){
+							$("#managerweight").val("100").attr("disabled", "disabled");
+						}
+					}
+					
+				});
+				$("#check3").click(function(){
+					if(document.getElementById("check3").checked==true){
+						$("#otherweight").removeAttr("disabled").val("");
+						$("#managerweight").removeAttr("disabled");
+						if(document.getElementById("check2").checked==false){
+							$("#managerweight").val("");
+						}
+					}else{
+						$("#otherweight").val("0").attr("disabled", "disabled");
+						if(document.getElementById("check2").checked==false){
+							$("#managerweight").val("100").attr("disabled", "disabled");
+						}
+					}
+				});
+  				
+				$(".indexweight:first").val("100");
+				$(".indexweight").attr("disabled","disabled");
+				$("#addindex").click(function(){
+					$(".indexweight:first").val("");
+					$(".indexweight").removeAttr("disabled");
+					$("#zhibiao").append("<br>&nbsp;指标：<input type='text' class='indexname' style='width:200px'></input>"+
+											"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+
+											"权重：<input type='text' class='indexweight' style='width:25px'></input>&nbsp;%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+  				});
+  				
+  				$("#comfirm").click(function(){
+  					if($("#templatename").val() == ""){
+						alert("请填写好模板名称！");
+						return;
+                    }
+  					if($('#managerweight').val() == ""){
+						alert("主管考评所占比例不能为空！");
+						return;
+                    }
+                    var strnum = /^[0-9]*$/;
+                    var managerweight = $("#managerweight").val();
+                    var selfweight = $("#selfweight").val();
+                    var otherweight = $("#otherweight").val();
+                    var templatename = $("#templatename").val();
+                    var templatedescription = $("#templatedescription").val();
+                    if (!managerweight.match(strnum) || managerweight==""||managerweight>100||managerweight<1)
+					{
+						alert("主管考评百分比范围是整数1-100!\n请重新输入！");
+						return;
+					}
+					if (document.getElementById("check2").checked==true && (!selfweight.match(strnum) || selfweight=="" || selfweight>100 || selfweight<1))
+					{
+						alert("自评百分比范围是整数1-100!\n请重新输入！");
+						return;
+					}
+					if (document.getElementById("check3").checked==true && (!otherweight.match(strnum) || otherweight=="" || otherweight>100 || otherweight<1))
+					{
+						alert("同事互评百分比范围是整数1-100的!\n请重新输入！");
+						return;
+					}
+					
+					if(document.getElementById("check2").checked==true && document.getElementById("check3").checked==true && Number(managerweight)+Number(selfweight)+Number(otherweight)!=100){
+						alert("此时主管考评、自评、互评比例之和应为100%！");
+						return;
+					}
+					if(document.getElementById("check2").checked==true && document.getElementById("check3").checked==false && Number(managerweight)+Number(selfweight)!=100){
+						alert("此时主管考评、自评比例之和应为100%！");
+						return;
+					}
+					if(document.getElementById("check2").checked==false && document.getElementById("check3").checked==true && Number(managerweight)+Number(otherweight)!=100){
+						alert("此时主管考评、互评比例之和应为100%！");
+						return;
+					}
+                    
+  					var indexname="";
+  					var indexnameflag=0;
+  					for(var i=0;i<$(".indexname").length;i++){
+  						if($(".indexname").get(i).value==""){
+  							indexnameflag++;
+  						}
+  						indexname+=$(".indexname").get(i).value+"$";
+  					}
+  					if(indexnameflag!=0){
+  						alert("请填写好考核指标！");
+  						return;
+  					}
+  					
+  					var indexweight="";
+  					var indexweightflag1=0;
+  					var indexweightflag2=0;
+  					var indexweightsum=0;
+  					for(var i=0;i<$(".indexweight").length;i++){
+  						if($(".indexweight").get(i).value==""){
+  							indexweightflag1++;
+  						}
+  						if(!($(".indexweight").get(i).value).match(strnum) || $(".indexweight").get(i).value>100 || $(".indexweight").get(i).value<1){
+  							indexweightflag2++;
+  						}
+  						indexweight+=$(".indexweight").get(i).value+"$";
+  						indexweightsum+=Number($(".indexweight").get(i).value);
+  					}
+  					if(indexweightflag1!=0){
+  						alert("请填写好各考核指标的权重！");
+  						return;
+  					}
+  					if(indexweightflag2!=0){
+  						alert("权重百分比范围是整数1-100!\n请重新输入！");
+						return;
+  					}
+  					if(indexweightsum!=100){
+  						alert("各指标权重之和应为100%！");
+  						return
+  					}
+  					
+  					if($("#templatedescription").val() == ""){
+						alert("请填写好对模板的描述！");
+						return;
+                    }
+  					
+  					$.post('/addPerformanceTemplate',{'templateName':templatename,'managerWeight':managerweight,'selfWeight':selfweight,'otherWeight':otherweight,'allIndexName':indexname,'allIndexWeight':indexweight,'templateDescription':templatedescription},callback,'xml');
+  					function callback(databack){
+  						var recode = $(databack).find("recode").text();
+  						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							alert("绩效考核模板添加成功！");
+//							location.href="afterSale.html";
+						}
+  					}
+  				});
+  				
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+				
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+//						location.href="afterSale.html?page="+page;
+					}
+				}
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner4.jpg)">
+			  	<div id="userInfo">
+                            	<table class="di"  border="0" cellpadding="0" cellspacing="0">
+						 			 <tr>
+						 			  <td width="5" ><img src="images/sq_img_14.png" /></td>
+  		  				 			  <td align="right" ><span id="welcome" class="welcome"></span></td>
+  						 			  <td width="80" align="center"><a href="authUpdatePasswd.html" class="updatePawd">修改密码</a></td>
+ 									  <td width="80" align="center"><a href="#" onclick="logout()" class="updatePawd">安全退出</a></td>
+ 									  <td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+  								     </tr>
+								</table>
+		     	 </div>
+		  </div>
+			<div id="content" class="c-1000">
+				<div id="main">
+                	<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>添加绩效考核模板</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						</table>
+						</div></td>
+						  </tr>
+						</table>             
+                  </div>
+                  
+                  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+			    <td height="28" align="center" valign="middle" class="b_di"><strong>添加绩效考核模板</strong></td>
+			    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+			  </tr>
+			</table>
+			</div>
+<div id="content_r7">
+						<table class="sTable">
+						
+							<tr>
+								<td><label class="required">*</label>模板名称</td>
+								<td class="width_15"><input type="text" id="templatename" class="wideSelText"></input>&nbsp;</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" id="check1" ></input>&nbsp;&nbsp;主管考评</td>
+								<td class="width_15">比例：&nbsp;<input type="text" id="managerweight" style="width:25px"></input>&nbsp;%</td>
+							</tr>
+							
+							<tr>
+								<td><input type="checkbox" id="check2" ></input>&nbsp;&nbsp;自评&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td class="width_15">比例：&nbsp;<input type="text" id="selfweight" style="width:25px"></input>&nbsp;%</td>
+							</tr>
+							
+							<tr>
+								<td><input type="checkbox" id="check3" ></input>&nbsp;&nbsp;互评&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td class="width_15">比例：&nbsp;<input type="text" id="otherweight" style="width:25px"></input>&nbsp;%</td>
+							</tr>
+							
+							<tr>
+								<td><label class="required">*</label>考核指标及权重</td>
+								<td class="width_15" id="zhibiao">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;指标：<input type="text" class="indexname" style="width:200px"></input>
+									&nbsp;&nbsp;&nbsp;
+									权重：<input type="text" class="indexweight" style="width:25px"></input>&nbsp;%
+									<input  type="button" id="addindex" value="单击添加更多指标"></input>
+								</td>
+							</tr>
+							
+							<tr>
+								<td><label class="required">*</label>模板描述描述</td>
+								<td class="width_15"><textarea rows="5" cols="24"  class="wideSelText"  id="templatedescription"></textarea></td>
+							</tr>
+
+							<tr><td colspan="2"><input class="bt" type="button" id="comfirm" value="提交"></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:location.href='javascript:history.back()'"></input>
+							    </td>
+							</tr>
+						</table>
+				  </div>
+                    </div>
+				<div id="bg_di"></div>
+         </div>
+			<div id="bg_yejiao">
+		  <div id="footer">
+ 
+          </div>
+		  </div>
+		</div>
+</body>
+</html>
+

@@ -1,0 +1,176 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id = "user_id")
+@Entity
+@Table(name = "tb_user")
+public class User {
+	@Id
+	private String user_id; // 用户标识
+	private String key_id; // 钥匙标识
+	private String name; // 用户名称
+	private String sex; // 性别
+	private String post_id; // 关联position表中post_id字段
+	private String dept_id; // 关联department表中dept_id字段
+	private String address; // 用户地址
+	private String place_info; // 工位信息
+	private String telephone; // 固话
+	private String mobile; // 手机
+	private String email; // 邮箱
+	private String user_ip; // IP地址
+	private String user_desc;// 用户描述
+	private String password;// 用户密码
+	private String idNumber;//身份证号码
+	private String permissionXml;// 权限信息
+	private String templateId;// 绩效考核模板Id
+	private String appraiser;// 互评人
+
+	public String getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(String userId) {
+		user_id = userId;
+	}
+
+	public String getKey_id() {
+		return key_id;
+	}
+
+	public void setKey_id(String keyId) {
+		key_id = keyId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public String getPost_id() {
+		return post_id;
+	}
+
+	public void setPost_id(String postId) {
+		post_id = postId;
+	}
+
+	public String getDept_id() {
+		return dept_id;
+	}
+
+	public void setDept_id(String deptId) {
+		dept_id = deptId;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPlace_info() {
+		return place_info;
+	}
+
+	public void setPlace_info(String placeInfo) {
+		place_info = placeInfo;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getUser_desc() {
+		return user_desc;
+	}
+
+	public void setUser_desc(String userDesc) {
+		user_desc = userDesc;
+	}
+
+	public String getUser_ip() {
+		return user_ip;
+	}
+
+	public void setUser_ip(String userIp) {
+		user_ip = userIp;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getIdNumber() {
+		return idNumber;
+	}
+
+	public void setIdNumber(String idNumber) {
+		this.idNumber = idNumber;
+	}
+
+	public String getPermissionXml() {
+		return permissionXml;
+	}
+
+	public void setPermissionXml(String permissionXml) {
+		this.permissionXml = permissionXml;
+	}
+
+	public String getTemplateId() {
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this.templateId = templateId;
+	}
+
+	public String getAppraiser() {
+		return appraiser;
+	}
+
+	public void setAppraiser(String appraiser) {
+		this.appraiser = appraiser;
+	}
+
+}

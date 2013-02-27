@@ -1,0 +1,597 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--权限管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+    	<style type="text/css">
+			<!--
+			a:link {
+				text-decoration: none;
+			}
+			a:visited {
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			a:active {
+				text-decoration: none;
+			}
+			-->
+        </style>
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+				//初始化dept,userDept,user列表
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#dept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+									$("#userDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});
+	   	                 },
+	                     'xml'
+	             );
+
+	             //初始化权限设置页面 
+	             $.ajax({url: 'permissionTemplate.xml',
+	             		data: {},
+	             		async: false,
+	             		success: function(xml){
+	             				//根据xml的内容显示选项
+	             				$(xml).find("permission").children().each(function(i){
+	             			
+	             					var cat	= this.tagName;
+	             					var title = $(this).attr("title");
+	             					if (title == "项目信息" || title ==  "绩效考核对象管理") {
+	             						return;
+	             					}
+	             					var str = "<tr><td>"+title+"</td><td id='" + cat + "'>";
+	             					
+	             					$(this).children().each(function(){
+	             						var checkboxClass = cat;
+	             						var checkboxValue = this.tagName;
+	             						var optionTitle = $(this).attr("title");
+		             					// 添加查看请假加班部门范围
+		             					if (cat == "ticketApplyInfo" && checkboxValue == "read") {
+		             						str +="查看请假、加班详情<br/><table border='0' cellspacing='0' cellpadding='0'class='wideSelText' align=\"center\"><tr><td><select class='doubleSelText' id='addApplyDept' multiple='multiple' title='双击以添加'></select></td><td><img src='images/arrow_two_head.png'></img></td><td><select class='doubleSelText' id='removeApplyDept' multiple='multiple'title='双击以删除'></select></td></tr></table>";
+		             					} else {
+	             							str += "<input type='checkbox'   value='"+ checkboxValue +"' class='"+ checkboxClass +"' />"+optionTitle+"     ";
+	             						}
+	             					});
+
+	             					str += "</td></tr>";	    
+	             					$("#finalRow").before(str);    
+	             					
+	             				});
+	             				$("#finalRow").before("<tr><td rowspan='2'>绩效考核操作对象</td><td>能够对以下部门发起绩效考核<table border='0' cellspacing='0' cellpadding='0'class='wideSelText' align=\"center\"><tr><td><select class='doubleSelText' id='addLaunchDept' multiple='multiple' title='双击以添加'></select></td><td><img src='images/arrow_two_head.png'></img></td><td><select class='doubleSelText' id='removeLaunchDept' multiple='multiple'title='双击以删除'></select></td></tr></table></td></tr>");
+	             				$("#finalRow").before("<tr><td>能够对以下部门指定考核模板<table border='0' cellspacing='0' cellpadding='0' class='wideSelText' align=\"center\"><tr><td><select class='doubleSelText' id='addAssignDept' multiple='multiple' title='双击以添加'></select></td><td><img src='images/arrow_two_head.png'></img></td><td><select class='doubleSelText' id='removeAssignDept' multiple='multiple' title='双击以删除'></select></td></tr></table></td></tr>");
+	             				performanceLaunch();
+	             				performanceAssign();
+	             			},
+	             		dataType:'xml'
+	             });
+
+				//添加和删除项目信息权限部门  以及 绩效考核部门
+				initMultiSelect("addReadDept", "removeReadDept");
+				initMultiSelect("addUpdateDept", "removeUpdateDept");
+				initMultiSelect("addApplyDept", "removeApplyDept");
+				initMultiSelect("addLaunchDept", "removeLaunchDept");
+				initMultiSelect("addAssignDept", "removeAssignDept");
+				
+				function initMultiSelect(listToSelect, listSelected) {
+					$("#" + listToSelect).dblclick(function(){
+						$("#" + listToSelect + " option:selected").each(function(){
+							$(this).remove().appendTo("#" + listSelected);
+						});
+					});
+					$("#" + listSelected).dblclick(function(){
+						$("#" + listSelected + " option:selected").each(function(){
+							$(this).remove().appendTo("#" + listToSelect);
+						});
+					});
+				}
+	             //初始化设置方式
+	             $("#byPosition").attr("checked","checked");
+	             $("#userDept").attr("disabled", "disabled");
+	             $("#user").attr("disabled", "disabled");
+	             
+	             //权限赋予方式切换
+	            var type = "byPosition";
+	             $("#byUser").click(function(){
+	             		$("#userDept").removeAttr("disabled");
+	             		$("#user").removeAttr("disabled");
+	             		$("#dept").attr("disabled", "disabled");
+	             		$("#position").attr("disabled", "disabled");    
+	             		type = "byUser";    
+	             		updatePermissionByUser();     			
+	             	});
+	             $("#byPosition").click(function(){
+	             		$("#dept").removeAttr("disabled");
+	             		$("#position").removeAttr("disabled");
+	             		$("#userDept").attr("disabled", "disabled");
+	             		$("#user").attr("disabled", "disabled"); 
+	             		type = "byPosition";
+	             		updatePermissionByPosition();  
+	             });
+	             
+	             //改变职位时更新权限信息        
+	            $("#position").change(function() {
+	            	updatePermissionByPosition();
+	            });
+	             //改变用户时更新权限信息   
+	            $("#user").change(function(){
+	           		updatePermissionByUser();
+	            });
+	            //改变部门时更新职位信息
+	            $("#dept").change(function(){
+	                //清除原有信息
+           			clearAll();
+	            	var deptId = $("#dept").val();
+	            	$("#position option:gt(0)").remove();
+	            	if(deptId == "-1") {
+	            		return;
+	            	}
+	            	//更新职位列表
+					$.post('/getPostByDeptId',
+		            			{'deptId':$("#dept").val()},
+		            			function(xml){
+		            				$(xml).find("item").each(function(){
+										$("#position").append("<option value=\""+$(this).find("postId").text()+"\">"+$(this).find("postName").text()+"</option>");
+	
+									});
+								},
+									'xml'
+           			);
+	            });
+	            //改变用户部门时，更新用户列表
+	            $("#userDept").change(function(){
+                     //清除原有信息
+           			 clearAll();
+           			 var userDeptId = $("#userDept").val();
+	            	$("#user option:gt(0)").remove();
+	            	if(userDeptId == "-1") {	            		
+	            		return;
+	            	}
+            		var dept = $("#userDept").val();
+            		$.post('/getUserByDept',
+                    {'userDeptId':userDeptId},
+                    function(xml){
+						$(xml).find("item").each(function(){
+								$("#user").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+							});
+   	                 },
+                     'xml');
+	            }); 	           
+	            
+	            
+	            //点击确定时，存入权限信息
+	            $("#submit").click(function(){
+	            	if(type == "byUser") {
+	            		if($("#user").val() == -1) {
+							alert("请选择用户！");
+							return;
+						}
+	            	}else{
+		            	if($("#dept").val()==-1) {
+							alert("请选择部门！");
+							return;
+						}else if($("#position").val()==-1) {
+							alert("请选择职位！");
+							return;
+						}
+					}
+	            	$.get('permissionTemplate.xml',
+	            			function(xml) {
+	            				$(":checked").each(function(){
+	            					var className = $(this).attr("class");
+	            					var value = $(this).attr("value");
+	            					$(xml).find("permission").find(className).find(value).text(1);
+	            				});
+		            			//获取已选部门
+	            				var strReadDept = "";
+	            				var strUpdateDept = "";
+			                    $("#removeReadDept option").each(function() {
+			                    	var id = $(this).val();
+			                    	var name = $(this).text();
+			                    	strReadDept += id + "," + name + ";";
+			                    });
+			                    $("#removeUpdateDept option").each(function() {
+			                    	var id = $(this).val();
+			                    	var name = $(this).text();
+			                    	strUpdateDept += id + "," + name + ";";
+			                    });
+			                    //获取已选绩效部门
+	            				var strLaunchDept = "";
+	            				var strAssignDept = "";
+			                    $("#removeLaunchDept option").each(function() {
+			                    	var id = $(this).val();
+			                    	var name = $(this).text();
+			                    	strLaunchDept += id + "," + name + ";";
+			                    });
+			                    $("#removeAssignDept option").each(function() {
+			                    	var id = $(this).val();
+			                    	var name = $(this).text();
+			                    	strAssignDept += id + "," + name + ";";
+			                    });
+			                    // 获取请假加班部门
+			                  var strApplyDept = "";
+			                  	$("#removeApplyDept option").each(function() {
+			                    	var id = $(this).val();
+			                    	var name = $(this).text();
+			                    	strApplyDept += id + "," + name + ";";
+			                    });
+			                 	//将部门信息写入xml 加上绩效部门信息@2011-11-03
+			                    $(xml).find("permission").find("projectInfo").find("read").text(strReadDept);
+			                    $(xml).find("permission").find("projectInfo").find("update").text(strUpdateDept);
+			                    $(xml).find("permission").find("ticketApplyInfo").find("read").text(strApplyDept);
+			                    $(xml).find("permission").find("performanceObjectInfo").find("launchObject").text(strLaunchDept);
+			                    $(xml).find("permission").find("performanceObjectInfo").find("assignObject").text(strAssignDept);
+			                    //将xml转换为字符串
+		            			var x = $(xml);
+		            			x.children().each(function(){
+									if($.browser.msie){
+										xmlstr = this.xml;
+									}else{
+										xmlstr = (new XMLSerializer()).serializeToString(this);
+									}
+								var method;	
+								var param;
+								if(type == "byPosition") {
+									method="/setPermissionByPosition";
+									param = {'deptId':$("#dept").val(), 'postId':$("#position").val(), 'strPermission':xmlstr};
+								}else{
+									method="/setPermissionById";
+									param = {'userId':$("#user").val(), 'strPermission':xmlstr};
+								}
+								$.post(	method,
+										param,
+										function(xml){
+											var recode = $(xml).find("recode").text();
+											if(!recode){
+												alert($(xml).find("errormsg").text());
+											}else{
+												alert("设置成功！");
+											}									
+										},
+										'xml'
+										);
+												
+		            			});
+	            			},
+	            			'xml');
+	            });
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+				function updatePermissionByUser() {
+					clearAll();
+					if($("#user").val() == -1) {
+						return;
+					}
+					 $.post('/getPermissionById',
+		                    {'userId':$("#user").val()},
+		                    function(xml){
+								$("input[type=checkbox]").each(function() {
+								   $(this).removeAttr("checked");
+									var className = $(this).attr("class");
+									var value	 = $(this).attr("value");
+									var p = $(xml).find("permission").find(className).find(value).text();
+									if($(xml).find("permission").find(className).find(value).text() == "1"){
+										$(this).attr("checked", "checked");
+									}
+								});
+								showDeptList(xml);
+		   	                 },
+		                     'xml');
+				}
+				function updatePermissionByPosition() {
+					clearAll();
+					if($("#dept").val()==-1 || $("#position").val()==-1) {
+						return;
+					}
+					$.post('/getPermissionByPosition',
+	                    {'deptId':$("#dept").val(), 'postId':$("#position").val()},
+	                    function(xml){
+							$("input[type=checkbox]").each(function() {
+							 	$(this).removeAttr("checked");
+								var className = $(this).attr("class");
+								var value	 = $(this).attr("value");
+								if($(xml).find("permission").find(className).find(value).text() == "1"){
+									$(this).attr("checked", "checked");
+								}
+							});
+							showDeptList(xml);								
+	   	                 },
+	                     'xml');
+				}
+				
+				function showDeptList(xml) {
+
+						//获取部门信息
+						showSelectedDept(xml, "projectInfo", "read", "removeReadDept");
+						showSelectedDept(xml, "projectInfo", "update", "removeUpdateDept");
+						
+						//获取绩效部门对象信息@2011-11-03
+						showSelectedDept(xml, "performanceObjectInfo", "launchObject", "removeLaunchDept");
+						showSelectedDept(xml, "performanceObjectInfo", "assignObject", "removeAssignDept");
+						
+						// 显示请假加班列表
+						showSelectedDept(xml, "ticketApplyInfo", "read", "removeApplyDept");
+					    updateDeptToSelect();
+				}
+				
+				//显示已选择部门列表
+				function showSelectedDept(xml, parentNode, childNode, listSelected) {
+					var strDeptList = $(xml).find("permission").find(parentNode).find(childNode).text();
+					if (strDeptList!=null && strDeptList!="") {
+						deptList = strDeptList.split(";");
+					    
+					    for(var i = 0, len = deptList.length-1; i< len; i++) {
+					          deptId = deptList[i].split(",")[0];
+					          deptName = deptList[i].split(",")[1];
+					          //$("#" + listSelected).append("<option value=\""+deptId+"\">"+deptName+"</option>");
+					          dup = false;
+							  $("#" + listSelected + " option").each(function(){
+									if(deptId == $(this).val()) {
+										dup = true;
+									}
+							  });
+							  if(!dup) {
+								  $("#" + listSelected).append("<option value=\""+deptId+"\">"+deptName+"</option>");
+							  }
+					    }
+					}
+				}
+				//更新待选部门信息
+				function updateDeptToSelect() {
+								
+					$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									var deptId =$(this).find("deptId").text();
+									var deptName = $(this).find("deptName").text();
+									//显示可选的部门
+									showDeptToSelect("addReadDept", "removeReadDept", deptName, deptId);
+									showDeptToSelect("addUpdateDept", "removeUpdateDept", deptName, deptId);
+									showDeptToSelect("addLaunchDept", "removeLaunchDept", deptName, deptId);
+									showDeptToSelect("addAssignDept", "removeAssignDept", deptName, deptId);
+									showDeptToSelect("addApplyDept", "removeApplyDept", deptName, deptId);
+							});
+	   	                 },
+	                     'xml'
+	             	);
+				}  
+				
+				//显示可选的部门
+				function showDeptToSelect(listToSelect, listSelected, deptName, deptId) {
+					dup = false;
+					$("#" + listSelected + " option").each(function(){
+						if(deptId == $(this).val()) {
+							dup = true;
+						}
+					});
+					if(!dup) {
+						$("#" + listToSelect).append("<option value=\""+deptId+"\">"+deptName+"</option>");
+					}
+				}
+				function clearAll() {
+					$("input[type=checkbox]").each(function() {
+						$(this).removeAttr("checked");
+					});
+					//清除原有部门信息
+					$("#removeReadDept option").remove();
+					$("#removeUpdateDept option").remove();	
+					$("#addReadDept option").remove();
+					$("#addUpdateDept option").remove();	
+					
+					$("#removeLaunchDept option").remove();
+					$("#removeAssignDept option").remove();	
+					$("#addLaunchDept option").remove();
+					$("#addAssignDept option").remove();
+					
+					$("#addApplyDept option").remove();
+					$("#removeApplyDept option").remove();
+				}          
+			});
+        </script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页 &gt;&nbsp;
+										<strong>权限管理</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>权限管理</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<input type="radio" name="radio" id="byPosition"
+										value="byPosition" />
+									根据职位授权
+								</td>
+								<td>
+									<label for="dept">
+										部门
+									</label>
+									<select name="dept" id="dept" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+									<label for="position">
+										职位
+									</label>
+									<select name="position" id="position" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="radio" id="byUser" value="byUser" />
+									<label for="byUser">
+										根据人员授权
+									</label>
+								</td>
+								<td>
+									<label for="userDept">
+										部门
+									</label>
+									<select name="userDept" id="userDept" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+									<label for="user">
+										用户
+									</label>
+									<select name="user" id="user" class="doubleSelText">
+										<option value="-1" selected="selected"></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td rowspan="2">
+									项目信息
+								</td>
+								<td>查询
+									<table border='0' cellspacing='0' cellpadding='0'
+										class='wideSelText' align="center">
+										<tr>
+											<td>
+												<select class="doubleSelText" id='addReadDept' multiple='multiple' title='双击以添加'></select>
+											</td>
+											<td>
+												<img src='images/arrow_two_head.png'></img>
+											</td>
+											<td>
+												<select class="doubleSelText" id='removeReadDept' multiple='multiple'
+													title='双击以删除'></select>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>修改
+									<table border='0' cellspacing='0' cellpadding='0'
+										class='wideSelText' align="center">
+										<tr>
+											<td>
+												<select class="doubleSelText" id='addUpdateDept' multiple='multiple' title='双击以添加'></select>
+											</td>
+											<td>
+												<img src='images/arrow_two_head.png'></img>
+											</td>
+											<td>
+												<select class="doubleSelText" id='removeUpdateDept' multiple='multiple'
+													title='双击以删除'></select>
+											</td>
+										</tr>
+									</table>
+									</td>
+							</tr>
+							<tr id="finalRow">
+								<td colspan='2'>
+									<input type='button' class="bt" value='确定' id='submit' />
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+				<div id="bg_di"></div>
+            </div>
+            <div id="footer"></div>
+
+         </div>
+	</body>
+</html>

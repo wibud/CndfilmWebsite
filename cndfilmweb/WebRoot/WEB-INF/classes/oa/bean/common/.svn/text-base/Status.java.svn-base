@@ -1,0 +1,49 @@
+package oa.bean.common;
+
+import oa.exception.LocalException;
+import oa.util.ExceptionUtil;
+
+public final class Status {
+	public static final String NORMAL = "0";
+	public static final String DISABLED = "-1";
+	public static final String DELETED = "-2";
+	public static final String MODIFIED = "-3";
+	public static final String TIMEOUT = "-4";
+	
+	public static final String getter(String status){
+		if(status == null || status.equals("")){
+			return "";
+		}else if(status.equals(NORMAL)){
+			return "正常";
+		}else if(status.equals(DISABLED)){
+			return "已禁用";
+		}else if(status.equals(DELETED)){
+			return "已删除";
+		}else if(status.equals(MODIFIED)){
+			return "已修改";
+		}else if(status.equals(TIMEOUT)){
+			return "已过期";
+		}else {
+			ExceptionUtil.throwException(new LocalException("状态字段格式错误"));
+			return null;
+		}
+	}
+	
+	public static final String setter(String status){
+		if(status == null){
+			return null;
+		}else if(status.equals("正常")){
+			return NORMAL;
+		}else if(status.equals("已禁用")){
+			return DISABLED;
+		}else if(status.equals("已删除")){
+			return DELETED;
+		}else if(status.equals("已修改")){
+			return MODIFIED;
+		}else if(status.equals("已过期")){
+			return TIMEOUT;
+		}else {
+			return status;
+		}
+	}
+}

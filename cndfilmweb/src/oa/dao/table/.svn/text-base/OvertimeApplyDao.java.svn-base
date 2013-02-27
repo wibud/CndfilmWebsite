@@ -1,0 +1,143 @@
+package oa.dao.table;
+
+import java.util.List;
+
+import oa.dao.BaseDao;
+import oa.model.table.OvertimeApply;
+import oa.util.ResultList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+@SuppressWarnings("unchecked")
+public class OvertimeApplyDao extends BaseDao{
+
+	private static final Logger log = LoggerFactory.getLogger(OvertimeApplyDao.class);
+	
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(OvertimeApply transientInstance) {
+		log.debug("saving OvertimeApply instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.error("save failed", re);
+			throw re;
+		}
+	}
+		
+	public void delete(OvertimeApply persistentInstance) {
+		log.debug("deleting OvertimeApply instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+   
+	public void update(OvertimeApply instance) {
+		log.debug("update OvertimeApply instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	
+	public OvertimeApply findById(String id){
+		log.debug("finding OvertimeApply instance with id: " + id);
+		try {
+			OvertimeApply instance = (OvertimeApply)super.get("oa.model.table.OvertimeApply", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("find by username failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<OvertimeApply> findByExample(Integer pageNo, OvertimeApply instance) {
+		log.debug("find OvertimeApply instances with example");
+//		System.out.println(instance);
+		try {
+			return super.find(pageNo, "oa.model.table.OvertimeApply", instance);
+		} catch (RuntimeException re) {
+			log.debug("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<OvertimeApply> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding OvertimeApply instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.OvertimeApply", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<OvertimeApply> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding OvertimeApply instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.OvertimeApply", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<OvertimeApply> findAll(Integer pageNo) {
+		log.debug("finding all OvertimeApply instances");
+		try {
+			return super.find(pageNo, "oa.model.table.OvertimeApply");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	//以一个字段或另一个字段为条件模糊查询
+	public ResultList<OvertimeApply> findByProperty(Integer pageNo,String propertyName1,String propertyName2,String value){
+		log.debug("finding OvertimeApply instance with property: " + propertyName1
+				+ ", value: " + value+" or "+propertyName2+", value; "+value);
+		try {
+			return super.likefind(pageNo, "oa.model.table.OvertimeApply", propertyName1, propertyName2,value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+	//连表查询
+	public List<OvertimeApply> findByHQL(Integer pageNo, String hql){
+		log.debug("finding OvertimeApply instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	
+	public String findCount(String hql){
+		log.debug("finding OvertimeApply instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+}

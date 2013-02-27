@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--售后服务详情</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			String.prototype.replaceAll=function(s1,s2) {
+				return this.replace(new RegExp(s1,"gm"),s2);
+			};
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var Record_Id = href.split("Record_Id=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+
+				var Record_Id     = tmp[0].split("=")[1];
+				var laizi = tmp[1].split("=")[1];
+				$("#record_Id").val(Record_Id);
+				var recordId     =Record_Id;
+				
+				$.ajax({
+					type:'post',
+					async: false,
+					data: {'recordId':Record_Id},
+					url:'/aftersalerecordlistbyid',
+					success:function(xml){
+						var feedbackpeople      = $(xml).find("feedBackPeople").text();
+	                    var customername      = $(xml).find("customerName").text();
+	                    var customertel      = $(xml).find("customerTel").text();
+	                    var customerunit      = $(xml).find("customerUnit").text();
+	                    var customertype      = $(xml).find("customerType").text();
+	                    var description      = $(xml).find("description").text();
+						var trackpeople    = $(xml).find("trackPeople").text();
+						var currentdealer     = $(xml).find("currentDealer").text();
+						var jieguo          = $(xml).find("jieguo").text();
+						var reporttime     = $(xml).find("reportTime").text();
+						var solvetime     = $(xml).find("solveTime").text();
+						
+						if(jieguo=="null"){
+							jieguo='';
+						}
+						if(solvetime=="null"){
+							solvetime='';
+						}						
+						if(customertype=="0"){
+							customertype="其他";
+						}else if(customertype=="1"){
+							customertype = "BGW";
+						}else if(customertype=="2"){
+							customertype = "ZHW";
+						}
+						
+						$("#ori tr:gt(0)").remove();
+						$("#ori").append("<tr class='content' id='"+Record_Id+"'><td>"+customertype+"</td><td>"+feedbackpeople+
+	    	                                 "</td><td>"+customername+"</td><td>"+customertel+"</td><td>"+customerunit+
+	    	                                 "</td><td align='left'>"+description+"</td><td>"+trackpeople+"</td><td>"+currentdealer+"</td><td style='white-space: nowrap'>"+jieguo+"</td><td style='white-space: nowrap'>"+reporttime+"</td><td style='white-space: nowrap'>"+solvetime+"</td></tr>");
+					},
+					dataType:'xml'
+				});
+				
+//				$("#customername").val(customername);
+//				$("#customertel").val(customertel);
+//				$("#customerunit").val(customerunit);
+				
+				
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+
+				var url = "/afterTrack";
+//				$.post('/afterTrack', {'recordId':recordId}, callback, 'xml');	
+//				function callback(databack){
+//						var recode = $(databack).find("recode").text();
+//						if(recode != 0){
+//							alert($(databack).find("errormsg").text());
+//						}else{
+//							location.href="afterTrack.html";
+//							}
+//						}
+
+
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,		
+						function(xml){
+							$("#track tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+//								var track_Id     = $('#track_Id').val();
+//	                            var recordId     = $('#record_Id').val();
+	                            var track_Id    = $(this).find("track_Id").text();
+	                            var recordId    = $(this).find("record_Id").text();
+							    var editPerson    = $(this).find("editPerson").text();
+							    var editTime     = $(this).find("editTime").text();
+							    var liuyan = $(this).find("liuYan").text();
+							    var currentdealer     = $(this).find("currentDealer").text();
+							    var customername     = $(this).find("customerName").text();
+							    var customertel     = $(this).find("customerTel").text();
+							    var customerunit     = $(this).find("customerUnit").text();
+							    var jieguo     = $(this).find("jieguo").text();
+							    var solution	=$(this).find('solution').text();
+							    liuyan = liuyan.replaceAll("\n","<br/>");
+								if(solution=="null")solution="";
+								i += 10*page2-10;
+
+							    var col = Number(id)+Number(startWith);
+
+							    var tmp1 = "recordId="+recordId+"&editPerson="+editPerson+"&editTime="+editTime+"&liuyane="+liuyan;
+
+							    //在列表上控制admin是否可以删除
+//								if(userName!="admin" && userName!="ADMIN")
+//	                           		$("#content_r table").append("<tr class='content' id='"+userId+"'><td>"+(i+1)+"</td><td>"+userName+
+//	    	                                 "</td><td>"+userSex+"</td><td>"+userDepName+"</td><td>"+userDesc+
+//	    	                                 "</td><td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'systemUserEdit.html?"+tmp1+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td></td></tr>");
+//								else
+//									$("#content_r table").append("<tr class='content' id='"+userId+"'><td>"+(i+1)+"</td><td>"+userName+
+//											"</td><td>"+userSex+"</td><td>"+userDepName+"</td><td>"+userDesc+
+//											"</td><td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'systemUserEdit.html?"+tmp1+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/del.png' title='删除' class='deleteNot'></input></td></td></tr>");
+
+								$("#track").append("<tr class='content' id='"+track_Id+"'><td>"+(i+1)+"</td><td>"+editPerson+
+	    	                                 "</td><td style='white-space: nowrap'>"+editTime+"</td><td align='left'>"+liuyan+"</td><td>"+currentdealer+"</td><td>"+jieguo+"</td><td align='left'>"+solution+"</td></tr>");
+
+
+		                        id++;
+
+	                        });
+							//$("#pageNav").showPageNav(page2, pageCount, count, url);
+							pageNav(page2,pageCount,count,url,"#pageNav");
+	                        //调用注册按钮的事件
+//							register();
+						}
+						,{'recordId':recordId}
+		
+					
+					);
+				};
+//				alert(page);
+				$(this).showData(url,page);
+
+				$("#back").click(
+						function(){
+							if(laizi == "shouhouzhuye"){
+								location.href="afterSale.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+						}
+					);
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+				//注册按钮
+/***			    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/systemUserDelete', {'userId':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+	               
+	               $(".deleteNot").click(function(){
+						alert("不能删除admin！");
+		           })
+				}
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="systemUserList.html?page="+page;
+					}
+				}
+****/
+			});
+
+        </script>
+
+	</head>
+<body>
+		<div id="container2">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner4.jpg)">
+			  	<div id="userInfo">
+                            	<table class="di"  border="0" cellpadding="0" cellspacing="0">
+						 			 <tr>
+						 			  <td width="5" ><img src="images/sq_img_14.png" /></td>
+  		  				 			  <td align="right" ><span id="welcome" class="welcome"></span></td>
+  						 			  <td width="80" align="center"><a href="authUpdatePasswd.html" class="updatePawd">修改密码</a></td>
+ 									  <td width="80" align="center"><a href="#" onclick="logout()" class="updatePawd">安全退出</a></td>
+ 									  <td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+  								     </tr>
+								</table>
+		     	 </div>
+		  </div>
+			<div id="content" class="c-1000">
+				<div id="main">
+                	<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>售后服务详情</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						</table>
+						</div></td>
+						  </tr>
+						</table>             
+                  </div>
+                  
+                  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+			    <td height="28" align="center" valign="middle" class="b_di"><strong>售后服务详情</strong></td>
+			    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+			  </tr>
+			</table>
+			</div>
+<div id="content_r7">
+						<div >
+						<table id="ori" border="1" class="listTable" style="word-break:break-all;">
+							<caption>该售后服务记录当前信息</caption>
+							<tr>
+								<th style="white-space: nowrap">用户类型</th>
+								<th style="white-space: nowrap">反馈人</th>
+								<th style="white-space: nowrap">客户联系人</th>
+								<th style="white-space: nowrap">联系方式</th>
+								<th style="white-space: nowrap">客户单位</th>
+								<th style="white-space: nowrap">问题描述</th>
+								<th style="white-space: nowrap">跟踪人</th>
+								<th style="white-space: nowrap">当前处理人</th>
+								<th style="white-space: nowrap">状态</th>
+								<th style="white-space: nowrap">上报时间</th>
+								<th style="white-space: nowrap">解决时间</th>
+							</tr>
+						</table>
+						<br/><br/>
+						<table id="track" border="1" class="listTable">
+							<caption>该售后服务记录跟踪详情（第一条为原始记录） </caption>
+							<tr>
+								<th style="white-space: nowrap">序号</th>
+								<th style="white-space: nowrap">修改者</th>
+								<th style="white-space: nowrap">修改时间</th>
+								<th style="white-space: nowrap">本人处理意见</th>
+								<th style="white-space: nowrap">处理人变更</th>
+								<th style="white-space: nowrap">状态变更</th>
+								<th style="white-space: nowrap">解决方法</th>
+
+							</tr>
+						</table>
+						<input class="bt" type="button" value="返回" id="back"></input>
+						<div id="sq_di">
+						<div id="pageNav"></div>
+						</div>
+						</div>
+					 
+				  </div>
+                    </div>
+				<div id="bg_di"></div>
+            </div>
+			<div id="bg_yejiao">
+		  <div id="footer">
+ 
+          </div>
+		  </div>
+		</div>
+</body>
+</html>
+

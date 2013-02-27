@@ -1,0 +1,511 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--内部资产管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="./scripts/js/date.js"></script>
+		<script type="text/javascript">
+		
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+				
+				$("#tr_Mgr").remove();
+				$("#tr_CA_apply").remove();
+				
+				var orderByFA= "assetNo";
+				var orderByCA = "assetKindID";
+				
+				//确定当前登录用户
+				var loginer = "";
+				var loginerDeptID = "";
+				
+				//各种资产ID,用于查询数据库
+				var assetID = "";
+				var kindID="";
+				var subKindID="";
+				var assetPosition = "";
+				var assetCategory = "";
+				var cassetTotalNum = 0;
+				
+				
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				
+				var urlFAssetList="/assetFixedListIA";
+				var urlCAssetList="/assetFixedListIA2";
+				$.fn.showData=function(urls,page2)
+				{
+					switch(urls)
+					{
+						case urlFAssetList: showFAssetData(urls,page2);break;
+						case urlCAssetList: showCAssetData(urls,page2);break;
+						default:alert("url错误！");
+					}
+				};
+				function showFAssetData (url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#fassetList tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+								var assetKindID = $(this).find("assetKindID").text();
+								var assetSubKindID = $(this).find("assetSubKindID").text();
+	                            var assetKind	=$(this).find("assetKind").text();
+	                            var assetSubKind = $(this).find("assetSubKind").text();
+	                            var assetID = $(this).find("asset_id").text();
+	                            var assetNo = $(this).find("assetNo").text();
+							    var assetModel=$(this).find("assetModel").text();
+							    var price=$(this).find("assetPrice").text();
+							    var assetBaoxiu = $(this).find("assetBaoxiu").text();
+							    var assetPosition = $(this).find("assetPosition").text();
+							    var assetOwner = $(this).find("assetOwner").text();
+							    var assetDept = $(this).find("assetDept").text();
+   	                            var strBTNAppend = "";
+   	                            var state = "已分配";
+   	                            if("在库中"==$(this).find("mark").text())
+   	                            {
+   	                            	strBTNAppend= "<td><input type='button' value='出库' class='bt_fassetOut'/></td>";
+									state = "未分配";   	                            	
+   	                            }
+   	                            var strInfo ="<td>"+(i+1)+"</td><td style='display:none'>"+assetID+"</td><td style='display:none'>"+assetKindID+
+								 "</td><td style='display:none'>"+assetSubKindID+"</td><td>"+assetKind+"</td><td>"+assetSubKind+"</td><td>"+assetNo+"</td><td>"+assetModel+
+								 "</td><td>"+price+"</td><td>"+assetBaoxiu+"</td><td>"+assetDept+"："+assetOwner+"</td><td>"+assetPosition+"</td><td>"+state+"</td>";
+								$("#fassetList").append("<tr class='content' id='"+(i+1)+"'>"+strInfo+strBTNAppend+"</tr>");
+		                        id++;
+	                        });
+	                        
+							pageNav(page2,pageCount,count,url,"#pageNav");
+							registerFAOutButtons();
+						},
+						{'assetCategory':"固定资产",'orderBy':orderByFA}
+					);
+				};
+				
+				function showCAssetData(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#cassetList tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+								var assetKindID = $(this).find("assetKindID").text();
+								var assetSubKindID = $(this).find("assetSubKindID").text();
+	                            var assetKind	=$(this).find("assetKind").text();
+	                            var assetSubKind = $(this).find("assetSubKind").text();
+	                            var assetID = $(this).find("asset_id").text();
+	                            var assetName = $(this).find("assetName").text();
+							    var assetModel=$(this).find("assetModel").text();
+							    var price=$(this).find("assetPrice").text();
+							    var num = $(this).find("assetNum").text();
+							    var unit = $(this).find("assetUnit").text();
+							    var assetOwner = $(this).find("assetOwner").text();
+							    var assetDept = $(this).find("assetDept").text();
+							    var assetPosition = $(this).find("assetPosition").text();
+							    
+								 var strInfo ="<td>"+(i+1)+"</td><td style='display:none'>"+assetID+"</td><td style='display:none'>"+assetKindID+
+								 "</td><td style='display:none'>"+assetSubKindID+"</td><td>"+assetKind+"</td><td>"+assetSubKind+"</td><td>"+assetName+"</td><td>"+assetModel+
+								 "</td><td>"+price+"</td><td>"+num+" "+unit+"</td><td>"+assetDept+"："+assetOwner+"</td><td>"+assetPosition+"</td>";
+   	                            
+   	                            var strBTNAppend= "<td><input type='button' value='出库' class='bt_cassetOut'/></td>";
+   	                            
+								$("#cassetList").append("<tr class='content' id='"+(i+1)+"'>"+strInfo+strBTNAppend+"</tr>");
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav1");
+							registerCAOutButtons();
+						},
+						{'assetCategory':"耗材资产",'orderBy':orderByCA}
+					);
+				};
+				
+				
+				$.post("/currentUserDetail",{},
+				function(xml){
+					loginer   = $(xml).find("userId").text();
+					loginerDeptID = $(xml).find("userDeptId").text();
+					showFAssetData(urlFAssetList,page);
+					showCAssetData(urlCAssetList,page);
+				}
+				,'xml');
+			
+			
+			//初始化对话框
+			$( "#dialog-form" ).dialog({ autoOpen: false,
+										width:460,
+										modal:true,
+										buttons: {
+											"出库": function(){
+												var assetNum="";
+												var assetNo="";
+												var assetName = "";
+												var assetUnit = "";
+												if(assetCategory=="耗材资产")
+												{
+													assetNum=$("#text_cassetNum").val();
+													assetName=$("#text_fassetNo").val();
+													assetUnit = $("#text_cassetDanwei").val();
+													if(!numCheck(assetNum)) return;
+												}
+												else
+												{
+													assetNo	=$("#text_fassetNo").val();
+												}
+												var assetModel=$("#text_fassetModel").val();
+												var assetPrice=$("#text_fassetPrice").val();
+												var assetOperTime	=$("#text_fassetOutTime").val();
+												var assetFromTo	=$("#text_fassetTo").val();
+												var array=[kindID,subKindID,assetNo,assetName,assetModel,assetPrice,assetNum,assetOperTime,assetFromTo];
+												for(i=0;i<9;i++){
+													if(array[i]==""){
+														if(i==2&&assetCategory=="耗材资产") continue;
+														if((i==3||i==6)&&assetCategory!="耗材资产") continue;
+														alert("请填入完整信息！");return;
+													}
+												}
+												if(assetCategory=="耗材资产"&&parseInt(assetNum)>cassetTotalNum)
+												{
+													alert("出库数量超过库存数量，请重新填写！");
+													return;
+												}
+												$.post('/assetOut',{'assetKindID':kindID,'assetCategory':assetCategory,'assetSubKindID':subKindID,'assetNo':assetNo,
+												'assetName':assetName,'assetModel':assetModel,'assetNum':assetNum,'assetPrice':assetPrice,'assetOpeTime':assetOperTime,'assetOper':loginer,
+												'assetOperDeptID':loginerDeptID,'assetFromTo':assetFromTo,'assetUnit':assetUnit,'assetPosition':assetPosition},CB_faasetOut,'xml');
+												function CB_faasetOut(databack){
+													var recode = $(databack).find("recode").text();
+													if(recode != 0){
+														alert($(databack).find("errormsg").text());
+													}else {
+															alert("出库成功！");
+															$( "#dialog-form" ).dialog("close");
+															location.href="AssetFixedold.html";
+													}
+												}
+													
+											},
+											"取消": function() {
+												$( this ).dialog( "close" );
+											}
+										}}
+										);
+										
+			
+			function registerFAOutButtons()
+			{
+				$(".bt_fassetOut").each(
+					function()
+					{
+						$(this).click(
+							function()
+							{
+								assetCategory = "固定资产";
+								$( "#dialog-form" ).dialog("open");
+								getIDs(this);
+								$("#text_fassetKind").val($(this).parent().parent().children("td:eq(4)").text());
+								$("#text_fassetSubKind").val($(this).parent().parent().children("td:eq(5)").text());
+								$("#text_fassetNo").val($(this).parent().parent().children("td:eq(6)").text());
+								$("#text_fassetModel").val($(this).parent().parent().children("td:eq(7)").text());
+								assetPosition = $(this).parent().parent().children("td:eq(11)").text();
+								$("#tr_cassetNum").hide();
+							}
+						);
+					}
+				);
+			}
+			
+			function registerCAOutButtons()
+			{
+				$(".bt_cassetOut").each(
+					function()
+					{
+						$(this).click(
+							function()
+							{
+								assetCategory = "耗材资产";
+								$( "#dialog-form" ).dialog("open");
+								getIDs(this);
+								$("#text_fassetKind").val($(this).parent().parent().children("td:eq(4)").text());
+								$("#text_fassetSubKind").val($(this).parent().parent().children("td:eq(5)").text());
+								$("#text_fassetNo").val($(this).parent().parent().children("td:eq(6)").text());
+								$("#text_fassetModel").val($(this).parent().parent().children("td:eq(7)").text());
+								assetPosition = $(this).parent().parent().children("td:eq(11)").text();
+								$("#tr_cassetNum").show();
+								var strary = $(this).parent().parent().children("td:eq(9)").text().split(" ");
+								$("#text_cassetNum").val("<="+strary[0]);
+								$("#text_cassetDanwei").val(strary[1]);
+								cassetTotalNum = parseInt(strary[0]);
+								
+							}
+						);
+					}
+				);
+			}
+			//排序
+			$(".orderFA").each(function(){					
+				$(this).click(function(){
+					orderByFA = $(this).attr("id");
+					showFAssetData(urlFAssetList,page);
+				});
+				$(this).css("cursor","hand");
+			});
+			$(".orderCA").each(function(){					
+				$(this).click(function(){
+					orderByCA = $(this).attr("id");
+					showCAssetData(urlCAssetList,page);
+				});
+				$(this).css("cursor","hand");
+			});
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+			function getIDs(object)
+			{
+				assetID = $(object).parent().parent().children("td:eq(1)").text();
+				kindID=$(object).parent().parent().children("td:eq(2)").text();
+				subKindID=$(object).parent().parent().children("td:eq(3)").text();
+				if(assetID=="null") assetID="";
+				if(kindID=="null") kindID="";
+				if(subKindID=="null") subKindID="";
+			}
+			
+			});
+			function numCheck(str)
+			{
+				var   type="^[0-9]*[1-9][0-9]*$"; 
+	      	 		var   re   =   new   RegExp(type); 
+	      			if(str.match(re)==null) 
+	       		{ 
+		         	alert( "数量格式不正确，请输入大于零的整数!"); 
+		        	return false;
+		       	}
+		       	return true;
+			}	
+		</script>
+
+	</head>
+<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="150"><div class="biao" align="left">当前位置：&gt;&nbsp;<strong>资产管理</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right">
+							    <div class="biao2_wide">
+							    <table id="tb_Mgr" border="0" cellspacing="0" cellpadding="0">
+							    	<tr>
+								    	<td><img src='images/oa_edit.gif' /></td><td width='5'>&nbsp;</td>
+								    	<td><a href='assetIn.html' >入库登记</a></td><td width='5'>&nbsp;</td>
+								    	<td><img src='images/transfer.png' /></td><td width='5'>&nbsp;</td>
+								    	<td><a href='assetOut.html' >出库登记</a></td><td width='5'>&nbsp;</td>	
+								    	<td><img src='images/oa_search.png' /></td><td width='5'>&nbsp;</td>
+								    	<td><a href='fassetsearch.html' >资产查询</a></td><td width='5'>&nbsp;</td>
+								    	<td><img src='images/bg_xg.png' /></td><td width='5'>&nbsp;</td>
+								    	<td><a href='fassetlog.html' >流动记录</a></td><td width='5'>&nbsp;</td>
+								    	<td><img src='images/cfg.png' /></td><td width='5'>&nbsp;</td>
+								    	<td><a href='fassetKindConfig.html' >类别管理</a></td><td width='5'>&nbsp;</td>
+								    	<td><img src='images/bg_fh.gif' /></td><td width='5'>&nbsp;</td>
+								    	<td><a href='homePage.html' >返回</a></td><td width='5'>&nbsp;</td>
+							    	</tr>
+								</table>
+								</div>
+							</td>
+ 					 </tr>
+ 					</table>
+					</div>
+					
+					
+					
+					<div id="content_r8">
+					<div id="tabs" style="z-index:0">
+							
+				            <ul id="ul_lists" style="z-index:0">
+				                <li id="li_fassetList"><a href="#tabs-1">固定资产</a></li>
+				                <li id="li_cassetList"><a href="#tabs-2">耗材资产</a></li>
+				            </ul>
+				        
+						<div class="tablediv" id="tabs-1">    
+						<table id="fassetList" border="0" class="listTable" style="width:100%">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>资产大类</th>
+								<th>资产小类</th>
+								<th class="orderFA" id="assetNo">资产编号
+								</th>
+								<th class="orderFA" id="assetModel">资产规格
+								</th>
+								<th class="orderFA" id="assetPrice">资产价格
+								</th>
+								<th class="orderFA" id="assetExtens">保修期限
+								</th>
+								<th>当前责任人</th>
+								<th>存放地点</th>
+								<th>状态</th>
+								<th colspan="2">操作</th>
+							</tr>
+							</thead>
+						</table>
+						<div align="right" id="pageNav"></div>
+						</div>
+						<div class="tablediv" id="tabs-2">    
+						<table id="cassetList" border="0" class="listTable" style="width:100%">
+							<tr>
+								<th>序号
+								</th>
+								<th class="orderCA" id="assetKindID">耗材大类
+								</th>
+								<th class="orderCA" id="assetSubKindID">耗材小类
+								</th>
+								<th class="orderCA" id="assetName">耗材品牌
+								</th>
+								<th class="orderCA" id="assetModel">耗材规格
+								</th>
+								<th class="orderCA" id="assetPrice">耗材单价
+								</th>
+								<th class="orderCA" id="mark">耗材数量
+								</th>
+								<th>当前负责人
+								</th>
+								<th>存放地点
+								</th>
+								<th colspan="2">操作</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav1"></div>
+						</div>
+					</div>	
+				</div>
+				
+<div id="dialog-form" title="资产出库">
+	<table class="sTable" border="0" cellpadding="0" cellspacing="0" style="width:400px;text-align:center">
+							<tr>
+								<td class="width_5">资产大类</td>
+								<td >
+								<input type="text" id="text_fassetKind" class="wideSelText" readonly="readonly" disabled="disabled"/> 
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">资产小类</td>
+								<td >
+								<input type="text" id="text_fassetSubKind" class="wideSelText" readonly="readonly" disabled="disabled"/> 
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">编号/品牌</td>
+								<td >
+								<input type="text" id="text_fassetNo" class="wideSelText" readonly="readonly" disabled="disabled"/> 
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">规格/特征</td>
+								<td class="width_15">
+									<textarea  id="text_fassetModel" class="wideSelText" readonly="readonly" disabled="disabled"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">出库单价</td>
+								<td class="width_15">
+								    <input type="text" id="text_fassetPrice" class="wideSelText"/>
+							    </td>
+							</tr>
+							<tr id="tr_cassetNum">
+					    		<td class="width_5">数量/单位</td>
+					    		<td class="width_15">
+					    			数量：<input type="text" id="text_cassetNum" style="width:100px"/>
+					    			单位：<input type="text" id="text_cassetDanwei" style="width:100px" readonly="readonly" disabled="disabled"/>
+					    		</td>
+						    </tr>						    
+						    <tr>
+								<td class="width_5">出库去向</td>
+								<td class="width_15"><textarea  id="text_fassetTo" class="wideSelText"></textarea></td>
+							</tr>
+							<tr>
+								<td class="width_5">出库时间</td>
+								<td class="width_15">
+								    <input type="text" id="text_fassetOutTime" class="wideSelText" readonly="readonly" onclick="setday(this)"/>
+							    </td>
+							</tr>
+						</table>
+</div>
+				</div>
+				<div id="bg_di"></div>
+            </div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+         </div>
+	</body>
+</html>
+
+	

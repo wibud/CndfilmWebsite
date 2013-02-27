@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--添加项目</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+        <script type="text/javascript">
+			$(document).ready(function(){				
+				init();
+				
+				$.post('/getPermission',
+							{},
+							function(){
+							},
+							'xml'
+				);
+				var name,dept,manager;
+
+				$('#comfirm').click(function(){
+					var name   = $('#name').val();
+					var dept    = $('#dept').val();  
+					var manager  = $('#manager').val();
+					var des		= $('#des').val();
+					var projectId;
+
+					if($('#name').val() == ""){
+						alert("项目名不能为空");
+						return;
+                    }
+                    var strMember = "";
+                    $("#removeMember option").each(function() {
+                    	var id = $(this).val();
+                    	var name = $(this).text();
+                    	strMember += id + "," + name + ";";
+                    });
+					//添加项目信息
+                    $.post('/addProject', {'name':name,'dept':dept,'manager':manager,'member':strMember,'des':des}, callback, 'xml');
+
+					function callback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							alert('添加成功！');
+							location.href = "projectInfoList.html";
+						}
+					};	
+					if($("#mail").attr('checked') == "checked"){
+						//发送邮件
+						var currentUserName = "";
+						$.ajax({
+							url:"/currentUserDetail",
+							async:false,
+							method:"post",
+							success: function(xml){
+								currentUserName = $(xml).find("userName").text();
+							},
+							dataTyep: "xml"
+						});
+						var content = currentUserName +"新建了一个项目由您负责，项目的名称叫 "+ name + "，请您及时处理。";
+						$.ajax({
+							url: '/sendMail',
+							data: {'mailTo':manager,'subject':"一个由您负责的新项目",'content':content},
+							success: function(databack){
+										var recode = $(databack).find("recode").text();
+										if(recode != 0){
+											alert($(databack).find("errormsg").text());
+										}
+									},
+							dataType: 'xml'
+						});
+					}
+				});
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+				//初始化dept,manager,memberDept,addMember列表
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){							      
+									$("#dept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+									$("#memberDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});
+							$.post('/getUserByDept',
+	            			{'userDeptId':$("#dept  option:first").val()},
+	            			 function(xml){
+								$(xml).find("item").each(function(){
+										$("#manager").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+										$("#addMember").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+									});
+		   	                 },
+		                     'xml');
+	   	                 },
+	                     'xml');
+
+	            
+	            //动态更新manger列表         
+	            $('#dept').change(function(){
+		           			$("#manager option").remove();
+		            		var dept = $('#dept').val();
+		            		$.post('/getUserByDept',
+		                    {'userDeptId':dept},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+										$("#manager").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+									});
+		   	                 },
+		                     'xml');
+	            });  
+	             $('#memberDept').change(function(){
+		           			$("#addMember option").remove();
+		            		var dept = $('#memberDept').val();
+		            		var dup;
+		            		$.post('/getUserByDept',
+		                    {'userDeptId':dept},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+									var id =$(this).find("userId").text();
+									var name = $(this).find("userName").text();
+									dup = false;
+									$("#removeMember option").each(function(){//已添加的成员不显示在待选成员里
+										if(id == $(this).val()) {
+											dup = true;
+										}
+									});
+									if(id == $("#manager").val()) {//负责人不会出现在待选成员里
+										dup = true;
+									}
+									if(!dup) {
+										$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+									}
+								});
+		   	                 },
+		                     'xml');
+	            }); 
+	         
+	            //添加成员
+	            $("#addMember").dblclick(function(){
+					$("#addMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#removeMember").append(option);
+						$(this).remove();
+					});
+				});  
+				//删除成员  
+				$("#removeMember").dblclick(function(){
+					$("#removeMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#addMember").append(option);
+						$(this).remove();
+					});
+				});  
+			     
+
+			});
+
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner3.jpg)">
+			  	<div id="userInfo">
+                            	<table class="di"  border="0" cellpadding="0" cellspacing="0">
+						 			 <tr>
+						 			  <td width="5" ><img src="images/sq_img_14.png" /></td>
+  		  				 			  <td align="right" ><span id="welcome" class="welcome">欢迎您！</span></td>
+  						 			  <td width="80" align="center"><a href="authUpdatePasswd.html" class="updatePawd">修改密码</a></td>
+ 									  <td width="80" align="center"><a href="#" onclick="logout()" class="updatePawd">安全退出</a></td>
+ 									  <td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+  								     </tr>
+								</table>
+		     	 </div>
+		  </div>
+			<div id="content" class="c-1000">
+				<div id="main">
+                	<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>项目计划设置</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						</table>
+						</div></td>
+						  </tr>
+						</table>             
+                  </div>
+                  
+                  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+			    <td height="28" align="center" valign="middle" class="b_di"><strong>项目计划设置</strong></td>
+			    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+			  </tr>
+			</table>
+			</div>
+<div id="content_r2">
+						<table class="sTable">
+							<tr>
+								<td><label class="required">*</label>项目名称</td>
+								<td><input type="text" id="name"  class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>所属部门</td>
+								<td>
+								    <select name="dept" id="dept"  class="wideSelText" >
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>负责人</td>
+								<td>
+								    <select name="manager" id="manager"  class="wideSelText">
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td align="center">选择成员</td>
+								<td align="center">
+									<table  border="0" cellspacing="0" cellpadding="0">
+									<tr>
+									<td style="border:0" colspan="3">
+									<select name="memberDept" id="memberDept" class="wideSelText">
+							        </select>
+							        </td>
+							        </tr>
+							        <tr>
+							        <td style="border:0">
+									<select id="addMember" multiple="multiple" title="双击以添加" style="width:130px" >							       
+							        </select>
+							        </td>
+							        <td style="border:0">
+							   		<img src="images/arrow_two_head.png" style="float:left"></img>
+							   		</td>
+							   		<td style="border:0">
+							   		<select id="removeMember" multiple="multiple" title="双击以删除" style="width:130px">
+							        </select>
+							        </td>
+							        </tr>
+							       </table>
+							    </td>
+							</tr>
+							<tr>
+								<td>备注</td>
+								<td >
+								    <textarea  id="des"  class="wideSelText"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td colspan="2"><input type="checkbox" id="mail" name="mail" />邮件通知<br /></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+								<input class="bt" type="button" id="comfirm" value="确定"></input>
+								<input class="bt" type="button" value="返回" onclick="javascript:location.href='projectInfoList.html'"></input>
+								</td>
+							</tr>
+						</table>
+				  </div>
+                    </div>
+				<div id="bg_di"></div>
+            </div>
+		  <div id="footer"></div>
+          </div>
+</body>
+</html>

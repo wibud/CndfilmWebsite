@@ -1,0 +1,32 @@
+package oa.bean.common;
+
+public class PermissionBean {
+	private String permission_id;		//权限ID
+	private String dept_id;			//部门
+	private String post_id;			//职位
+	private String permissionXml;			//操作权限
+	public String getPermission_id() {
+		return permission_id;
+	}
+	public void setPermission_id(String permission_id) {
+		this.permission_id = permission_id;
+	}
+	public String getDept_id() {
+		return dept_id;
+	}
+	public void setDept_id(String dept_id) {
+		this.dept_id = dept_id;
+	}
+	public String getPost_id() {
+		return post_id;
+	}
+	public void setPost_id(String post_id) {
+		this.post_id = post_id;
+	}
+	public String getPermissionXml() {
+		return permissionXml;
+	}
+	public void setPermissionXml(String permissionXml) {
+		this.permissionXml = permissionXml;
+	}
+}

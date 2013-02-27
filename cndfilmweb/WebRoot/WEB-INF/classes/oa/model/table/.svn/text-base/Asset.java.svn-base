@@ -1,0 +1,110 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="asset_id")
+@Entity
+@Table(name="tb_asset")
+public class Asset {
+	@Id
+	private String asset_id;
+	private String asset_category;
+	private String assetKindID;
+	private String assetSubKindID;
+	private String assetNo;
+	private String assetName;
+	private String assetModel;
+	private String assetPrice;
+	private String assetExtens;
+	private String assetOwner;
+	private String assetDept;
+	private String assetPosition;
+	
+	private String mark;
+	public String getAsset_id() {
+		return asset_id;
+	}
+	public void setAsset_id(String assetId) {
+		asset_id = assetId;
+	}
+	
+	public String getAsset_category() {
+		return asset_category;
+	}
+	public void setAsset_category(String asset_category) {
+		this.asset_category = asset_category;
+	}
+	public String getAssetKindID() {
+		return assetKindID;
+	}
+	public void setAssetKindID(String assetKind) {
+		this.assetKindID = assetKind;
+	}
+	
+	public String getAssetSubKindID() {
+		return assetSubKindID;
+	}
+	public void setAssetSubKindID(String assetSubKindID) {
+		this.assetSubKindID = assetSubKindID;
+	}
+	public String getAssetNo() {
+		return assetNo;
+	}
+	public void setAssetNo(String assetNo) {
+		this.assetNo = assetNo;
+	}
+	public String getAssetName() {
+		return assetName;
+	}
+	public void setAssetName(String assetName) {
+		this.assetName = assetName;
+	}
+	
+	public String getAssetModel() {
+		return assetModel;
+	}
+	public void setAssetModel(String assetModel) {
+		this.assetModel = assetModel;
+	}
+	public String getAssetPrice() {
+		return assetPrice;
+	}
+	public void setAssetPrice(String assetPrice) {
+		this.assetPrice = assetPrice;
+	}
+	public String getAssetOwner() {
+		return assetOwner;
+	}
+	public void setAssetOwner(String assetOwner) {
+		this.assetOwner = assetOwner;
+	}
+	public String getAssetDept() {
+		return assetDept;
+	}
+	public void setAssetDept(String assetDept) {
+		this.assetDept = assetDept;
+	}
+	
+	public void setMark(String mark) {
+		this.mark = mark;
+	}
+	public String getMark() {
+		return mark;
+	}
+	public String getAssetPosition() {
+		return assetPosition;
+	}
+	public void setAssetPosition(String assetPosition) {
+		this.assetPosition = assetPosition;
+	}
+	public String getAssetExtens() {
+		return assetExtens;
+	}
+	public void setAssetExtens(String assetExtens) {
+		this.assetExtens = assetExtens;
+	}
+	
+}

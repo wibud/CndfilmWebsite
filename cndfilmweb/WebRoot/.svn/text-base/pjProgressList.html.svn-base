@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--项目进度</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+        <style type="text/css">
+			<!--
+			a:link {
+				text-decoration: none;
+			}
+			a:visited {
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			a:active {
+				text-decoration: none;
+			}
+			-->
+        </style>
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+				$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$(this).navi();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+				var project_id       =tmp[0].split("=")[1];
+								
+				var url = "/pjProgressList";
+				
+
+				$.fn.showData = function(url,page2,project_id){
+					page = page2;
+					urlT = url+"?page="+page2+"&projectId ="+project_id ;
+					$(this).handlerData(
+						urlT,
+						function(xml){
+							$("#content_r7 table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+								var project_id	= $(this).find("project_id").text();
+								var stepCount=Number($(this).find("stepCount").text());
+								var reStartCount=Number($(this).find("reStartCount").text());
+								var reEndCount=Number($(this).find("reEndCount").text());
+								var projectStep=$(this).find("projectStep").text().split("$");
+								var deStartTime=$(this).find("deStartTime").text().split(",");
+								var deEndTime=$(this).find("deEndTime").text().split(",");
+								var reStartTime=$(this).find("reStartTime").text();
+								var reStart=reStartTime.split(",");
+								var reEndTime=$(this).find("reEndTime").text();
+								var reEnd=reEndTime.split(",");
+								var miaoshu=$(this).find("currentStep").text().split("$");
+								var mubiao=$(this).find("curStepEndTime").text().split("$");
+								var shijijindu=$(this).find("updateEveryProgress").text().split(",");
+								var reStartStr;
+								var reEndStr;
+								
+								for(i=0;i<stepCount;i++){
+									if(reStart[i]!=""&&reStart[i]!=null)
+										reStartStr="<td>"+reStart[i]+"</td>";
+									else reStartStr="<td>未开始</td>";
+									
+									if(reEnd[i]!=""&&reEnd[i]!=null)
+										reEndStr="<td>"+reEnd[i]+"</td>";
+									else reEndStr="<td>未完成</td>";
+									
+									$("#content_r7 table").append("<tr><th>"+projectStep[i]+"</th><td>"+miaoshu[i]+"</td><td>"+mubiao[i]+"</td><td>"+deStartTime[i]+"</td><td>"+deEndTime[i]+
+									"</td>"+reStartStr+reEndStr+"<td>"+shijijindu[i]+"</td></tr>");
+								}
+								
+		                        id++;
+	                        });
+//							$("#pageNav").showPageNav(page2, pageCount, count, url);
+	                        //调用注册按钮的事件
+							register();
+						}
+					);
+				};
+				$(this).showData(url,page,project_id);
+
+				//注册按钮
+			    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/deleteProject', {'projectId':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+				} 
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="projectInfoList.html?page="+page;
+					}
+				}
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner3.jpg)">
+			  	<div id="userInfo">
+                            	<table class="di"  border="0" cellpadding="0" cellspacing="0">
+						 			 <tr>
+						 			  <td width="5" ><img src="images/sq_img_14.png" /></td>
+  		  				 			  <td align="right" ><span id="welcome" class="welcome"></span></td>
+  						 			  <td width="80" align="center"><a href="authUpdatePasswd.html" class="updatePawd">修改密码</a></td>
+ 									  <td width="80" align="center"><a href="#" onclick="logout()" class="updatePawd">安全退出</a></td>
+ 									  <td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+  								     </tr>
+								</table>
+		     	 </div>
+		  </div>
+			<div id="content" class="c-1000">
+				<div id="main">
+                	<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>项目进度查看</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						</table>
+						</div></td>
+						  </tr>
+						</table>             
+                  </div>
+                  
+                  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+			    <td height="28" align="center" valign="middle" class="b_di"><strong>项目进度查看</strong></td>
+			    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+			  </tr>
+			</table>
+			</div>
+<div id="content_r7">
+						<div >
+						<table border="1" class="sTable" style="word-break:break-all;word-wrap:break-word;">
+							<tr>
+								<th style="white-space: nowrap">项目阶段名称</th>
+								<th style="white-space: nowrap">项目阶段描述</th>
+								<th style="white-space: nowrap">目标</th>
+								<th style="white-space: nowrap">计划开始时间</th>
+								<th style="white-space: nowrap">计划完成时间</th>
+								<th style="white-space: nowrap">实际开始时间</th>
+								<th style="white-space: nowrap">实际完成时间</th>
+								<th style="white-space: nowrap">实际进度</th>
+							</tr>
+						</table>
+						<input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+						</div>
+					 
+				  </div>
+                    </div>
+				<div id="bg_di"></div>
+            </div>
+		  <div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+          </div>
+		
+</body>
+</html>
+

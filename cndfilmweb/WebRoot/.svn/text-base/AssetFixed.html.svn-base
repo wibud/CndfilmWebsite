@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--资产管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript">
+		
+		
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+				var authInOut=0;
+				var authAllot=0;
+				var authTrans=0;
+				var authRecy=0;
+				var authAssetSearch=0;
+				var authAssetLog=0;
+				var authAssetKindMgr=0;
+				var authCAapply=0;
+				var authTemp;
+				$.post('/getPermission',{},
+					function(xml){
+						authTemp=Number($(xml).find("permission").find("fassetManager").find("fassetInOut").text());
+						if(authTemp==1) authInOut=authInOut|1;
+						authTemp=Number($(xml).find("permission").find("passetManager").find("passetInOut").text());
+						if(authTemp==1) authInOut=authInOut|2;
+						authTemp=Number($(xml).find("permission").find("cassetManager").find("cassetInOut").text());
+						if(authTemp==1) authInOut=authInOut|4;
+						if(authInOut!=0)
+						{
+							
+						}
+						readPermission=Number($(xml).find("permission").find("deptInfo").find("read").text());
+						if(readPermission==0){
+							$('#seekDept').attr("disabled", true);
+						}else{
+							$('#seekDept').attr("disabled", false);
+						}
+						if(updatePermission==0){
+								$("#addDept").attr("disabled", true);
+						}else{
+								$("#addDept").attr("disabled", false);
+						}
+						$(this).showData(url,page);
+				
+					},
+				'xml');
+				
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				
+				var url = "/assetFixedListIA";
+				
+				
+
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#fassetList tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+	                            var asset_id            = $(this).find("asset_id").text();
+	                            //这个是资产类别，以后还要修改。
+	                            var assetKind			=$(this).find("assetKind").text();
+							    var assetNo          = $(this).find("assetNo").text();
+							    var assetName           = $(this).find("assetName").text();
+							    var assetOwner      = $(this).find("assetOwner").text();
+							    var assetDept      = $(this).find("assetDept").text();
+							    var col = Number(id)+Number(startWith);
+
+							   // var tmp = "userId="+userId+"&userName="+userName+"&userSex="+userSex+"&userDeptId="+userDeptId+"&userPostId="+userPostId+"&userPlaceInfo="+userPlaceInfo+"&userAddress="+userAddress+"&userTel="+userTel+"&userMobile="+userMobile+"&userEmail="+userEmail+"&userIp="+userIp+"&userDesc="+userDesc;
+								
+								 var strInfo ="<td>"+(i+1)+"</td><td>"+assetKind+"</td><td>"+assetNo+"</td><td>"+assetName+"</td><td>"+assetDept+"</td><td>"+assetOwner+"</td>";
+   	                            
+   	                           // var strEdit = null;
+   	                            //var strDelete=null;
+								//if(updatePermission==1){
+									//strDelete="<td id='delete'><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+								//}else{
+									//strDelete="<td><img src='./images/del1.jpg'/></td>";
+								//}
+								//if(updatePermission==1) {
+									//strEdit = "<td><input class='edit' type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'systemUserEdit.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+								//}else{
+									//strEdit = "<td><img src='./images/edit1.jpg'/></td>";
+								//}
+								$("#fassetList").append("<tr class='content' id='"+asset_id+"'>"+strInfo+"</tr>");
+									
+									
+									
+							    //在列表上控制admin是否可以删除
+								/*if(userName!="admin" && userName!="ADMIN")
+	                           		$("#content_r table").append("<tr class='content' id='"+userId+"'><td>"+(i+1)+"</td><td>"+userName+
+	    	                                 "</td><td>"+userSex+"</td><td>"+userDeptName+"</td><td>"+userPostName+"</td><td>"+userPlaceInfo+"</td><td>"+userTempDeptName+"</td><td>"+userTempPostName+"</td><td>"+userAddress+"</td><td>"+userTel+"</td><td>"+userMobile+"</td><td>"+userEmail+"</td><td>"+userIp+"</td><td>"+userDesc+
+	    	                                 "</td><td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'systemUserEdit.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td></td></tr>");
+								else
+									$("#content_r table").append("<tr class='content' id='"+userId+"'><td>"+userId+"</td><td>"+userName+
+											"</td><td>"+userSex+"</td><td>"+userDeptName+"</td><td>"+userPostName+"</td><td>"+userPlaceInfo+"</td><td>"+userTempDeptName+"</td><td>"+userTempPostName+"</td><td>"+userAddress+"</td><td>"+userTel+"</td><td>"+userMobile+"</td><td>"+userEmail+"</td><td>"+userIp+"</td><td>"+userDesc+
+											"</td><td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'systemUserEdit.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/del.png' title='删除' class='deleteNot'></input></td></td></tr>");
+		                        */
+		                        id++;
+
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav");
+	                        //调用注册按钮的事件
+							//register();
+						}
+					);
+				};
+				
+				$(this).showData(url,page);	
+			
+				function init(){
+					
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+			});
+				
+				
+		</script>
+
+	</head>
+<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：资产管理&gt;&nbsp;<strong>资产管理</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2_wide">
+						    <!-- 
+						    <table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td><img src="images/oa_edit.gif" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetInOut.html" >出入库登记</a></td>
+						    <td width="5">&nbsp;</td>
+						    <td><img src="images/allot.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetallot.html">资产分配</a></td>
+							<td width="5">&nbsp;</td>
+						    <td><img src="images/transfer.png" width="20" height="18" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassettrans.html" >资产转移</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/recycle.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetrecycle.html">资产回收</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/oa_search.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetsearch.html">资产查询</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/bg_xg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetlog.html">流动记录</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/cfg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetKindConfig.html">类别管理</a></td>
+							<td width="5">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="homePage.html" >返回</a></td>
+						  </tr>
+						</table>
+						 -->
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+					
+					
+					
+					<div id="content_r6">
+					
+					<div id="tabs" style="z-index:0">
+							
+			            <ul style="z-index:0">
+			                <li><a href="#tabs-1">固定资产</a></li>
+			                <li><a href="#tabs-2">采购资产</a></li>
+			                <li><a href="#tabs-3">耗材资产</a></li>
+			                <li><a href="#tabs-4">耗材申请记录</a></li>
+			               
+			            </ul>
+			            
+				        <div class="tablediv" id="tabs-1">  
+				        <div align="right">
+				        <table id="tb_fassetMgr" border="0" cellspacing="0" cellpadding="0">
+						  <tr >
+						    <td><img src="images/oa_edit.gif" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetInOut.html" >出入库登记</a></td>
+						    <td width="5">&nbsp;</td>
+						    <td><img src="images/allot.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetallot.html">资产分配</a></td>
+							<td width="5">&nbsp;</td>
+						    <td><img src="images/transfer.png" width="20" height="18" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassettrans.html" >资产转移</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/recycle.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetrecycle.html">资产回收</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/oa_search.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetsearch.html">资产查询</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/bg_xg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetlog.html">流动记录</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/cfg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetKindConfig.html">类别管理</a></td>
+							<td width="5">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="homePage.html" >返回</a></td>
+						  </tr>
+						</table>
+						</div>
+						<table id="fassetList" border="0" class="listTable" style="width:100%">
+							<tr>
+								<th>序号</th>
+								<th>资产类别</th>
+								<th>资产编号</th>
+								<th>资产名称</th>
+								<th>所属部门</th>
+								<th>当前所有人</th>
+								<th colspan="2">操作</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav"></div>
+                  		</div>
+                  		
+                  		<div class="tablediv" id="tabs-2"> 
+                  		<div align="right">
+				        <table id="tb_passetMgr" border="0" cellspacing="0" cellpadding="0">
+						  <tr >
+						    <td><img src="images/oa_edit.gif" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetInOut.html" >出入库登记</a></td>
+						    <td width="5">&nbsp;</td>
+						    
+							<td><img src="images/oa_search.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetsearch.html">资产查询</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/bg_xg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetlog.html">流动记录</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/cfg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetKindConfig.html">类别管理</a></td>
+							<td width="5">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="homePage.html" >返回</a></td>
+						  </tr>
+						</table>
+						</div> 
+						<table id="passetList" border="0" class="listTable" style="width:100%">
+							<tr>
+								<th>序号</th>
+								<th>资产类别</th>
+								<th>资产编号</th>
+								<th>资产名称</th>
+								<th>所属部门</th>
+								<th>当前所有人</th>
+								<th colspan="2">操作</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav1"></div>
+                  		</div>
+                  		
+                  		<div class="tablediv" id="tabs-3">  
+                  		<div align="right">
+				        <table id="tb_cassetMgr" border="0" cellspacing="0" cellpadding="0">
+						  <tr >
+						    <td><img src="images/oa_edit.gif" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetInOut.html" >出入库登记</a></td>
+						    <td width="5">&nbsp;</td>
+						    
+							<td><img src="images/oa_search.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetsearch.html">资产查询</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/bg_xg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetlog.html">流动记录</a></td>
+							<td width="5">&nbsp;</td>
+							<td><img src="images/cfg.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetKindConfig.html">类别管理</a></td>
+							<td width="5">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="homePage.html" >返回</a></td>
+						  </tr>
+						</table>
+						</div> 
+						<table id="cassetList" border="0" class="listTable" style="width:100%">
+							<tr>
+								<th>序号</th>
+								<th>资产类别</th>
+								<th>资产编号</th>
+								<th>资产名称</th>
+								<th>所属部门</th>
+								<th>当前所有人</th>
+								<th colspan="2">操作</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav2"></div>
+                  		</div>
+                  		
+                  		<div class="tablediv" id="tabs-4"> 
+                  		<div align="right">
+				        <table id="tb_cassetLogMgr" border="0" cellspacing="0" cellpadding="0">
+						  <tr >
+						    <td><img src="images/allot.png" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="fassetallot.html">采购资产申请</a></td>
+							<td width="5">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="5">&nbsp;</td>
+						    <td><a href="homePage.html" >返回</a></td>
+						  </tr>
+						</table>
+						</div>  
+						<table id="cassetApplyList" border="0" class="listTable" style="width:100%">
+							<tr>
+								<th>序号</th>
+								<th>资产类别</th>
+								<th>资产编号</th>
+								<th>资产名称</th>
+								<th>所属部门</th>
+								<th>当前所有人</th>
+								<th colspan="2">操作</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav3"></div>
+                  		</div>
+                  	</div>
+                  	</div>
+				</div>
+				<div id="bg_di"></div>
+            </div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+         </div>
+	</body>
+</html>
+
+	

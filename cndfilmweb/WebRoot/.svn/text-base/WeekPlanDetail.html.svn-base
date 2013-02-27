@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--周计划详情</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+				//进度条
+				var loadingScroll = { 
+					doScroll : function(boxId,textId,progress,flag) { 
+						var loading = document.getElementById(boxId); 
+						var pointW=Math.floor(progress);
+						loading.style.width = pointW*1.5 + "px"; 
+						if(flag == 0){
+							$('#'+textId).prepend(pointW + "%");
+						}else if(flag == 1){
+							$('#'+textId).prepend(pointW + "% 未开始");
+						}else{
+							$('#'+textId).prepend("无计划期限");
+						}
+					} 
+				};
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var flag	=href.split("flag=")[1].split("&")[0].split("#")[0];
+				
+				var planId			=tmp[0].split("=")[1];
+				var planStartTime	=tmp[1].split("=")[1];
+				var planEndTime		=tmp[2].split("=")[1];
+				var weekPlan		=tmp[3].split("=")[1];
+				var planProgress	=tmp[4].split("=")[1];
+				var planCount		=Number(tmp[5].split("=")[1]);
+				var testStartTime	=tmp[6].split("=")[1];
+				var testEndTime		=tmp[7].split("=")[1];
+				var planName		=tmp[8].split("=")[1];
+				var planDetail		=tmp[9].split("=")[1];
+				var testFinishDetail=tmp[10].split("=")[1];
+				var i;
+				$("#planStartTime").val(planStartTime);
+				$("#planEndTime").val(planEndTime);
+				
+				if(planCount<=0){
+					$("weekPlanDetail").append("<tr><td style=\"width:50px;text-align:center\">1</td><td style=\"text-align:center\">未制定</td><td style=\"text-align:center\">无</td><td align=\"center\" >未制定</td><td style=\"text-align:center\"></td><td align=\"center\">无</td></tr>");
+				}else{
+					for(i=0;i<planCount;i++){
+						var pjbar="<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"table2\"><tr><td width=\"5\" valign=\"middle\"  ><img src=\"images/bg_19.gif\" width=\"5\" height=\"15\" /></td><td valign=\"middle\"><div id=\"real"
+									+i+"\" class=\"jhjd2\" style=\"overflow:hidden;\"></div></td><td width=\"5\" valign=\"middle\" ><img src=\"images/bg_18.gif\" width=\"5\" height=\"15\" /></td><td width=\"5\" valign=\"middle\" ></td><td id=\"text"
+									+i+"\" width=\"30\" valign=\"middle\" ></td></tr></table>";
+						var pjbar2="<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"table2\"><tr><td width=\"5\" valign=\"middle\"  ><img src=\"images/bg_15.gif\" width=\"5\" height=\"15\" /></td><td valign=\"middle\"><div id=\"real2"
+									+i+"\" class=\"jhjd\" style=\"overflow:hidden;\"></div></td><td width=\"5\" valign=\"middle\" ><img src=\"images/bg_14.gif\" width=\"5\" height=\"15\" /></td><td width=\"20\" valign=\"middle\" ></td><td id=\"text2"
+									+i+"\" width=\"100px\" valign=\"middle\" ></td></tr></table>";
+						var plan=weekPlan.split(",")[i];
+						var progress=planProgress.split(",")[i];
+						var name=planName.split(",")[i];
+						var detail=planDetail.split(",")[i];
+						var finishDetail=testFinishDetail.split(",")[i];
+						$("#weekPlanDetail").append("<tr><td style=\"width:50px;text-align:center\" rowspan=\"2\">"+(i+1)+"</td><td align=\"center\" rowspan=\"2\" style='width:80px'>"+name+"</td><td align=\"center\" rowspan=\"2\" style='width:190px'>"+detail+"</td><td align=\"center\" rowspan=\"2\" style='width:180px'>"+plan+"</td><td align=\"center\" rowspan=\"2\" style='width:120px'>"+finishDetail+"</td><td style=\"width:70px;white-space:nowrap\" >计划进度：</td><td align=\"left\" style=\"width:150px;white-space:nowrap\">"+pjbar2+"</td></tr>");
+						$("#weekPlanDetail").append("<tr><td style=\"width:70px\">实际进度：</td><td align=\"left\" style=\"width:150px\">"+pjbar+"</td></tr>");
+						
+						var realId	="real"+i;
+						var textId = "text" + i;
+						if(document.getElementById(realId)){
+							loadingScroll.doScroll(realId,textId,progress,0);
+						}
+						var startTime = testStartTime.split(",")[i];
+						var endTime	= testEndTime.split(",")[i];
+						var currentTime =new Date();
+						var start = "";
+						var end = "";
+						var progress2 = "";
+						var flag = "";
+						var realId2	="real2"+i;
+						var textId2	="text2"+i;
+						if(startTime != null && startTime != ""){
+							start =new Date(Number(startTime.split("-")[0]),Number(startTime.split("-")[1])-1,Number(startTime.split("-")[2]),9,0);
+							end = new Date(Number(endTime.split("-")[0]),Number(endTime.split("-")[1])-1,Number(endTime.split("-")[2]),17,30);
+							if(end.getTime()<=currentTime.getTime()){
+								progress2 = 100;
+								flag = 0;
+							}
+							else if(start.getTime()>=currentTime.getTime()){
+								progress2 = 0;
+								flag = 1;
+							}
+							else{
+								progress2 = Math.round(((currentTime.getTime()-start.getTime())/(end.getTime()-start.getTime()))*100)
+								flag = 0;
+							}
+							if(document.getElementById(realId2)){
+								loadingScroll.doScroll(realId2,textId2,progress2,flag);
+							}
+						}else{
+							progress2 = 0;
+							flag = 2;
+							if(document.getElementById(realId2)){
+								loadingScroll.doScroll(realId2,textId2,progress2,flag);
+							}
+						}
+									
+					}
+				}
+				
+				if(flag == 1){
+					document.getElementById('back').href="WeekPlanList.html?page="+prePage;
+				}else{
+					document.getElementById('back').href="javascript:history.back()";
+				}
+				
+				
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+		});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background: url(../../images/bg_banner5.jpg)"
+				class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" style="width: 310px" align="left">
+										当前位置：日常管理&gt;周计划管理&gt;&nbsp;
+										<strong>周计划详情</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<img src="images/bg_fh.gif" width="18" height="18" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a id="back">返回</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>周计划详情</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table id="weekPlanDetail" class="listTable" border="0"
+							cellpadding="0" cellspacing="0">
+							<tr>
+								<th width="50px">
+									序号
+								</th>
+								<th>
+									任务名称
+								</th>
+								<th>
+									任务详情
+								</th>
+								<th>
+									本周任务目标
+								</th>
+								<th>
+									任务完成情况
+								</th>
+								<th colspan="2">
+									进度
+								</th>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

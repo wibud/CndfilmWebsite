@@ -1,0 +1,148 @@
+package oa.dao.table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.WeekPlan;
+import oa.util.ResultList;
+import java.util.List;
+@SuppressWarnings("unchecked")
+public class WeekPlanDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(WeekPlanDao.class);
+	// property constants
+	public static final String PLAN_ID="plan_id";		   	
+	public static final String USER_ID="user_id";		  	
+	public static final String CREATE_TIME="create_time";		 	
+	public static final String EDIT_TIME="edit_time";	    	
+	public static final String PLAN_START_TIME="plan_start_time";         
+	public static final String PLAN_END_TIME="plan_end_time";      
+	public static final String WEEK_PLAN="week_plan";       
+	public static final String PLAN_PROGRESS="plan_progress";
+	public static final String JUDGEMENT="judgement";
+	public static final String REMARK="remark";
+	public static final String PLAN_COUNT="plan_count";
+	public static final String DEPT_ID="dept_id";
+	public static final String TEST_START_TIME="test_start_time";
+	public static final String TEST_END_TIME="test_end_time";
+	public static final String PLAN_NAME="plan_name";
+	public static final String PLAN_DETAIL="plan_detail";
+	public static final String TEST_FINISH_DETAIL="test_finish_detail";
+	
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(WeekPlan instance) {
+		log.debug("saving WeekPlan instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(WeekPlan instance) {
+		log.debug("deleting WeekPlan instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(WeekPlan instance) {
+		log.debug("update WeekPlan instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public WeekPlan findById(String id) {
+		log.debug("getting WeekPlan instance with id: " + id);
+		try {
+			WeekPlan instance = (WeekPlan) super.get("oa.model.table.WeekPlan", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public ResultList<WeekPlan> findByExample(Integer pageNo, WeekPlan workAttendance) {
+		log.debug("find WeekPlan instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.WeekPlan", workAttendance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<WeekPlan> findAll(Integer pageNo) {
+		log.debug("finding all WeekPlan instances");
+		try {
+			return super.find(pageNo, "oa.model.table.WeekPlan");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<WeekPlan> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding WeekPlan instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.WeekPlan", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<WeekPlan> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding WeekPlan instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.WeekPlan", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public List<WeekPlan> findByHQL(Integer pageNo, String hql){
+		log.debug("finding WeekPlan instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding count instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+			}
+	
+}
+
+
+
+

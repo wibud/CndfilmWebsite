@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--个人资产管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="./scripts/js/date.js"></script>
+
+		<script type="text/javascript">
+		
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+				
+				
+				var orderByfilFA = "assetNo";
+				var orderByCAApply = "applyTime";
+				
+				//确定当前登录用户
+				var loginer = "";
+				var loginerDeptID = "";
+				
+				//各种资产ID,用于查询数据库
+				var assetID = "";
+				var kindID="";
+				var subKindID="";
+				
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				
+				var urlLoginerFAsset = "/assetFixedListAlloted";
+				var urlCAssetApplyList = "/showCAApplyLogSearchList";
+				$.fn.showData=function(urls,page2)
+				{
+					switch(urls)
+					{
+						case urlLoginerFAsset: $(this).showLoginerFAssetData(urls,page2);break;
+						case urlCAssetApplyList: $(this).showCAssetApplyData(urls,page2);break;
+						default:alert("url错误！");
+					}
+				};
+				
+
+				$.fn.showLoginerFAssetData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#afiFassetList tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+	                            var asset_id            = $(this).find("asset_id").text();
+	                            var assetKindID = $(this).find("assetKindID").text();
+	                            var assetSubKindID = $(this).find("assetSubKindID").text();
+	                            var assetKind			=$(this).find("assetKind").text();
+	                            var assetSubKind = $(this).find("assetSubKind").text();
+							    var assetNo          = $(this).find("assetNo").text();
+							    var assetModel=$(this).find("assetModel").text();
+							    var assetPrice=$(this).find("assetPrice").text();
+							    var assetBaoxiu = $(this).find("assetBaoxiu").text();
+
+								 var strInfo ="<td>"+(i+1)+"</td><td style='display:none'>"+asset_id+"</td><td style='display:none'>"+assetKindID+"</td><td style='display:none'>"+assetSubKindID+"</td><td>"+assetKind+
+								 "</td><td>"+assetSubKind+"</td><td>"+assetNo+"</td><td>"+assetModel+"</td><td>"+assetPrice+"</td><td>"+assetBaoxiu+"</td>";
+   	                            var strBTNAppend = "<td><input type='button' value='归还' class='bt_fassetGHApply'/></td>";
+   	                            
+								$("#afiFassetList").append("<tr class='content' id='"+asset_id+"'>"+strInfo+strBTNAppend+"</tr>");
+		                        id++;
+
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav2");
+	                        //调用注册按钮的事件
+							registerFAGHButtons();
+						},
+						{'assetOwner':loginer,'orderBy':orderByfilFA}
+					);
+				};
+				$.fn.showCAssetApplyData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#cassetLogList tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+	                            var assetKindID = $(this).find("assetKindID").text();
+	                            var assetSubKindID = $(this).find("assetSubKindID").text();
+	                            var assetKind			=$(this).find("assetKind").text();
+	                            var assetSubKind = $(this).find("assetSubKind").text();
+							    var assetName   = $(this).find("assetName").text();
+							    var assetModel=$(this).find("assetModel").text();
+							    var assetPrice=$(this).find("assetOpePrice").text();
+							    var applyTime = $(this).find("applyTime").text();
+							    var signState = $(this).find("signState").text();
+							    var authState = $(this).find("authState").text();
+							    var remarks = $(this).find("remarks").text().split("@#%");
+							    if(signState=="0")
+						    	 state="部门负责人未签字";
+						     	else if(signState=="1"&&authState=="0")
+						    	 state="未批准";
+						    	else if(signState=="1"&&authState=="1")
+						    		 state="已批准";
+								else if(signState=="1"&&authState=="2")
+						    		 state="不批准";
+						    	else if(signState=="2")
+						    		 state="部门负责人拒签";
+						    	var assetNum=remarks[0];
+							    var assetTotalPrice = (parseInt(assetPrice)*parseInt(assetNum)).toString();
+								 var strInfo ="<td>"+(i+1)+"</td><td style='display:none'>"+assetKindID+"</td><td style='display:none'>"+assetSubKindID
+								 +"</td><td>"+assetKind+"</td><td>"+assetSubKind+"</td><td>"+assetName+"</td><td>"+assetModel+
+								 "</td><td>"+assetNum/*+" "+assetUnit*/+"</td><td>"+assetTotalPrice+"</td><td>"+applyTime+"</td><td>"+state+"</td>";
+   	                           
+								$("#cassetLogList").append("<tr class='content' id='"+(i+1)+"'>"+strInfo+"</tr>");
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav3");
+							//register();
+						},
+						{'operations':"耗材申请,",'applyerDeptID':loginerDeptID,'orderBy':orderByCAApply}
+					);
+				};
+				
+				$.post("/currentUserDetail",{},
+				function(xml){
+					loginer   = $(xml).find("userId").text();
+					loginerDeptID = $(xml).find("userDeptId").text();
+					$(this).showLoginerFAssetData(urlLoginerFAsset,page);
+					$(this).showCAssetApplyData(urlCAssetApplyList,page);
+				}
+			,'xml');
+			
+			function registerFAGHButtons()
+			{
+				$(".bt_fassetGHApply").each(
+					function()
+					{
+						$(this).click(
+								function()
+								{
+									if(true==confirm("确定归还？"))
+									{
+										getIDs(this);
+										var no=$(this).parent().parent().children("td:eq(6)").text();
+										var model=$(this).parent().parent().children("td:eq(7)").text();
+										var price=$(this).parent().parent().children("td:eq(8)").text();
+										var baoXiu = $(this).parent().parent().children("td:eq(9)").text();
+										$.post('/cassetApply',{'asset_id':assetID,'assetCategory':"固定资产",'assetKindID':kindID,'assetSubKindID':subKindID,'assetNo':no,
+										'assetModel':model,'assetNum':"1",'assetOwner':loginer,'assetDept':loginerDeptID,'applyKind':"固定资产归还"},CB_cassetApply,'xml');
+										function CB_cassetApply(databack){
+											var recode = $(databack).find("recode").text();
+											if(recode != 0){
+												alert($(databack).find("errormsg").text());
+											}else {
+													alert("操作成功！");
+													location.href="AssetFixedold.html";
+											}
+										}
+									}	
+									else return;
+								}
+						);
+					}
+				);
+			}
+			
+			//排序
+			$(".orderfilFA").each(function(){					
+				$(this).click(function(){
+					orderByfilFA = $(this).attr("id");
+					$(this).showLoginerFAssetData(urlLoginerFAsset,page);
+				});
+				$(this).css("cursor","hand");
+			});
+			$(".orderCAApply").each(function(){					
+				$(this).click(function(){
+					orderByfilFA = $(this).attr("id");
+					$(this).showCAssetApplyData(urlCAssetApplyList,page);
+				});
+				$(this).css("cursor","hand");
+			});	
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+			function getIDs(object)
+			{
+				assetID = $(object).parent().parent().children("td:eq(1)").text();
+				kindID=$(object).parent().parent().children("td:eq(2)").text();
+				subKindID=$(object).parent().parent().children("td:eq(3)").text();
+				if(assetID=="null") assetID="";
+				if(kindID=="null") kindID="";
+				if(subKindID=="null") subKindID="";
+			}
+			
+			});
+			
+		</script>
+
+	</head>
+<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="150"><div class="biao" align="left">当前位置：&gt;&nbsp;<strong>资产管理</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right">
+						    <div class="biao2_wide">
+						    <table id="tb_Mgr" border="0" cellspacing="0" cellpadding="0">
+						    <tr>
+						    <td><img src='images/allot.png' /></td><td width='5'>&nbsp;</td>
+						    <td><a href='fassetApply.html' >固定资产领用</a></td><td width='5'>&nbsp;</td>
+						    <td><img src='images/bg_bj.gif' /></td><td width='5'>&nbsp;</td>
+						    <td><a href='cassetApply.html' >耗材申请</a></td><td width='5'>&nbsp;</td>
+						    <td><img src='images/bg_fh.gif' /></td><td width='5'>&nbsp;</td>
+						    <td><a href='homePage.html' >返回</a></td><td width='5'>&nbsp;</td>
+						    </tr>
+							</table>
+							</div>
+							</td>
+ 					 </tr>
+ 					</table>
+					</div>
+					
+					
+					
+					<div id="content_r8">
+					<div id="tabs" style="z-index:0">
+							
+				            <ul id="ul_lists" style="z-index:0">
+				                <li id="li_AfiFassetList"><a href="#tabs-1">拥有固定资产</a></li>
+				                <li id="li_cassetApplyLogList"><a href="#tabs-2">部门耗材申请记录</a></li>
+				            </ul>
+				        
+					<div class="tablediv" id="tabs-1">    
+						<table id="afiFassetList" border="0" class="listTable" style="width:100%">
+							<tr>
+								<th>序号
+								</th>
+								<th>资产大类
+								</th>
+								<th>资产小类
+								</th>
+								<th class="orderfilFA" id="assetNo">资产编号
+								</th>
+								<th class="orderfilFA" id="assetModel">资产规格
+								</th>
+								<th class="orderfilFA" id="assetPrice">资产价格
+								</th>
+								<th class="orderfilFA" id="assetExtens">保修期限
+								</th>
+								<th>操作</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav2"></div>
+					</div>
+					<div class="tablediv" id="tabs-2">
+						<table id="cassetLogList" border="0" class="listTable" style="width:100%">
+							<tr>
+								<th>序号</th>
+								<th class="orderCAApply" id="assetKindID">耗材大类</th>
+								<th class="orderCAApply" id="assetSubKindID">耗材小类</th>
+								<th class="orderCAApply" id="assetName">耗材品牌</th>
+								<th class="orderCAApply" id="assetModel">耗材规格</th>
+								<th>申请数量</th>
+								<th>总额</th>
+								<th class="orderCAApply" id="applyTime">申请时间</th>
+								<th>申请状态</th>
+								
+							</tr>
+						</table>
+						<div align="right" id="pageNav3"></div>
+					</div>
+				</div>
+				</div>
+				</div>
+				<div id="bg_di"></div>
+            </div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+         </div>
+	</body>
+</html>
+
+	

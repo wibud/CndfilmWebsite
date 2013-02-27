@@ -1,0 +1,149 @@
+package oa.dao.table;
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.Project;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class ProjectDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(ProjectDao.class);
+	// property constants
+	public static final String PROJECT_ID = "project_id";		//项目标识
+	public static final String NAME = "name";						//项目标识	
+	public static final String MANAGER = "manager"; 			//项目标识
+	public static final String DEPT = "dept";							//项目标识
+	public static final String CREATE_ON = "create_on";		//项目标识
+	public static final String CREATE_BY = "create_by";			//项目标识
+	public static final String STATUS="status";						//项目标识
+	public static final String DES="des";	//项目标识
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(Project instance) {
+		log.debug("saving Project instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(Project instance) {
+		log.debug("deleting Project instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(Project instance) {
+		log.debug("update Project instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public Project findById(String id) {
+		log.debug("getting Project instance with id: " + id);
+		try {
+			Project instance = (Project) super.get("oa.model.table.Project", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Project> findByExample(Integer pageNo, Project project) {
+		log.debug("find Project instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Project", project);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Project> findAll(Integer pageNo) {
+		log.debug("finding all Project instances");
+		try {
+			return super.find(pageNo, "oa.model.table.Project");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<Project> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding Project instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.Project", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Project> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding Project instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.Project", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	
+	//以一个字段或另一个字段为条件模糊查询
+	public ResultList<Project> findByProperty(Integer pageNo,String propertyName1,String propertyName2,String value){
+		log.debug("finding Project instance with property: " + propertyName1
+				+ ", value: " + value+" or "+propertyName2+", value; "+value);
+		try {
+			return super.likefind(pageNo, "oa.model.table.Project", propertyName1, propertyName2,value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+	
+	
+	public List<Project> findByHQL(Integer pageNo, String hql){
+		log.debug("finding Project instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding Project instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+			}
+	
+}

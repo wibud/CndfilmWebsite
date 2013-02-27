@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--耗材申请</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript">
+		
+			var assetCategory="固定资产";
+			var fassetPrice="";
+			var index=1;
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+			showFAssetKindList("#sel_fassetKind");
+			
+			
+			
+			
+			function showFAssetKindList(kindSel){
+				//获取固定资产类别列表
+				$.post('/assetKindShowList',{'assetCategory':assetCategory},
+					CB_kindList,
+					'xml');
+				function CB_kindList(xml){
+					var perext=kindSel+" option";
+					$(perext).remove();
+					$(kindSel).append("<option value=\"\">"+"—大类—"+"</option>");
+					$(xml).find("item").each(function(){
+						$(kindSel).append("<option value=\""+$(this).find("assetKindID").text()+"\">"+$(this).find("assetKind").text()+"</option>");									
+					});	
+				}
+			}
+			
+			$("#sel_fassetKind").change(
+					function()
+					{
+						var kindID = $("#sel_fassetKind").val();
+						var perext="#sel_fassetSubKind"+" option";
+						$(perext).remove();
+						$("#sel_fassetSubKind").append("<option value=\"\">"+"—小类—"+"</option>");
+						if(kindID=="")
+						{
+							return;
+						}
+						$.post('/assetSubKindShowList',{'assetKindID':kindID},
+						function(xml){
+							$(xml).find("item").each(function(){
+								$("#sel_fassetSubKind").append("<option value=\""+$(this).find("assetSubKindID").text()+"\">"+$(this).find("assetSubKind").text()+"</option>");									
+							});	
+							},
+						'xml');
+					}
+				);
+			
+			function init(){
+				$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+			}
+			
+			$("#add").click(
+				function()
+				{
+					var fassetKindID=$("#sel_fassetKind").val();
+					var fassetKind=$("#sel_fassetKind :selected").text();
+					var fassetSubKindID = $("#sel_fassetSubKind").val();
+					var fassetSubKind = $("#sel_fassetSubKind :selected").text();
+					var array=[fassetKindID,fassetSubKindID];
+					for(i=0;i<2;i++)
+					{
+						if(array[i]=="")
+						{
+							alert("请输入完整信息！");
+							return;
+						}
+					}
+					
+					var oldlist=false;
+					$("#tb_applyList").find("tr:gt(0)").each(
+						function()
+						{
+							var kind = $(this).find("td:eq(3)").text();
+							var subKind = $(this).find("td:eq(4)").text();
+							if(kind==fassetKind&&subKind==fassetSubKind)
+							{
+								alert("此类资产已在列表中！");
+								oldlist=true;
+								return;
+							}
+						}
+					);
+					if(oldlist==true) return;
+					 var strInfo ="<td>"+index+"</td><td style=\"display:none\">"+fassetKindID+"</td><td style=\"display:none\">"+fassetSubKindID+"</td><td>"+fassetKind+"</td><td>"+fassetSubKind+"</td>";
+					 var strDelete="<td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+					$("#tb_applyList").append("<tr class='content' id='"+index+"'>"+strInfo+strDelete+"</tr>");
+					index++;
+					register();
+				}
+			);
+			
+			$("#confirm").click
+			(
+				function()
+				{
+					if(index==1)
+					{
+						alert("您还没有选择要申请的耗材，无法提交！");
+						return;
+					}
+					var deptID = "";
+					var userID = "";
+					$.post("/currentUserDetail",{},
+						function(xml){
+							deptID   = $(xml).find("userDeptId").text();
+							userID   = $(xml).find("userId").text();
+							var tag=1;
+							$("#tb_applyList").find("tr:gt(0)").each(
+								function()
+								{
+									var kindID=$(this).find("td:eq(1)").text();
+									var subKindID = $(this).find("td:eq(2)").text();
+									$.post('/cassetApply',{'assetCategory':assetCategory,'assetKindID':kindID,'assetSubKindID':subKindID,'assetOwner':userID,
+									'assetDept':deptID,'applyKind':"固定资产领用",'assetNum':"1"},CB_cassetApply,'xml');
+									function CB_cassetApply(databack){
+										var recode = $(databack).find("recode").text();
+										if(recode != 0){
+											alert("序号："+tag+"申请项信息提交失败，错误信息："+$(databack).find("errormsg").text());
+										}else {
+												tag++;
+										}
+										if(tag==index)
+										{
+											alert("提交成功！");
+											location.href="fassetApply.html";
+										}
+									}
+									
+								}
+							);
+						}
+					,'xml');
+					
+					
+				}
+				
+			);
+			
+			
+			//注册按钮
+			function register(){
+				$(".delete").last().click(function(){
+					if(confirm("您确定删除吗？")){
+					$(this).parent().parent().nextAll().each(
+						function()
+						{
+							var $indextd=$(this).find("td:eq(0)");
+							var oldIndex=$indextd.text();
+							$indextd.text((parseInt(oldIndex)-1).toString());
+						}
+					);
+					$(this).parent().parent().remove();
+					index--;
+	               	}
+	              });
+			}
+			
+			
+			}); 
+			
+			
+		</script>
+		 
+	</head>
+	
+	<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content">
+				<div id="main">
+				<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="300">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：资产管理 &gt;&nbsp;
+										<strong>固定资产领用</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>固定资产领用</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="width_5">固定资产大类</td>
+								<td class="width_15">
+									<select id="sel_fassetKind" class="wideSelText">
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="width_5">固定资产小类</td>
+								<td class="width_15">
+									<select id="sel_fassetSubKind" class="wideSelText">
+									<option value="" selected="selected">—小类—</option>
+									</select>
+								</td>
+							</tr>
+							<tr><td colspan="2"><input class="bt" type="button" id="add" value="添加"  ></input>
+							    </td>
+							</tr>
+						</table>
+						</br>
+						<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>领用列表</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+						<table  id="tb_applyList" class="listTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+							<tr>
+								<th>序号
+								</th>
+								<th>大类
+								</th>
+								<th>小类
+								</th>
+								<th >操作</th>
+							</tr>
+						</table>
+						</br>
+						<input class="bt" type="button" id="confirm" value="提交"  ></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+						</div>
+					</div>
+				</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,150 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.Department;
+import oa.util.ResultList;
+@SuppressWarnings("unchecked")
+public class DepartmentDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(DepartmentDao.class);
+	// property constants
+	public static final String DEPT_ID = "dept_id";		//部门标识
+	public static final String DEPT_NAME = "dept_name";
+	public static final String PERSON_IN_CHARGE = "person_in_charge";
+	public static final String UP_DEPT_ID = "up_dept_id";
+	public static final String TELEPHONE = "telephone";
+	public static final String DEPT_DESC = "dept_desc";
+	public static final String SECOND_MANAGER = "second_manager";
+
+	protected void initDao() {
+		// do nothing
+	}
+	
+	
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public Department findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding Department instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<Department> user=super.find(null,"oa.model.table.Department", propertyName, value);
+			if(user.isEmpty()){
+				return null;
+			}else{
+				return user.get(0);
+			}
+			
+			 
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+			}
+		}
+
+	public void save(Department transientInstance) {
+		log.debug("saving Department instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(Department persistentInstance) {
+		log.debug("deleting Department instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(Department instance) {
+		log.debug("update Department instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public Department findById(String id) {
+		log.debug("getting Department instance with id: " + id);
+		try {
+			Department instance = (Department) super.get("oa.model.table.Department", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+	
+
+
+	public ResultList<Department> findByExample(Integer pageNo, Department instance) {
+		log.debug("find Department instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Department", instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Department> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding Department instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.Department", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<Department> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding Department instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.Department", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<Department> findAll(Integer pageNo) {
+		log.debug("finding all Department instances");
+		try {
+			return super.find(pageNo, "oa.model.table.Department");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	/**
+	 * 查找某个部门下的所有子孙部门
+	 * @param id
+	 * @return
+	 */
+	public ResultList<Department> findAllDescendant(String id){
+		ResultList<Department> children = this.findByProperty(null, UP_DEPT_ID, id);
+		ResultList<Department> result = new ResultList<Department>(children);
+		
+		for(Department dept : children){
+			result.addAll(findAllDescendant(dept.getDept_id()));
+		}
+		
+		return result;
+	}
+	
+}

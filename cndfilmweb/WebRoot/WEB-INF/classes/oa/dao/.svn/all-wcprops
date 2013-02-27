@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/oa/!svn/ver/3125/src/trunk/CyberOA/src/oa/dao
+END
+DaoTemplate.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/oa/!svn/ver/995/src/trunk/CyberOA/src/oa/dao/DaoTemplate.java
+END
+DatabaseAnno.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/src/oa/dao/DatabaseAnno.java
+END
+DaoUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/oa/!svn/ver/2877/src/trunk/CyberOA/src/oa/dao/DaoUtil.java
+END
+DaoLocalException.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/src/oa/dao/DaoLocalException.java
+END
+HibernateTemplate.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/oa/!svn/ver/2847/src/trunk/CyberOA/src/oa/dao/HibernateTemplate.java
+END
+BaseDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/oa/!svn/ver/3096/src/trunk/CyberOA/src/oa/dao/BaseDao.java
+END
+DaoRemoteException.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/src/oa/dao/DaoRemoteException.java
+END

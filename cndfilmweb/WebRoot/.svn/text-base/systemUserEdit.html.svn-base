@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改用户信息</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+
+				/*var userId,userName,userSex,userDeptId,userPostName,userPlaceInfo，userTempDeptName，userTempPostName，userAddress,userTel,userMobile,userEmail,userIp,userDes;*/
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var userId = href.split("userId=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+
+				var userId             = tmp[0].split("=")[1];
+				var userName           = tmp[1].split("=")[1];
+				var userSex            = tmp[2].split("=")[1];
+				var userDeptId         = tmp[3].split("=")[1];
+				var userPostId         = tmp[4].split("=")[1];
+				var userPlaceInfo      = tmp[5].split("=")[1];
+				var userAddress        = tmp[6].split("=")[1];
+				var userTel            = tmp[7].split("=")[1];
+				var userMobile         = tmp[8].split("=")[1];
+				var userEmail          = tmp[9].split("=")[1];
+				var userIp             = tmp[10].split("=")[1];
+				var userDesc           = tmp[11].split("=")[1];
+				var idNumber		    = tmp[12].split("=")[1];
+
+
+				
+				$("#userName").val(userName);
+				$("#userPlaceInfo").val(userPlaceInfo);
+				$("#idNumber").val(idNumber);
+				$("#userAddress").val(userAddress);
+				$("#userTel").val(userTel);
+				$("#userMobile").val(userMobile);
+				$("#userEmail").val(userEmail);
+				$("#userIp").val(userIp);
+				$("#userDesc").val(userDesc);
+				userSex=userSex.replace(/\s*/g,"");
+				$("#userSex option[value='"+userSex+"']").attr("selected","selected");
+				
+				//初始化dept，position列表
+				$.post('/systemDeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#userDeptId").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+
+								});
+
+							$("#userDeptId option[value='"+userDeptId+"']").attr("selected","selected");
+							$.post('/getPostByDeptId',
+			                    {'deptId':$("#userDeptId").val()},
+			                    function(xml){
+			                   		$("#userPostId").append(" <option value=\"\" selected=\"selected\"></option>");
+									$(xml).find("item").each(function(){
+											$("#userPostId").append("<option value=\""+$(this).find("postId").text()+"\">"+$(this).find("postName").text()+"</option>");
+		
+										});
+		
+									$("#userPostId option[value='"+userPostId+"']").attr("selected","selected");
+			   	                 },
+			                     'xml');
+	   	                 },
+	                     'xml');
+	                     
+	            	//根据部门信息的改变动态显示姓名选项
+	            	$("#userDeptId").change(function(){
+	            		$("#userPostId option").remove();
+	            		var deptId=$('#userDeptId').val();
+	            		$.post('/getPostByDeptId',
+	            			{'deptId':deptId},
+	            			function(xml){
+	            				$(xml).find("item").each(function(){
+											$("#userPostId").append("<option value=\""+$(this).find("postId").text()+"\">"+$(this).find("postName").text()+"</option>");
+		
+										});
+		
+									$("#userPostId option[value='"+userPostId+"']").attr("selected","selected");
+	            			},
+	            		'xml');
+	            	});
+	                     
+
+
+				   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+			        $("#comfirm").click(function(){
+					  
+						var userName          = $("#userName").val();
+						var userSex           = $("#userSex").val();
+						var userDeptId        = $("#userDeptId").val();
+						var userPostId        = $("#userPostId").val();
+						var userPlaceInfo     = $("#userPlaceInfo").val();
+					    var userAddress       = $("#userAddress").val();
+					    var idNumber          = $("#idNumber").val();
+					    var userTel           = $("#userTel").val();
+					    var userMobile        = $("#userMobile").val();
+					    var userEmail         = $("#userEmail").val();
+					    var userIp            = $("#userIp").val();
+						var userDesc          = $("#userDesc").val();
+
+						if($('#userName').val() == ""){
+							alert("用户名不能为空");
+							return;
+		                }
+
+	                    $.post('/systemUserEdit', {'userId':userId,'userName':userName,'userSex':userSex,'userDeptId':userDeptId,'userPostId':userPostId,'userPlaceInfo':userPlaceInfo,'idNumber':idNumber,'userAddress':userAddress,'userTel':userTel,'userMobile':userMobile,'userEmail':userEmail,'userIp':userIp,'userDesc':userDesc}, callback, 'xml');
+
+	                    function callback(xml){
+							var $xml = $(xml);
+
+							//这个函数从后台得到xml里面的数据
+							var recode = $xml.find("recode").text();
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+
+													
+							alert("修改成功！");
+							location.href="systemDeptList.html?page="+prePage;
+
+						}
+
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								location.href="systemUserList.html?page="+prePage;
+							}
+						}
+					});
+
+					$("#back").click(
+						function(){location.href="systemUserList.html?page="+prePage;}
+					);
+
+					function init(){
+
+						$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$("#sidebar").showSideBar();
+						$(this).navi();
+					}
+			
+
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" id="toHomePage" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：用户管理 &gt;用户信息管理&gt;&nbsp;
+										<strong>修改用户信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改用户信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="wideSelText"><label class="required">*</label>姓名</td>
+								<td><input type="text" id="userName" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText"><label class="required">*</label>性别</td>
+								<td>
+								    <select name="userSex" id="userSex" class="wideSelText">
+								    	<option value="男">男</option>
+								    	<option value="女">女</option>
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td class="wideSelText"><label class="required">*</label>部门</td>
+								<td>
+								    <select name="userDeptId" id="userDeptId" class="wideSelText">
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td class="wideSelText"><label class="required">*</label>职位</td>
+								<td>
+								    <select name="userPostId" id="userPostId" class="wideSelText">
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td class="wideSelText">工位信息</td>
+								<td><input type="text" id="userPlaceInfo" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText">身份证号码</td>
+								<td><input type="text" id="idNumber" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText">家庭住址</td>
+								<td><input type="text" id="userAddress" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText">固话</td>
+								<td><input type="text" id="userTel" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText">移动电话</td>
+								<td><input type="text" id="userMobile" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText">邮箱</td>
+								<td><input type="text" id="userEmail" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText">IP</td>
+								<td><input type="text" id="userIp" class="wideSelText"></input></td>
+							</tr>
+							<tr>
+								<td class="wideSelText">备注</td>
+								<td><textarea id="userDesc" class="wideSelText"></textarea></td>
+							</tr>
+							<tr><td colspan="2">
+							                    <input class="bt" type="button" value="确定" id="comfirm"></input>
+							                    <input class="bt" type="button" value="返回" id="back"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+			</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

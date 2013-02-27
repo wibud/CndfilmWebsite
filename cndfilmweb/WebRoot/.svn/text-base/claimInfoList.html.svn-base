@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>OA系统</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+	<script type="text/javascript">
+	    showIncludeFile();
+	    showIncludeThickBoxAjaxingFile();
+	</script>
+	<script type="text/javascript">
+	    $(document).ready(function(){
+		    init();
+		    
+			/*$.post('/getPermission',
+				   {},
+				   function(xml) {
+					   permission = $(xml).find("result").text();
+					   readpermission = $(xml).find("permission").find("ticketApplyInfo").find("read").text();
+					   if (readpermission == 0) {
+							 $("#searchTicket").attr("disabled", true);
+						   }else{
+						     $("#searchTicket").attr("disabled", false);
+						   }
+						},
+						'xml');*/
+						
+			//翻页
+			var href = location.href;
+			var page = href.split("page=")[1];
+			if(page)
+			   page = page.split("&")[0].split("#")[0];
+			if(!page || page<1)
+			   page=1;
+			var pageCount = 0;
+			var count = 0;
+			var url = "/claimInfoList";
+			
+			$.fn.showData = function(url,page2){
+			   page = page2;
+			   urlT = url+"?page="+page2;
+			   $(this).handlerData(
+			            urlT,
+						function(xml){
+							$("#content_r6 table tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+                            
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+								}
+							$(xml).find("item").each(function(i){
+							     var claimId = $(this).find("claimId").text();
+							     var userId = $(this).find("userId").text();
+								 var userName = $(this).find("applyName").text();
+								 var userDept = $(this).find("deptName").text();
+								 var type = $(this).find("claimType").text();
+								 var claimType;
+								 var description = $(this).find("description").text();
+								 var claimDate = $(this).find("claimDate").text();
+								 var applyDate = $(this).find("applyDate").text();
+								 var claimSerialnumber = $(this).find("claimSerialnumber").text();
+								 var totalAmount = $(this).find("totalAmount").text();
+								 var approvalState = $(this).find("approvalState").text();
+								 var deptManager= $(this).find("deptManager").text();
+								 var secondManager= $(this).find("secondManager").text();
+								 var payee_temp= $(this).find("payee").text();
+								 var payee="";
+								 
+								 if(payee_temp=="null"){
+								    payee="暂无";
+								 }else if(payee_temp!="null"){
+								    payee=payee_temp;
+								 }
+								 
+								 switch(type){
+								    case '1':claimType="话费补贴";break;
+								    case '2':claimType="餐费补贴";break;
+								    case '3':claimType="出差补贴";break;
+								    case '4':claimType="交通补贴";break;
+								    case '5':claimType="其他补贴";break;
+								    default:claimType="";break;
+								 }
+								 
+								 var tmp="claimId="+claimId;
+								 var bookingInfo1="<tr class='content' id='"+claimId+"'><td>"+(i+1)+"</td><td>"+userName+"</td><td>"+userDept+"</td><td>"+applyDate+"</td><td>"+claimType+"</td><td id='totalAmount'>"+totalAmount+"</td><td id='approvalState'>"+approvalState+"</td><td>"+payee+"</td>";
+								 
+								 var bookingInfo2="<td><input  type='image' src='./images/oa_detail.png'  title='查看详情' onclick=\"javascript: location.href=encodeURI(\'claimApplyDetail.html?"+tmp+"&page1="+page+"\')\"></input></td><td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+								 if(approvalState=="部门主管审批不通过" || approvalState=="分管领导审批不通过" || approvalState=="总经理审批不通过" || approvalState=="财务部审批不通过"){
+								      var bookingInfo3="<td id='approval3'><input type='button' value='修改' title='修改' class='approval3'></input></td>"+"<td id='deptManager' style='display:none'>"+deptManager+"</td><td id='secondManager' style='display:none'>"+secondManager+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+								 }else if(approvalState=="等待申请人领款"){
+								      var bookingInfo3="<td id='approval3'><input type='button' value='确认' title='确认' class='approval3'></input></td>"+"<td id='deptManager' style='display:none'>"+deptManager+"</td><td id='secondManager' style='display:none'>"+secondManager+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+								 }else{
+								      var bookingInfo3="<td id='approval3'><input type='button' value='审批' title='审批' class='approval3'></input></td>"+"<td id='deptManager' style='display:none'>"+deptManager+"</td><td id='secondManager' style='display:none'>"+secondManager+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+								 }     
+								 $("#content_r6 table").append(bookingInfo1+bookingInfo2+bookingInfo3);	
+								 id++;							 
+							});
+						//	$("#pageNav").showPageNav(page2, pageCount, count, url);
+							 pageNav(page2,pageCount,count,url,"#pageNav");
+							 register();
+							 register1();
+					}
+			   );
+			};
+			
+			 
+			$(this).showData(url,page);
+			function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+				function register1(){
+				    //点击"删除"按钮，弹出是否删除的询问对话框
+	                $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/claimDelete', {'claimId':id}, delCallback, 'xml');
+		                	}
+		                });
+	                });
+				}
+				
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+					    alert("删除成功");
+						location.href="claimInfoList.html?page="+page;
+					}
+				}
+				
+				function register(){
+				    var currentuserId;
+				    var currentuserPost;
+				    var cuurentuserDept;
+				    $.post('/currentUserDetail',
+						          {},
+						          function(xml){
+				                               currentuserId   = $(xml).find("userId").text();
+				                               currentuserPost=$(xml).find("userPostId").text();
+				                               currentuserDept=$(xml).find("userDeptId").text();
+			               $(".approval3").each(function(index){
+							var $this = $(this);
+							var id = $this.parents('.content').attr('id');
+							var row=$this.parent("td").parent("tr");
+							var content=$("#approvalState",row).text();
+						    var state1="等待部门主管审批";
+						    var state2="等待分管领导审批";
+						    var state3="等待总经理审批";
+						    var state4="等待财务部审批";
+						    var state5="等待申请人领款";
+						    
+						    var state6="部门主管审批不通过";
+						    var state7="分管领导审批不通过";
+						    var state8="总经理审批不通过";
+						    var state9="财务部审批不通过";
+						    
+						    var deptManager=$("#deptManager",row).text();
+						    var secondManager=$("#secondManager",row).text();
+						    var totalAmount=$("#totalAmount",row).text();
+						    var userId =$("#userId",row).text();
+						    
+						    $this.attr("disabled", true);
+						    
+						                   if(content==state1 && currentuserId==deptManager){
+						                         $this.attr("disabled", false);
+						                         $this.click(function(){
+							                        tmp="claimId="+id;
+								                    if(confirm("部门经理是否审批？")){
+									                   location.href="/approvalClaimApply.html?"+tmp;
+			                	                    }
+			                                    });
+						                    }
+                                           if(content==state2 && currentuserId==secondManager){
+                                                 $this.attr("disabled", false);
+						                         $this.click(function(){
+							                        tmp="claimId="+id;
+								                    if(confirm("分管经理是否审批？")){
+									                   location.href="/approvalClaimApply.html?"+tmp;
+			                	                    }
+			                                     });
+						                  }						                    
+						               
+						    
+						    if(content==state3 && currentuserPost=="2" && Number(totalAmount)>=300){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="claimId="+id;
+								        if(confirm("总经理是否审批？")){
+									          location.href="/approvalClaimApply.html?"+tmp;
+			                	        }
+			                        });
+						    }
+						    
+						    if(content==state4 && currentuserDept=="2"){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="claimId="+id;
+								        if(confirm("财务部是否审批？")){
+									          location.href="/approvalClaimApply.html?"+tmp;
+			                	        }
+			                        });
+						    }
+						    
+						    if(content==state5 && currentuserId==userId){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="claimId="+id;
+								        if(confirm("申请人是否确认领款？")){
+									          location.href="/approvalClaimApply.html?"+tmp;
+			                	        }
+			                        });
+						    }
+						    
+						   if(currentuserId==userId && (content==state6 || content==state7 || content==state8 || content==state9)){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="claimId="+id;
+								        if(confirm("申请人是否修改？")){
+									          location.href="/editClaimApply.html?"+tmp;
+			                	        }
+			                        });
+						   }
+						    
+		               });
+		               
+		                },
+						'xml');
+			     }
+				
+		});  
+	</script>
+
+</head>
+
+<body>
+		<div id="container2">
+		  <div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		    <div id="content" >
+			  <div id="main">
+			  <div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：日常管理&gt;&nbsp;<strong>报销管理</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td><img src="images/bg_yh.gif" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="claimApplySearch.html" id="searchClaim">查询报销单</a></td>
+						    <td width="10">&nbsp;</td>
+						    <td><img src="images/sq_img_09.png" width="15" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="addClaimApply.html" id="addClaim">申请报销</a></td>
+							<td width="10">&nbsp;</td>
+							<!--<td><img src="images/sq_img_09.png" width="15" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+							<td><a href="addBusinessClaim.html" id="addBusinessClaim">添加出差报销申请</a></td>
+							<td width="10">&nbsp;</td>
+							 --><td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="javascript:history.back()" >返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+					<div id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td width="100%" height="28" valign="bottom" class="b_di">
+							  <table width="600" height="25" border="0" cellpadding="0" cellspacing="0">
+						      <tr>
+						        <td width="100" align="center"><a href="ticketInfoList.html" style="color: blue;text-decoration:none"><strong>订票管理</strong></a></td>
+						        <td width="100" align="center" ><a href="overtimeInfoList.html" style="color: blue;text-decoration:none"><strong>加班管理</strong></a></td>
+						        <td width="100" align="center"><a href="vacancyInfoList.html" style="color: blue;text-decoration:none"><strong>请假管理</strong></a></td>
+						        <td width="100" align="center" ><a href="businessTripList.html" style="color: blue;text-decoration:none"><strong>出差管理</strong></a></td>
+						        <td width="100" style="background-color: white;" align="center" class="isactive" align="center" ><a href="claimInfoList.html" style="color: blue;text-decoration:none"><strong>报销管理</strong></a></td>
+						      </tr>
+						    </table>
+							</td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						
+						  </tr>
+						</table>
+					</div>
+			    <div id="content_r6">
+		           <table id="sortTable" class="listTable" style="overflow:auto;" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+					  <th width="5%">序号</th>
+					  <th width="5%">姓名</th>
+					  <th width="10%">部门</th>
+					  <th width="10%">申请时间</th>
+					  <th width="10%">费用类型</th>
+					  <th width="10%">报销金额</th>
+					  <th width="15%">审批状态</th>
+					  <th width="10%">领款人</th>
+					  <th width="10%">报销事由</th>
+					  <th width="10%" colspan="2">操作</th>
+					</tr>
+                  </table>
+                  <script type="text/javascript" src="./scripts/js/rowView.js"></script>
+                  <br/>
+			    </div>
+			    <div id="sq_di">
+				  <div id="pageNav"></div>
+				  </div>
+			   </div>	
+			  <div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+			<div id="footer"></div>
+			</div>
+		</div>
+</body>
+</html>
+

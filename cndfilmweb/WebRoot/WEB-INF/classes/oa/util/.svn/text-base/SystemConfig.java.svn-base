@@ -1,0 +1,72 @@
+package oa.util;
+
+public final class SystemConfig {
+
+	private SystemConfig() {
+	}
+
+	private static Integer pageSize;
+	private static String systemId;
+	private static String systemIP;
+	private static String systemName;
+	private static String login_method;
+	private static String admin_id;
+	private static String downloadPath;
+
+	public static Integer getPageSize() {
+		return pageSize;
+	}
+
+	public static void setPageSize(Integer pageSize) {
+		SystemConfig.pageSize = pageSize;
+	}
+
+	public static String getSystemId() {
+		return systemId;
+	}
+
+	public static void setSystemId(String systemId) {
+		SystemConfig.systemId = systemId;
+	}
+
+	public static String getSystemName() {
+		return systemName;
+	}
+
+	public static void setSystemName(String systemName) {
+		SystemConfig.systemName = systemName;
+	}
+
+	public static String getSystemIP() {
+		return systemIP;
+	}
+
+	public static void setSystemIP(String systemIP) {
+		SystemConfig.systemIP = systemIP;
+	}
+
+	public static void setLogin_method(String login_method) {
+		SystemConfig.login_method = login_method;
+	}
+
+	public static String getLogin_method() {
+		return login_method;
+	}
+
+	public static String getAdmin_id() {
+		return admin_id;
+	}
+
+	public static void setAdmin_id(String admin_id) {
+		SystemConfig.admin_id = admin_id;
+	}
+
+	public static String getDownloadPath() {
+		return downloadPath;
+	}
+
+	public static void setDownloadPath(String downloadPath) {
+		SystemConfig.downloadPath = downloadPath;
+	}
+
+}

@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改部门信息</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+		
+			
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var deptId = href.split("deptId=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+
+
+				var deptId         = tmp[0].split("=")[1];
+				var deptName       = tmp[1].split("=")[1];
+				var upDeptId       = tmp[2].split("=")[1];
+				var tel            = tmp[3].split("=")[1];
+				var personInCharge = tmp[4].split("=")[1];
+				var secondManager = tmp[5].split("=")[1];
+				var managerDept = tmp[6].split("=")[1];
+				var secondManagerDept = tmp[7].split("=")[1];
+				var deptDesc       = tmp[8].split("=")[1];
+				  
+			
+
+				
+				$("#deptName").val(deptName);
+				$("#tel").val(tel);
+				$("#deptDesc").val(deptDesc);
+
+				//$("#userSex option[value='"+userSex+"']").attr("selected","selected");
+
+				
+	               	$.post('/systemDeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#upDeptId").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+
+								});
+
+							$("#upDeptId option[value='"+upDeptId+"']").attr("selected","selected");
+	   	                 },
+	                     'xml');
+				
+					//初始化部门列表
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#managerDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");							
+								});
+							$("#managerDept option[value='"+managerDept+"']").attr("selected","selected");
+							$.post('/getUserByDept',
+				                    {'userDeptId':$('#managerDept').val()},
+				                    function(xml){
+										$(xml).find("item").each(function(){
+												var id =$(this).find("userId").text();
+												var name = $(this).find("userName").text();
+												$("#personInCharge").append("<option value=\""+id+"\">"+name+"</option>");
+											});
+											$("#personInCharge option[value='"+personInCharge+"']").attr("selected","selected");
+				   	                 },
+				                     'xml');							
+	   	                 },
+	                     'xml');
+	            
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#secondManagerDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");							
+								});
+							$("#secondManagerDept option[value='"+secondManagerDept+"']").attr("selected","selected");
+							$.post('/getUserByDept',
+				                    {'userDeptId':$('#secondManagerDept').val()},
+				                    function(xml){
+										$(xml).find("item").each(function(){
+												var id =$(this).find("userId").text();
+												var name = $(this).find("userName").text();
+												$("#secondManager").append("<option value=\""+id+"\">"+name+"</option>");
+											});
+											$("#secondManager option[value='"+secondManager+"']").attr("selected","selected");
+				   	                 },
+				                     'xml');							
+	   	                 },
+	                     'xml');
+                 //随部门改变动态改变部门成员    
+               	$("#managerDept").change(function(){
+            		$("#personInCharge option").remove();
+            		var deptId=$('#managerDept').val();
+            		$.post('/getUserByDept',
+            			{'userDeptId':deptId},
+            			function(xml){
+            				$(xml).find("item").each(function(){
+										$("#personInCharge").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+	
+									});
+	
+								$("#personInCharge option[value='"+personInCharge+"']").attr("selected","selected");
+            			},
+            		'xml');
+            	});
+	            	
+            	$("#secondManagerDept").change(function(){
+            		$("#secondManager option").remove();
+            		var deptId=$('#secondManagerDept').val();
+            		$.post('/getUserByDept',
+            			{'userDeptId':deptId},
+            			function(xml){
+            				$(xml).find("item").each(function(){
+										$("#secondManager").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+	
+									});
+	
+								$("#secondManager option[value='"+secondManager+"']").attr("selected","selected");
+            			},
+            		'xml');
+            	});
+	            	
+				   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+			        $("#comfirm").click(function(){
+						var deptName        = $('#deptName').val();
+						var upDeptId        = $('#upDeptId').val();
+						var tel             = $('#tel').val();
+						var personInCharge  = $('#personInCharge').val();
+						var deptDesc        = $("#deptDesc").val();
+					    var secondManager        = $("#secondManager").val();
+						if($('#deptName').val() == ""){
+							alert("部门名不能为空");
+							return;
+		                }
+		                if($('#personInCharge').val() == ""){
+							alert("部门负责人不能为空");
+							return;
+						}
+						if($('#secondManager').val() == ""){
+							alert("部门分管领导不能为空");
+							return;
+						}
+
+	                    $.post('/systemDeptEdit', {'deptId':deptId,'deptName':deptName,'upDeptId':upDeptId,'tel':tel,'personInCharge':personInCharge,'secondManager':secondManager,'deptDesc':deptDesc}, callback, 'xml');
+
+	                    function callback(xml){
+							var $xml = $(xml);
+
+							//这个函数从后台得到xml里面的数据
+							var recode = $xml.find("recode").text();
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+
+						/*	deptId          = $xml.find("deptId").text();
+							deptName        = $xml.find("deptName").text();
+							upDeptId        = $xml.find("upDeptId").text();
+							tel             = $xml.find("tel").text();
+							personInCharge  = $xml.find("personInCharge").text();
+							deptDesc        = $xml.find("deptDesc").text();
+							
+
+		                    $("#deptId").val(deptId);
+							$("#deptName").val(deptName);
+							$("#upDeptId").val(upDeptId);
+							$("#tel").val(tel);
+							$("#personInCharge").val(personInCharge);
+							$("#deptDesc").val(deptDesc);
+					        */
+					        
+					        alert("修改成功！");
+							location.href="systemDeptList.html?page="+prePage;
+						}
+
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								location.href="systemDeptList.html?page="+prePage;
+							}
+						}
+					});
+
+					$("#back").click(
+						function(){location.href="systemDeptList.html?page="+prePage;}
+					);
+
+					function init(){
+
+						$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$("#sidebar").showSideBar();
+						$(this).navi();
+					}
+				
+
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" id="toHomePage" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：用户管理 &gt;部门信息管理&gt;&nbsp;
+										<strong>修改部门信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改部门信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td><label class="required">*</label>部门名称</td>
+								<td class="width_15"><input type="text" id="deptName" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td>父部门名称</td>
+								<td class="width_15">
+								    <select name="upDeptId" id="upDeptId" class="dept">
+								    <option value="" selected="selected"></option>
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td>部门电话</td>
+								<td class="width_15"><input type="text" id="tel" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>部门主管</td>
+								<td class="width_15">
+									<select name="managerDept" id="managerDept" class="dept" >
+							        </select>
+							        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        <select name="personInCharge" id="personInCharge" class="person" >
+							        </select>
+							     </td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>部门分管领导</td>
+								<td class="width_15">
+									<select name="secondManagerDept" id="secondManagerDept" class="dept" >
+							        </select>
+							        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        <select name="secondManager" id="secondManager" class="person" >
+							        </select>
+							     </td>
+							</tr>
+							<tr>
+								<td>备注</td>
+								<td class="width_15"><textarea id="deptDesc" class="width_15"></textarea></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+							                    <input class="bt" type="button" value="确定" id="comfirm"></input>
+							                    <input class="bt" type="button" value="返回" id="back"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

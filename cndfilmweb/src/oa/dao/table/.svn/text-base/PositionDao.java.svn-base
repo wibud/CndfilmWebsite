@@ -1,0 +1,63 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.Position;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class PositionDao  extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(PositionDao.class);
+	// property constants
+	public static final String POST_ID = "post_id";		//部门标识
+	public static final String POST_NAME = "post_name";
+	public static final String POST_MARK = "post_mark";
+	
+	protected void initDao() {
+		// do nothing
+	}
+
+	
+	public Position findById(String id) {
+		log.debug("getting Position instance with id: " + id);
+		try {
+			Position instance = (Position) super.get("oa.model.table.Position", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public Position findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding Position instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<Position> user=super.find(null,"oa.model.table.Position", propertyName, value);
+			Position u=user.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+		
+	}
+	
+	public ResultList<Position> findByExample(Integer pageNo, Position instance) {
+		log.debug("find Position instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Position", instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+		
+}
+	
+

@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+
+				Array.prototype.unique = function() {  
+                   var data = [];  
+                   var a = {}; //声明一个对象，javascript的对象可以当哈希表用  
+                   for (var i = 0; i < this.length; i++) {  
+                       if(!a[this[i]]){  
+                          a[this[i]] = true;  
+                          data[data.length] = this[i];  
+                   }  
+                }  
+                return data;  
+                };  
+                
+                
+				$.post('/systemDeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#userDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+
+								});
+
+						
+	   	                 },
+	                     'xml');
+	                     
+	             $.post('/systemUserList',
+	                    {},
+	                    function(xml){
+	                        $("#userName").append(" <option value=\"\" selected=\"selected\"></option>");
+	                        $(xml).find("item").each(function(){
+	                                $("#userName").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>"); 
+	                        });
+	                    },
+	                    'xml'); 
+	                          
+	             //根据部门信息的改变动态显示姓名选项
+	             $("#userDept").change(function(){
+	                   var deptId=$('#userDept').val();
+	                   $("#userName option").remove();
+	            		//列出符合部门和职位的员工
+	            	   $.post('/systemUserSearch',
+	            		       {'userDeptId':deptId},
+	            		       function(xml){
+	            				$("#userName").append(" <option value=\"\" selected=\"selected\"></option>");
+	            				$(xml).find("item").each(function(){
+											$("#userName").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+										});
+	            			    },
+	            		'xml');
+	            	});
+
+				$('#confirm').click(function(){
+					var userId       = $("#userName").val();
+					var deptId     = $("#userDept").val();  
+					var applyDate  = $("#applyDate").val();
+					var claimDate  = $("#claimDate").val();
+					var totalAmount = $("#totalAmount").val();
+					var approvalState = $("#approvalState").val();
+					
+					var tmp="userId="+userId+"&deptId="+deptId+"&applyDate="+applyDate+"&claimDate="+claimDate+"&totalAmount="+totalAmount+"&approvalState="+approvalState;
+					tmp=encodeURI(tmp);
+					
+				    location.href="/claimSearchList.html?"+tmp;
+					
+					
+				});
+				
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+					
+			});
+		
+
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+				<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+							    <td width="300">
+									<div style="width:300px" class="biao" align="left">当前位置：报销申请管理 &gt;&nbsp;<strong>查询报销单</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>查找报销单信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="width_5">部门</td>
+								<td class="width_15">
+								    <select name="userDept" id="userDept" class="width_15">
+								    <option value="" selected="selected"></option>
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">姓名</td>
+								<td class="width_15">
+								<select name="userName" id="userName" class="width_15">
+								    <option value="" selected="selected"></option>
+							    </select>
+							    </td>
+							</tr>
+							<tr>
+							<td>申请时间：</td>
+							<td><input readonly="readonly" id="applyDate" onclick="setday(this)" size="30"/></td>
+							</tr>
+							<tr>
+							<td>事由时间：</td>
+							<td><input readonly="readonly" id="claimDate" onclick="setday(this)" size="30"/></td>
+							</tr>
+							<tr>
+							<td>报销金额：</td>
+							<td><input id="totalAmount" type="text" size="30"/></td>
+							</tr>
+						    <tr>
+								<td class="width_5">审批状态</td>
+								<td class="width_15">
+								    <select name="approvalState" id="approvalState" class="width_15">
+								    <option value="" selected="selected"></option>
+								    <option value="等待部门主管审批">等待部门主管审批</option>
+								    <option value="等待分管领导审批">等待分管领导审批</option>
+								    <option value="等待申请人确认">等待财务部审批</option>
+								    <option value="等待申请人领款">等待申请人领款</option>
+								    <option value="申请人已领款">申请人已领款</option>
+								    <option value="部门主管审批不通过">部门主管审批不通过</option>
+								    <option value="人事部审批不通过">分管领导审批不通过</option>
+								    <option value="财务部审批不通过">财务部审批不通过</option>
+							        </select>
+							     </td>
+							</tr>
+							<tr><td colspan="2"><input class="bt" type="button" id="confirm" value="确定"  ></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+           <div id="footer"></div>
+		</div>
+	</body>
+</html>

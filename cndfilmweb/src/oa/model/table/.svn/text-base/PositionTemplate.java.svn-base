@@ -1,0 +1,62 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id = "positionTemplateId")
+@Entity
+@Table(name = "tb_positiontemplate")
+public class PositionTemplate {
+	@Id
+	private String positionTemplateId; // 权限ID
+	private String deptId; // 部门
+	private String post_id; // 职位
+	private String templateId; // 操作权限
+	private String des;
+
+	public String getPositionTemplateId() {
+		return positionTemplateId;
+	}
+
+	public void setPositionTemplateId(String positionTemplateId) {
+		this.positionTemplateId = positionTemplateId;
+	}
+
+
+	public String getPost_id() {
+		return post_id;
+	}
+
+	public void setPost_id(String post_id) {
+		this.post_id = post_id;
+	}
+
+	public String getTemplateId() {
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this.templateId = templateId;
+	}
+
+	public String getDes() {
+		return des;
+	}
+
+	public void setDes(String des) {
+		this.des = des;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+}

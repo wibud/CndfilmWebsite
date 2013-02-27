@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+		
+		   $(document).ready(function(){
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var claimId = href.split("claimId=")[1].split("&")[0].split("#")[0];
+				/*var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}*/
+				
+				$.post('/claimApplyDetail',
+				       {'claimId':claimId},
+					   function(xml) {
+							 var userId	= $(xml).find("userId").text();
+							 var userName = $(xml).find("applyName").text();
+							 var userDept = $(xml).find("deptName").text();
+							 var type = $(xml).find("claimType").text();
+							 var claimType;
+							 var claimSerialNumber = $(xml).find("claimSerialnumber").text();
+							 var description = $(xml).find("description").text();
+							 var applyDate = $(xml).find("applyDate").text();
+							 var claimDate = $(xml).find("claimDate").text();
+							 var totalAmount = $(xml).find("totalAmount").text();
+							 var rmb =  $(xml).find("rmb").text();
+							 var formNumber = $(xml).find("formNumber").text();
+							 var approvalState = $(xml).find("approvalState").text();
+							 var cashier = $(xml).find("cashier").text();
+							 var payee = $(xml).find("payee").text();
+                             var temp1="";
+                             var temp2="";
+                             var temp3="";
+                             var temp4="";
+							 	 
+							 if(cashier == "null"){
+							    $("#payee").val("暂无"); 
+							 }else{
+							    $("#payee").val(payee);
+							 }	
+							  
+							 switch(type){
+								    case '1':claimType="话费补贴";break;
+								    case '2':claimType="餐费补贴";break;
+								    case '3':claimType="出差补贴";break;
+								    case '4':claimType="交通补贴";break;
+								    case '5':claimType="其他补贴";break;
+								    default:claimType="";break;
+							 }
+							 
+							 if(approvalState=="等待部门主管审批"){
+							      temp1="等待审批";
+							      temp2="等待审批";
+							      temp3="等待审批";
+							      temp4="未领款";
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							 }	
+							 if(approvalState=="等待分管领导审批"){
+							      temp1="审批通过";
+							      temp2="等待审批";
+							      temp3="等待审批";
+							      temp4="未领款";
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							 }
+							 
+							 if(approvalState=="等待财务部审批"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="等待审批";
+							      temp4="未领款";
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							 }
+							 if(approvalState=="等待申请人领款"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="审批通过"; 
+							      temp4="等待领款";
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							 }
+							 if(approvalState=="申请人已领款"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="审批通过"; 
+							      temp4="已领款";
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							 }
+							 
+							 if(approvalState=="部门主管审批不通过"){
+							      temp1="审批不通过";
+							      temp2="";
+							      temp3="";
+							      temp4="退回申请人";
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							 }
+							 
+							 if(approvalState=="分管领导审批不通过"){
+							      temp1="审批通过";
+							      temp2="审批不通过";
+							      temp3="";
+							      temp4="退回申请人";
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							       
+							 }
+							 
+							 if(approvalState=="财务部审批不通过"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="审批不通过";
+							      temp4="退回申请人"; 
+							      $("#deptManagerApproval").text(temp1);
+				                  $("#secondManagerApproval").text(temp2);
+				                  $("#financeApproval").text(temp3);
+				                  $("#payeeState").text(temp4);
+							 }
+							
+				            $("#userName").val(userName);
+				            $("#userDept").val(userDept);
+				            $("#claimType").val(claimType);
+				            $("#claimSerialNumber").val(claimSerialNumber);
+				            $("#description").val(description);
+				            $("#claimDate").val(claimDate);
+				            $("#applyDate").val(applyDate);
+				            $("#totalAmount").val(totalAmount);
+				            $("#rmb").val(rmb);
+				            $("#formNumber").val(formNumber);
+				            
+			                    
+			                $("#confirm").click(function(){
+			                       var claimSerialNumber=$('#claimSerialNumber').val();
+			                       var claimType=$('#claimType').val();
+			                       var now = new Date();
+                                   var year = now.getFullYear();
+                                   var temp=now.getMonth();
+                                   var month=Number(temp)+1;
+                                   if(Number(month)<10){
+                                      month="0"+month;
+                                   }
+                                   var day=now.getDate();
+                                   if(Number(day)<10){
+                                      day="0"+day;
+                                   }
+                                   var applyDate=year+"-"+month+"-"+day;
+                                   var description=$('#description').val();
+                                   var claimDate=$('#claimdate').val();
+                                   var totalAmount=$('#totalAmount').val();
+                                   var rmb=$('#rmb').val();
+                                   var formNumber=$('#formNumber').val();
+                                   
+                                   $.post('/editClaimApply',
+			                              {'claimId':claimId,'claimType':claimType,'formNumber':formNumber,'applyDate':applyDate,'claimDate':claimDate,'description':description,'totalAmount':totalAmount,'rmb':rmb},
+			                               callback,
+			                               'xml');
+			                        
+			                       function callback(xml){
+							                 var $xml = $(xml);
+							                 //这个函数从后台得到xml里面的数据
+							                 var recode = Number($xml.find("recode").text());
+							                 if(recode){
+								                alert($xml.find("errormsg").text());
+								                return ;
+							                 }												
+							                 alert("提交成功！");
+							                 location.href="homePage.html";
+
+						           }
+						             
+					               function callback(databack){
+							                 var recode = $(databack).find("recode").text();
+							                 if(recode!=0){
+								                alert($(databack).find("errormsg").text());
+							                 }else {
+							                    alert("提交成功！");
+								                location.href="homePage.html";
+							                 }
+						            }
+			                });      
+			                
+				          },
+				          'xml');
+				          
+                function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   }
+		   });
+		</script>
+</head>
+<body>
+      <div id="container2">
+	  <div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+		 </div>
+		 <div id="content">
+	          <div id="main">
+	          <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页&gt;&nbsp;
+										<strong>修改报销申请</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改报销申请</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r7">
+					<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+					   <tr>
+					   <td width="20%"><label class="required">*</label>报销部门：</td>
+					   <td width="30%"><input id="userDept" type="text" size="30" readonly="readonly" style="background:#DDEEEE;"/></td>
+					   <td width="20%"><label class="required">*</label>报销人姓名：</td>
+					   <td width="30%"><input id="userName" type="text" size="30" readonly="readonly" style="background:#DDEEEE;"/></td>			        
+                       </tr>
+					   <tr>
+					   <td>费用类别：</td>
+					   <td><select id="claimType">
+					       <option value="" selected="selected"></option>
+					       <option value="1">话费补贴</option>
+					       <option value="2">餐费补贴</option>
+					       <option value="3">出差补贴</option>
+					       <option value="4">交通补贴</option>
+					       <option value="5">其他补贴</option>
+					       </select> 
+					   </td>
+					   <td>付发票单：（张）</td>
+                       <td><input id="formNumber" type="text" size="30"/></td>
+					   </tr>
+					   <tr>
+					   <td>报销编号：</td>
+					   <td><input id="claimSerialNumber" type="text" size="30"/></td>
+					   <td><label class="required">*</label>事由日期:</td>
+                       <td><input readonly="readonly" id="claimdate" onclick="setday(this)" size="30"/></td>
+					   </tr>
+                       <tr>
+                       <td><label class="required">*</label>报销事由：</td>
+                       <td colspan="3"><textarea id="description" cols="92" rows="3"></textarea></td>
+                       </tr>
+                       <tr>
+                       <td><label class="required">*</label>合计金额(小写):</td>
+                       <td><input id="totalAmount" type="text" size="30"/></td>
+                       <td>人民币(大写)：</td>
+                       <td><input id="rmb" type="text" size="30"/></td>
+                       </tr>
+					  <tr>
+					  <td colspan="4">
+					  <br/>
+					  <input class="bt" type="button" id="confirm" value="提交"/>
+					  <input class="bt" type="button" value="返回" onclick="javascript:history.back()"/></td>
+                      </tr>					
+				      </table>
+			    </div>
+			  </div>
+			  <div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+</body>
+</html>

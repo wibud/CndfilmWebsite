@@ -1,0 +1,139 @@
+package oa.dao.table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.WorkAttendance;
+import oa.util.ResultList;
+import java.util.List;
+@SuppressWarnings("unchecked")
+public class WorkAttendanceDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(WorkAttendanceDao.class);
+	// property constants
+	public static final String ATTENCE_ID="attence_id";		   	
+	public static final String ATTENCE_TIME="attence_time";		  	
+	public static final String USER_ID="user_id";	 	  	
+	public static final String DEPT_ID="dept_id";		    	
+	public static final String AM_WORKSTART_TIME="am_workstart_time";		 	
+	public static final String AM_WORKEND_TIME="am_workend_time";	    	
+	public static final String PM_WORKSTART_TIME="pm_workstart_time";         
+	public static final String PM_WORKEND_TIME="pm_workend_time";      
+	public static final String REMARK="remark";       
+	
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(WorkAttendance instance) {
+		log.debug("saving WorkAttendance instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(WorkAttendance instance) {
+		log.debug("deleting WorkAttendance instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(WorkAttendance instance) {
+		log.debug("update WorkAttendance instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public WorkAttendance findById(String id) {
+		log.debug("getting WorkAttendance instance with id: " + id);
+		try {
+			WorkAttendance instance = (WorkAttendance) super.get("oa.model.table.WorkAttendance", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public ResultList<WorkAttendance> findByExample(Integer pageNo, WorkAttendance workAttendance) {
+		log.debug("find WorkAttendance instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.WorkAttendance", workAttendance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<WorkAttendance> findAll(Integer pageNo) {
+		log.debug("finding all WorkAttendance instances");
+		try {
+			return super.find(pageNo, "oa.model.table.WorkAttendance");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<WorkAttendance> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding WorkAttendance instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.WorkAttendance", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<WorkAttendance> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding WorkAttendance instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.WorkAttendance", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public List<WorkAttendance> findByHQL(Integer pageNo, String hql){
+		log.debug("finding WorkAttendance instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding count instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+			}
+	
+}
+
+

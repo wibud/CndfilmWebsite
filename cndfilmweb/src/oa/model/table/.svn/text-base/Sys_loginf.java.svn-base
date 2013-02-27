@@ -1,0 +1,90 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="log_id")
+@Entity
+@Table(name="tb_sysloginf")
+public class Sys_loginf {
+	@Id
+
+	private long log_id;		//日志标识
+	private String log_type;	//操作类型 0-页面操作,1-后台操作
+	private String wri_time;	//写入时间
+	private String user_id;		//用户ID
+	private String user_name;	//用户名称
+	private String user_dept_id;	//用户部门
+	private String src_ip;		//源IP
+	private String operation;
+	private String oper_rst;	//操作结果
+	private String log_desc;	//描述
+	
+	
+	
+	public String getOperation() {
+		return operation;
+	}
+	public void setOperation(String operation) {
+		this.operation = operation;
+	}
+	public long getLog_id() {
+		return log_id;
+	}
+	public void setLog_id(long logId) {
+		log_id = logId;
+	}
+	public String getLog_type() {
+		return log_type;
+	}
+	public void setLog_type(String logType) {
+		log_type = logType;
+	}
+	public String getWri_time() {
+		return wri_time;
+	}
+	public void setWri_time(String wriTime) {
+		wri_time = wriTime;
+	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String userId) {
+		user_id = userId;
+	}
+	public String getUser_name() {
+		return user_name;
+	}
+	public void setUser_name(String userName) {
+		user_name = userName;
+	}
+	public String getSrc_ip() {
+		return src_ip;
+	}
+	public void setSrc_ip(String srcIp) {
+		src_ip = srcIp;
+	}
+	public String getOper_rst() {
+		return oper_rst;
+	}
+	public void setOper_rst(String operRst) {
+		oper_rst = operRst;
+	}
+	public String getLog_desc() {
+		return log_desc;
+	}
+	public void setLog_desc(String logDesc) {
+		log_desc = logDesc;
+	}
+	public String getUser_dept_id() {
+		return user_dept_id;
+	}
+	public void setUser_dept_id(String userDeptId) {
+		user_dept_id = userDeptId;
+	}
+
+}

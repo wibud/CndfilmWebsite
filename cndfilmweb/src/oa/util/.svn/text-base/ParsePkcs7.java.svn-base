@@ -1,0 +1,341 @@
+/**
+ * 
+ */
+package oa.util;
+
+
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.cert.*;
+import java.io.*;
+import java.util.*;
+import javax.security.auth.x500.X500Principal;
+
+
+public class ParsePkcs7 {
+	
+	private FileInputStream fis;
+	private CertificateFactory cf;
+	private Collection c;
+	private Iterator certItr;
+	private X509Certificate cert;
+	
+	
+	//ȷ��֤���б��ļ�
+	public ParsePkcs7(File pkcs7File){
+		
+		try{
+			fis = new FileInputStream(pkcs7File);
+			cf = CertificateFactory.getInstance("X.509");
+			c = cf.generateCertificates(fis);
+			certItr = c.iterator();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	//��ʼ��֤���б��ļ�
+	public boolean initCert(){
+		
+		if(c!=null){
+			certItr = c.iterator();
+		
+		if ( certItr.hasNext() == false ){
+			return false;
+		}
+		}else{
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	
+	//����ػ�ȡÿһ��֤��
+	public boolean getNextCert(){
+
+		if ( certItr.hasNext() == false ){
+			return false;
+		}
+		
+		cert = (X509Certificate ) certItr.next();
+		return true;
+	}
+	
+	//��֤���л�ȡ֤��Id
+	public String getCertId(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.3");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		return "";
+	}
+	
+ 	//��֤���л�ȡKeyId
+	public String getKeyId(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.9");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		return "";
+	}
+
+	
+ 	//��֤���л�ȡ�û�Id
+	public String getUserId(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.8");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		return "";
+	}
+
+ 	//��֤���л�ȡ�û����
+	public String getUserName(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.7");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		return "";
+	}
+	
+ 	//��֤���л�ȡ�û��Ա�
+	public String getUserSex(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.0");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		return "";
+	}
+	
+	
+ 	//��֤���л�ȡ�û�������һ������
+	public String getUserFatherDepartment(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("2.5.4.10");
+			int ret1 = temp.indexOf("O");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+			
+			if (  ret1 != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				if(sa1[0].trim().equals("O")==true){
+					return s;
+				}
+				
+			}
+		}
+		
+		String return_default = "��";		
+		
+		return return_default;
+	}
+	
+ 	//��֤���л�ȡ�û������Ӳ���
+	public String getUserSubDepartment(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("2.5.4.11");
+			int ret1 = temp.indexOf("OU");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+			
+			if (  ret1 != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		String return_default = "��";		
+		
+		return return_default;
+	}
+	
+	
+ 	//��֤���л�ȡ�û�����
+	public String getUserRank(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.6");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		String return_default = "��ξ";
+		
+		return return_default;
+	}
+	
+	
+ 	//��֤���л�ȡ�û�ְ��
+	public String getUserHeadship(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.10");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		String return_default = "ֵ��Ա";
+		
+		return return_default;
+	}
+	
+ 	//��֤���л�ȡ�û��ֻ����
+	public String getUserMobile(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("1.1.1.2");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		return "";
+	}
+	
+ 	//��֤���л�ȡ�û��绰����
+	public String getUserTelephone(){
+		String s;
+		javax.security.auth.x500.X500Principal x500 = cert.getSubjectX500Principal();
+		s = x500.getName(X500Principal.RFC1779);
+		String[] sa = s.split("\\+");
+		
+		for (int i = 0; i < sa.length; i++) {
+			String temp = sa[i];
+			int ret = temp.indexOf("2.5.4.20");
+			if (  ret != -1 ){
+				String[] sa1 = temp.split("=");
+				s = sa1[1];
+				s.trim();
+				return s;
+			}
+		}
+		
+		return "";
+	}
+	
+ 	//��֤���л�ȡ֤������
+	public byte[] getCertInfo() throws FileNotFoundException{
+		byte[] buf;
+		try {
+			buf = cert.getEncoded();
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
+			return null;			
+		}
+		
+		return buf;
+	}	
+}
+

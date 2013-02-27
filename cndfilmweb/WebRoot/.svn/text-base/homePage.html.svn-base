@@ -1,0 +1,967 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--首页</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="./scripts/js/selfWeekPlan.js"></script>
+		<script type="text/javascript" src="./scripts/js/elecCheckWeekPlan.js"></script>
+		<script type="text/javascript" src="./scripts/js/businessTripCheck.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageVersion.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageTicket.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageOvertime.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageVacancy.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageProject.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageAfterSale.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageCommerceProject.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePageOutBound.js"></script>
+		   <script type="text/javascript" src="./scripts/js/homePageAssetApply.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePagePerformanceManagerAssess.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePagePerformanceSelfAssess.js"></script>
+		<script type="text/javascript" src="./scripts/js/homePagePerformanceOtherAssess.js"></script>
+		<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+		<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+		<script type="text/javascript">
+	
+			var loginer="";
+			$(document).ready(function(){
+				init();
+				 $(".tabs").tabs({
+					collapsible: true
+				});
+/*======================修改后==================================*/
+				initDialog();
+				var page = 1;
+				/*项目管理*/
+				var urlForProject = "/selfUserProject";
+				$(this).showProjectData(urlForProject, page);
+				
+				/*版本管理*/
+				var versionOrderBy = " releaseOn desc, productType asc, versionType asc";
+				var urlForVersion = "/selfUserVersion";
+				$(this).showVersionData (urlForVersion, page, versionOrderBy);
+				
+				/*售后*/
+				var urlForAfterSale = "/selfUserAfterSale";
+				$(this).showAfterSaleData (urlForAfterSale, page);
+				
+				/*订票管理*/
+				var urlForTicket = "/listByDept";
+				$(this).showTicketData (urlForTicket, page);
+				
+				/*加班申请*/
+				var urlForOvertime = "/overtimeListforHomePage";
+				$(this).showOvertimeData (urlForOvertime, page);
+				
+				/*请假申请*/
+				var urlForVacancy = "/vacancyListforHomePage";
+				$(this).showVacancyData (urlForVacancy, page);
+				
+				/*周计划审批*/
+				var urlForCheckWeekPlan = "/waitCheckWeekPlan";
+				$(this).showCheckWeekPlanData(urlForCheckWeekPlan, page);
+				
+				/*个人周计划*/
+				var urlForUserWeekPlan = "/getUserWeekPlan";
+				$(this).showWeekPlan(urlForUserWeekPlan);
+				
+				/*项目实施*/
+				var orderBy = "commerceprojectapplytime desc";
+				var urlForCommerceProject ="/commerceProjectAboutUserself";
+				$(this).showCommerceProjectData (urlForCommerceProject, page, orderBy);
+				
+				/*出差*/
+				var urlForTrip = "/businessTripCheck";
+				$(this).showTripData(urlForTrip, page);
+				
+
+				/*资产申请*/
+				var urlForAsset = "";
+				urlForAsset=getUrlForAsset();
+				$(this).showCAssetApplyData(urlForAsset,page);
+				$(this).showFAssetLYApplyData(urlForAsset+"1",page);
+				$(this).showFAssetGHApplyData(urlForAsset+"2",page);
+				registerShowTable();
+				//initAssetDialog();
+				//registerButtons();
+				
+
+				/*外出*/
+				var urlForOutBound = "/selfRelatedOutBoundApplyList";
+				$(this).showOutBoundData(urlForOutBound, page);
+				
+				/*绩效考评*/
+				var urlForPerformanceManagerAssess = "/listManagerAssessLeftResult";
+				$(this).showPerformanceManagerAssessData (urlForPerformanceManagerAssess, page);
+				var urlForPerformanceSelfAssess = "/listSelfAssessLeftResult";
+				$(this).showPerformanceSelfAssessData (urlForPerformanceSelfAssess, page);
+				var urlForPerformanceOtherAssess = "/listOtherAssessLeftResult";
+				$(this).showPerformanceOtherAssessData (urlForPerformanceOtherAssess, page);
+				
+
+				/*翻页*/
+				$.fn.showData = function(url,page2){
+			    	switch(url){
+			    		case urlForVersion:
+			    			$(this).showVersionData(urlForVersion, page2, versionOrderBy);
+			    			break;
+			    		case urlForTicket:
+			    			$(this).showTicketData(urlForTicket, page2);
+			    			break;
+			    		case urlForOvertime:
+			    			$(this).showOvertimeData(urlForOvertime, page2);
+			    			break;
+			    		case urlForVacancy:
+			    			$(this).showVacancyData(urlForVacancy, page2);
+			    			break;
+			    		case urlForCheckWeekPlan:
+			    			$(this).showCheckWeekPlanData(urlForCheckWeekPlan, page2);
+			    			break;
+			    		case urlForProject:
+			    			$(this).showProjectData(urlForProject, page2);
+			    			break;
+			    		case urlForAfterSale:
+			    			$(this).showAfterSaleData(urlForAfterSale, page2);
+			    			break;
+			    		case urlForCommerceProject:
+			    			$(this).showCommerceProjectData(urlForCommerceProject, page2);
+			    			break;
+			    		case urlForAsset:
+			    			$(this).showAssetApplyData(urlForAsset,page2);
+			    			break;
+		    			case urlForAsset+"1":
+			    			$(this).showFAssetLYApplyData(url,page2);
+			    			break;
+		    			case urlForAsset+"2":
+			    			$(this).showFAssetGHApplyData(url,page2);
+			    			break;
+			    		case urlForOutBound:
+			    			$(this).showOutBoundData(urlForOutBound, page2);
+			    			break;
+			    		case urlForPerformanceManagerAssess:
+			    			$(this).showPerformanceManagerAssessData(urlForPerformanceManagerAssess, page2);
+			    			break;
+			    		case urlForPerformanceSelfAssess:
+			    			$(this).showPerformanceSelfAssessData(urlForPerformanceSelfAssess, page2);
+			    			break;
+			    		case urlForPerformanceOtherAssess:
+			    			$(this).showPerformanceOtherAssessData(urlForPerformanceOtherAssess, page2);
+			    			break;
+
+			    		default:alert("url错误！");break;
+			    	}
+			    };
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+				
+				
+				});
+				
+				
+			</script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<div id="dialogs">
+							<div id="approveDialog" title="外出审批">
+								<table align="center">
+									<tr>
+										<td>
+											&nbsp;
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<select id="approveResult" class="doubleSelText">
+												<option id="审批通过">
+													审批通过
+												</option>
+												<option id="审批不通过">
+													审批不通过
+												</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											&nbsp;
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div id="backApplyDialog" title="返回申请">
+								<table align="center">
+									<tr>
+										<td>
+											<label class="required">
+												*
+											</label>
+											返回时间
+										</td>
+										<td>
+											<input class="doubleSelText" id="backTime" readonly="readonly"
+												onclick="setday(this)" size="30" />
+										</td>
+									</tr>
+									<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+									<tr>
+										<td width="30%">
+											<label class="required">
+												*
+											</label>
+											反馈结果
+										</td>
+										<td width="70%">
+											<textarea class="doubleSelText" id="feedBack" cols="25"
+												rows="4"></textarea>
+										</td>
+									</tr>
+								</table>
+							</div>
+
+						</div>
+						<div class="tabs" id="lable1"
+							style="position: relative; z-index: 0; background-color: #F5F5F5">
+							<ul>
+								<li>
+									<a id="selfweekPlan" href="#tabs-10">本周任务</a>
+								</li>
+								<li>
+									<a id="pjProgress" href="#tabs-11">项目开发管理</a>
+								</li>
+								<li>
+									<a id="versions" href="#tabs-3">版本管理</a>
+								</li>
+								<li>
+									<a id="commerceProject" href="#tabs-6">项目实施管理</a>
+								</li>
+								<li>
+									<a id="aftersale" href="#tabs-1">售后服务</a>
+								</li>
+							</ul>
+							<div id="tabs-10" style="overflow: auto">
+								<img src="images/sq_img_09.png" width="15" height="18" />
+								&nbsp;
+								<a href="addWeekPlan.html" id="addUser"
+									style="text-decoration: none">制定个人周计划</a> &nbsp;
+								<img src="images/oa_edit.gif" />
+								&nbsp;
+								<a href="updateWeekPlan.html" id="logintype"
+									style="text-decoration: none">更新个人周计划</a> &nbsp;
+								<img src="images/oa_search.png" />
+								&nbsp;
+								<a href="searchWeekPlan.html" style="text-decoration: none">查询周计划</a>
+								&nbsp;
+								<img src="images/bg_xg.png" />
+								&nbsp;
+								<a href="editWeekPlan.html" id="edit"
+									style="text-decoration: none">修改个人周计划</a>
+								<br />
+								<br />
+								<table class="sTable" border="0" cellpadding="0" cellspacing="0"
+									style="width: 100%">
+									<tr>
+										<th>
+											计划起止时间
+										</th>
+										<td style="text-align: center" id="area">
+											从&nbsp;
+											<input id="planStartTime" readonly="readonly"
+												disabled="disabled"></input>
+											&nbsp;到&nbsp;
+											<input id="planEndTime" readonly="readonly"
+												disabled="disabled"></input>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											状态
+										</th>
+										<td style="text-align: center">
+											<input style="text-align: center; width: 250px" id="status"
+												readonly="readonly"></input>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											备注
+										</th>
+										<td style="text-align: center">
+											<textarea style="text-align: center; width: 250px"
+												id="remark" readonly="readonly"></textarea>
+										</td>
+									</tr>
+								</table>
+								<br />
+								<table id="weekPlan" class="listTable" border="0"
+									cellpadding="0" cellspacing="0" style="width: 100%">
+									<tr>
+										<th width="50px">
+											序号
+										</th>
+										<th width="70">
+											本周任务目标
+										</th>
+										<th>
+											进度
+										</th>
+									</tr>
+								</table>
+							</div>
+							<div id="tabs-11" style="overflow: auto">
+								<table id="pjspeed" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th style="white-space: nowrap">
+											序号
+										</th>
+										<th style="white-space: nowrap">
+											项目名称
+										</th>
+										<th style="white-space: nowrap">
+											提醒
+										</th>
+										<th style="white-space: nowrap">
+											当前阶段
+										</th>
+										<th style="white-space: nowrap">
+											阶段进度
+										</th>
+										<th colspan="1" style="white-space: nowrap">
+											查看详情
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav"></div>
+							</div>
+							<div id="tabs-3">
+								<table id="versionTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr title="点击标题以排序">
+										<th>序号</th>
+										<th class="order" id="productType"><a>产品类型</a></th>
+										<th class="order" id="versionType"><a>版本类型</a></th>
+										<th class="order" id="versionName"><a>版本名称</a></th>
+										<th class="order" id="number"><a>版本号</a></th>
+										<th class="order" id="deptName"><a>所属部门</a></th>
+										<th class="order" id="managerName"><a>项目负责人</a></th>
+										<th class="order" id="releaseOn desc"><a>发布时间</a></th>
+										<th class="order" id="status">状态</th>
+										<th class="order" id="des">备注</th>
+										<th colspan="5">操作</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav3"></div>
+							</div>
+							<div id="tabs-6">
+								<table id="commerceProjectTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th>
+											序号
+										</th>
+										<th>
+											项目名称
+										</th>
+										<th>
+											项目申请人
+										</th>
+										<th>
+											实施工程师
+										</th>
+										<th>
+											项目类型
+										</th>
+										<th>
+											项目状态
+										</th>
+
+										<th colspan="3">
+											操作
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav6"></div>
+							</div>
+							<div id="tabs-1">
+								<table id="afterSaleTable" border="0" class="listTable"
+									style="width: 100%">
+
+									<tr>
+										<th>
+											序号
+										</th>
+										<th>
+											问题描述
+										</th>
+										<th>
+											跟踪人
+										</th>
+										<th>
+											当前处理人
+										</th>
+										<th>
+											状态
+										</th>
+										<th>
+											上报时间
+										</th>
+										<th>
+											查看详情
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav1"></div>
+							</div>
+						</div>
+
+						<div align="center" id="content_xdao2">
+							<table width="200" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td height="28" align="center" valign="middle">
+										<strong style="font-size: 14px">待处理问题</strong>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="tabs">
+							<ul>
+								<li>
+									<a id="ticketApply" href="#tabs-5">订票审批</a>
+								</li>
+								<li>
+									<a id="overtimeApply" href="#tabs-7">加班审批</a>
+								</li>
+								<li>
+									<a id="vacancyApply" href="#tabs-8">请假审批</a>
+								</li>
+								<li>
+									<a id="outBoundApply" href="#tabs-80">外出审批</a>
+								</li>
+								<li>
+									<a id="elecCheck" href="#tabs-9">周计划审批</a>
+								</li>
+								<li>
+									<a id="businessTripCheck" href="#tabs-12">出差管理</a>
+								</li>
+								<!--
+								<li><a id="claimApply" href="#tabs-13">报销审批</a></li>
+								-->
+								<li>
+									<a id="cassetApply" href="#tabs-14">耗材审批</a>
+								</li>
+								<li>
+									<a id="performanceAssess" href="#tabs-34">绩效考评</a>
+								</li>
+
+
+							</ul>
+
+
+
+							<div id="tabs-5">
+								<table id="ticketApplyTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th width="40">
+											序号
+										</th>
+										<th width="50">
+											姓名
+										</th>
+										<th width="80">
+											部门
+										</th>
+										<th width="70">
+											出发地
+										</th>
+										<th width="70">
+											目的地
+										</th>
+										<th width="80">
+											出行日期
+										</th>
+										<th width="70">
+											出行方式
+										</th>
+										<th width="70">
+											票务类型
+										</th>
+										<th width="100">
+											联系电话
+										</th>
+										<th width="180">
+											审批状态
+										</th>
+										<th width="60">
+											查看详情
+										</th>
+										<th colspan="1">
+											操作
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav5"></div>
+							</div>
+
+
+
+							<div id="tabs-7">
+								<table id="overtimeApplyTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th width="40">
+											序号
+										</th>
+										<th width="80">
+											姓名
+										</th>
+										<th width="100">
+											部门
+										</th>
+										<th width="100">
+											申请时间
+										</th>
+										<th width="130">
+											加班开始时间
+										</th>
+										<th width="130">
+											加班结束时间
+										</th>
+										<th width="80">
+											总计时长
+										</th>
+										<th width="130">
+											审批状态
+										</th>
+										<th width="60">
+											加班原因
+										</th>
+										<th width="40" colspan="1">
+											操作
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav7"></div>
+							</div>
+
+							<div id="tabs-8">
+								<table id="vacancyApplyTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th width="40">
+											序号
+										</th>
+										<th width="70">
+											姓名
+										</th>
+										<th width="80">
+											部门
+										</th>
+										<th width="80">
+											请假类别
+										</th>
+										<th width="100">
+											申请时间
+										</th>
+										<th width="130">
+											请假开始时间
+										</th>
+										<th width="130">
+											请假结束时间
+										</th>
+										<th width="80">
+											总计天数
+										</th>
+										<th width="130">
+											审批状态
+										</th>
+										<th width="60">
+											请假原因
+										</th>
+										<th colspan="1">
+											操作
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav8"></div>
+							</div>
+							<div id="tabs-80">
+								<table id="outBoundApplyTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th>
+											序号
+										</th>
+										<th>
+											申请人
+										</th>
+										<th>
+											外出时间
+										</th>
+										<th>
+											外出事由
+										</th>
+										<th>
+											外出审批状态
+										</th>
+										<th>
+											外出审批人
+										</th>
+										<th>
+											返回时间
+										</th>
+										<th>
+											外出反馈结果
+										</th>
+										<th>
+											返回审批状态
+										</th>
+										<th>
+											返回审批人
+										</th>
+										<th colspan="1">
+											操作
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNavForOutBound"></div>
+							</div>
+							<div id="tabs-9">
+								<table id="elecCheckTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th>
+											序号
+										</th>
+										<th>
+											姓名
+										</th>
+										<th>
+											部门
+										</th>
+										<th>
+											创建时间
+										</th>
+										<th>
+											修改时间
+										</th>
+										<th>
+											周计划开始时间
+										</th>
+										<th>
+											周计划结束时间
+										</th>
+										<th>
+											查看周计划
+										</th>
+										<th>
+											状态
+										</th>
+										<th>
+											备注
+										</th>
+										<th>
+											审核
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav9"></div>
+							</div>
+							<div id="tabs-12">
+								<table id="tripTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th>
+											序号
+										</th>
+										<th>
+											姓名
+										</th>
+										<th>
+											部门
+										</th>
+										<th>
+											申请时间
+										</th>
+										<th>
+											出差时间
+										</th>
+										<th>
+											预计返回时间
+										</th>
+										<th>
+											出差目的地
+										</th>
+										<th>
+											审批状态
+										</th>
+										<th colspan="4">
+											操作
+										</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav12"></div>
+							</div>
+							<!--
+				              <div id="tabs-13">
+				                 <table id="claimApplyTable" border="0" class="listTable" style=width:100%>
+				                       <tr>
+					                       <th width="5%">序号</th>
+					                       <th width="5%">姓名</th>
+					                       <th width="10%">部门</th>
+					                       <th width="10%">申请时间</th>
+					                       <th width="10%">费用类别</th>
+					                       <th width="10%">报销金额</th>
+					                       <th width="15%">审批状态</th>
+					                       <th width="10%">领款人</th>
+					                       <th width="10%">报销事由</th>
+					                       <th width="10%" colspan="1">操作</th>
+					                   </tr>
+				                 </table>
+				                 <div align="right" id="pageNav11"></div>
+				              </div>
+				              -->
+							<div id="tabs-14">
+								<table  id="tb_applyList" class="listTable" style="width: 100%" border="0"
+							cellpadding="0" cellspacing="0">
+							<tr>
+								<th>序号</th>
+								<th>申请类别</th>
+								<th>申请个数</th>
+								<th >操作</th>
+							</tr>
+							<tr id="tr_fassetLYApply">
+								<td>1</td>
+								<td>固定资产领用申请</td>
+								<td>0</td>
+								<td>
+									<input type='image' src='./images/oa_arrowdown.png'  title='展开' class='showtable' />
+									<input type='image' src='./images/oa_arrowup.png'  title='收起' class='showtable' style="display:none"/>
+								</td>
+							</tr>
+							<tr id="tr_fassetLYList" style="display:none">
+								<td></td>
+								<td colspan="3">
+									<table  id="tb_fassetLYList" class="listTable" style="width: 100%" border="0"
+									cellpadding="0" cellspacing="0" >
+										<tr>
+											<th>序号</th>
+											<th>大类</th>
+											<th>小类</th>
+											<th>申请时间</th>
+											<th>申请人</th>
+											<th>审批状态</th>
+											
+											<th colspan="3">操作</th>
+										</tr>
+									</table>
+									<div align="right" id="pageNav14"></div>
+								</td>
+							</tr>
+							<tr id="tr_fassetGHApply">
+								<td>2</td>
+								<td>固定资产归还申请</td>
+								<td>0</td>
+								<td>
+									<input type='image' src='./images/oa_arrowdown.png'  title='展开' class='showtable' />
+									<input type='image' src='./images/oa_arrowup.png'  title='收起' class='showtable' style="display:none"/>
+								</td>
+							</tr>
+							<tr id="tr_fassetGHList" style="display:none">
+								<td></td>
+								<td colspan="3">
+									<table  id="tb_fassetGHList" class="listTable" style="width: 100%" border="0"
+									cellpadding="0" cellspacing="0" >
+										<tr>
+											<th>序号</th>
+											<th>大类</th>
+											<th>小类</th>
+											<th>编号</th>
+											<th>规格/特征</th>
+											<th>申请时间</th>
+											<th>申请人</th>
+											<th>审批状态</th>
+											
+											<th colspan="3">操作</th>
+										</tr>
+									</table>
+									<div align="right" id="pageNav15"></div>
+								</td>
+							</tr>
+							<tr id="tr_cassetApply">
+								<td>3</td>
+								<td>耗材申请</td>
+								<td>0</td>
+								<td>
+									<input type='image' src='./images/oa_arrowdown.png'  title='展开' class='showtable' />
+									<input type='image' src='./images/oa_arrowup.png'  title='收起' class='showtable' style="display:none"/>
+								</td>
+							</tr>
+							<tr id="tr_cassetApplyList" style="display:none">
+								<td></td>
+								<td colspan="3">
+									<table  id="tb_cassetApplyList" class="listTable" style="width: 100%" border="0"
+									cellpadding="0" cellspacing="0" >
+										<tr>
+											<th>序号</th>
+											<th>大类</th>
+											<th>小类</th>
+											<th>品牌</th>
+											<th>规格</th>
+											<th>单价</th>
+											<th>数量</th>
+											<th>总额</th>
+											<th>申请时间</th>
+											<th>申请人</th>
+											<th>审批状态</th>
+											
+											<th colspan="3">操作</th>
+										</tr>
+									</table>
+									<div align="right" id="pageNav16"></div>
+								</td>
+							</tr>
+						</table>
+								
+							</div>
+
+					<div id="astApplyDeny" title="原因" style="display: none">
+						请填写原因：
+						</br>
+						<textarea  id="text_astDenyReason" style="width:360px"></textarea>
+					</div>
+
+							<div id="tabs-34">
+								<table id="performanceManagerAssessTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th style="width:10%">序号</th>
+										<th style="width:15%">评价对象</th>
+										<th style="width:25%">考核周期</th>
+										<th style="width:20%">考核状态</th>
+										<th style="width:15%">所用模板详情</th>
+										<th style="width:15%">操作</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav34"></div>
+								<table id="performanceSelfAssessTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th style="width:10%">序号</th>
+										<th style="width:15%">评价对象</th>
+										<th style="width:25%">考核周期</th>
+										<th style="width:20%">考核状态</th>
+										<th style="width:15%">所用模板详情</th>
+										<th style="width:15%">操作</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav35"></div>
+								<table id="performanceOtherAssessTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th style="width:10%">序号</th>
+										<th style="width:15%">评价对象</th>
+										<th style="width:25%">考核周期</th>
+										<th style="width:20%">考核状态</th>
+										<th style="width:15%">所用模板详情</th>
+										<th style="width:15%">操作</th>
+									</tr>
+								</table>
+								<div align="right" id="pageNav36"></div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+
+	

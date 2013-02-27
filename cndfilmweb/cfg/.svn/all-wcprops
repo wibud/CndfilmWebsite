@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/oa/!svn/ver/3125/src/trunk/CyberOA/cfg
+END
+executorAndScheduler.xml
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/cfg/executorAndScheduler.xml
+END
+struts.properties
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/oa/!svn/ver/2724/src/trunk/CyberOA/cfg/struts.properties
+END
+struts.xml
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/oa/!svn/ver/3124/src/trunk/CyberOA/cfg/struts.xml
+END
+applicationContext.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/oa/!svn/ver/3125/src/trunk/CyberOA/cfg/applicationContext.xml
+END
+log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/cfg/log4j.properties
+END
+oa.properties
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/oa/!svn/ver/2851/src/trunk/CyberOA/cfg/oa.properties
+END
+aop.xml
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/oa/!svn/ver/1492/src/trunk/CyberOA/cfg/aop.xml
+END

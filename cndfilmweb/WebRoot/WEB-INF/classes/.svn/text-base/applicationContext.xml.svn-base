@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	default-autowire="byName">
+
+	<context:annotation-config />
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:oa.properties" />
+	</bean>
+
+	<!-- 定义数据源Bean，使用C3P0数据源实现 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<!-- 连接数据库的驱动 -->
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<!-- 连接数据库的URL -->
+		<property name="jdbcUrl" value="${oa.datasource.jdbcUrl}" />
+		<!-- 连接数据库的用户名 -->
+		<property name="user" value="${oa.datasource.user}" />
+		<!-- 连接数据库的密码 -->
+		<property name="password" value="${oa.datasource.password}" />
+
+		<!-- 数据库连接池的初始化连接数 -->
+		<property name="initialPoolSize" value="10" />
+
+		<!-- 数据库连接池的最大连接数 -->
+		<property name="maxPoolSize" value="100" />
+
+		<!-- 数据库连接池的最小连接数 -->
+		<property name="minPoolSize" value="5" />
+
+		<!-- 一次请求的连接数 -->
+		<property name="acquireIncrement" value="5" />
+
+		<!-- 数据库连接池的连接的最大空闲时间(秒) -->
+		<property name="maxIdleTime" value="1800" />
+
+		<!-- 当连接池用完时客户端调用getConnection()后等待获取新连接的时间(毫秒) -->
+		<property name="checkoutTimeout" value="10000" />
+
+		<!-- 每隔一段时间检查所有连接池中的空闲连接(秒) -->
+		<property name="idleConnectionTestPeriod" value="1800" />
+
+		<!-- 获取新连接失败后重复尝试获取的次数 -->
+		<property name="acquireRetryAttempts" value="100" />
+
+		<!-- 获取新连接失败后重复尝试间隔时间(毫秒) -->
+		<property name="acquireRetryDelay" value="5000" />
+
+	</bean>
+
+	<!-- 定义Hibernate的SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<!-- 依赖注入数据源，注入上面定义的dataSource -->
+		<property name="dataSource" ref="dataSource" />
+
+		<!-- packagesToScan属性用来加载全部映射类 -->
+		<property name="packagesToScan">
+			<list>
+				<value>oa.model.table</value>
+			</list>
+		</property>
+
+		<!-- 定义Hibernate的SessionFactory的属性 -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<!-- hibernate.hbm2ddl.auto属性如果不设置，则hibernate不进行任何检查，可以不设置 -->
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<!-- 配置业务逻辑组件 -->
+	<bean id="userManager" class="oa.service.user.impl.UserManagerImpl" />
+	<bean id="systemManager" class="oa.service.system.impl.SystemManagerImpl" />
+	<bean id="versionManager" class="oa.service.version.impl.VersionManagerImpl" />
+	<bean id="certificationManager" class="oa.service.user.impl.CertificationManagerImpl" />
+	<bean id="projectInfoManager" class="oa.service.project.impl.ProjectInfoManagerImpl" />
+	<bean id="afterSaleRecordManager"
+		class="oa.service.aftersalerecord.impl.AfterSaleRecordManagerImpl" />
+	<bean id="operationrecordManager" class="oa.service.user.impl.OperationRecordManagerImpl" />
+	<bean id="mailSender11" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.163.com" />
+		<property name="port" value="25" />
+		<property name="username" value="cybercor@163.com" />
+		<property name="password" value="cybergreatwall" />
+	</bean>
+	<bean id="assetManager" class="oa.service.asset.impl.AssetManagerImpl" />
+	<bean id="email" class="oa.service.aftersalerecord.impl.EmailImpl">
+		<property name="mailSender" ref="mailSender11" />
+	</bean>
+	<bean id="ticketApplyManager" class="oa.service.ticketapply.impl.TicketApplyManagerImpl" />
+	<bean id="overtimeApplyManager" class="oa.service.formapply.impl.OvertimeApplyManagerImpl"></bean>
+	<bean id="outBoundManager" class="oa.service.formapply.impl.OutBoundManagerImpl"></bean>
+
+	<bean id="attenceManager" class="oa.service.workAttendance.impl.AttenceManagerImpl" />
+
+
+	<bean id="commerceProductManager"
+		class="oa.service.commerceproject.impl.CommerceProductManagerImpl" />
+	<bean id="commerceProjectManager"
+		class="oa.service.commerceproject.impl.CommerceProjectManagerImpl" />
+	<bean id="commerceProjectActingManager"
+		class="oa.service.commerceproject.impl.CommerceProjectActingManagerImpl" />
+	<bean id="commerceProjectAuthapplyManager"
+		class="oa.service.commerceproject.impl.CommerceProjectAuthapplyManagerImpl" />
+	<bean id="commerceProjectLogsManager"
+		class="oa.service.commerceproject.impl.CommerceProjectLogsManagerImpl" />
+		
+	<bean id="vacancyApplyManager" class="oa.service.formapply.impl.VacancyApplyManagerImpl" />
+
+
+	<bean id="FileDownloadServlet" class="oa.util.FileDownloadServlet" />
+
+	<bean id="weekPlanManager" class="oa.service.workPlan.impl.WeekPlanManagerImpl" />
+
+
+	<bean id="workRecordManager" class="oa.service.workPlan.impl.WorkRecordManagerImpl" />
+	<bean id="claimApplyManager" class="oa.service.formapply.impl.ClaimApplyManagerImpl"></bean>
+
+	<bean id="businessTripManager" class="oa.service.formapply.impl.BusinessTripManagerImpl" />
+	<bean id="performanceManager" class="oa.service.performance.impl.PerformanceManagerImpl" />
+
+	<!-- 配置Servlet组件 -->
+	<bean id="fileDownloadServlet" class="oa.util.FileDownloadServlet" />
+
+
+
+
+
+
+
+
+
+
+
+	<!-- 配置DAO组件 -->
+	<bean id="deptDao" class="oa.dao.table.DepartmentDao" />
+	<bean id="sysLoginfDao" class="oa.dao.table.SysLoginfDao" />
+	<bean id="systemConfigDao" class="oa.dao.table.SystemConfigDao" />
+	<bean id="userDao" class="oa.dao.table.UserDao" />
+	<bean id="projectDao" class="oa.dao.table.ProjectDao" />
+	<bean id="versionDao" class="oa.dao.table.VersionDao" />
+	<bean id="certificationDao" class="oa.dao.table.CertificationDao" />
+	<bean id="postDao" class="oa.dao.table.PositionDao" />
+	<bean id="afterSaleRecordDao" class="oa.dao.table.AfterSaleRecordDao" />
+	<bean id="afterSaleTrackDao" class="oa.dao.table.AfterSaleTrackDao" />
+	<bean id="osDao" class="oa.dao.table.OSDao" />
+	<bean id="productTypeDao" class="oa.dao.table.ProductTypeDao" />
+	<bean id="permissionDao" class="oa.dao.table.PermissionDao" />
+	<bean id="operationrecordDao" class="oa.dao.table.OperationRecordDao" />
+	<bean id="versionLogDao" class="oa.dao.table.VersionLogDao" />
+	<bean id="ticketApplyDAO" class="oa.dao.table.TicketApplyDAO" />
+	<bean id="workAttendanceDao" class="oa.dao.table.WorkAttendanceDao" />
+	<bean id="weekPlanDao" class="oa.dao.table.WeekPlanDao" />
+	<bean id="assetDao" class="oa.dao.table.AssetDao" />
+	<bean id="assetOpeLogDao" class="oa.dao.table.AssetOpeLogDao" />
+	<bean id="assetKindDao" class="oa.dao.table.AssetKindDao" />
+	<bean id="assetSubKindDao" class="oa.dao.table.AssetSubKindDao" />
+	<bean id="cassetApplyLogDao" class="oa.dao.table.CAssetApplyLogDao" />
+	<bean id="workRecordDao" class="oa.dao.table.WorkRecordDao" />
+	<bean id="overtimeApplyDao" class="oa.dao.table.OvertimeApplyDao"></bean>
+	<bean id="businessTripDao" class="oa.dao.table.BusinessTripDao"></bean>
+	<bean id="commerceProjectActingDao" class="oa.dao.table.CommerceProjectActingDao" />
+	<bean id="commerceProjectAuthApplyDao" class="oa.dao.table.CommerceProjectAuthApplyDao" />
+	<bean id="commerceProjectDao" class="oa.dao.table.CommerceProjectDao" />
+	<bean id="commerceProductDao" class="oa.dao.table.CommerceProductDao" />
+	<bean id="commerceProjectLogsDao" class="oa.dao.table.CommerceProjectLogsDao" />
+	<bean id="vacancyApplyDao" class="oa.dao.table.VacancyApplyDao"></bean>
+	<bean id="claimApplyDao" class="oa.dao.table.ClaimApplyDao"></bean>
+	<bean id="performanceResultDao" class="oa.dao.table.PerformanceResultDao"></bean>
+	<bean id="templateDao" class="oa.dao.table.TemplateDao"></bean>
+	<bean id="positionTemplateDao" class="oa.dao.table.PositionTemplateDao"></bean>
+	<bean id="outBoundDao" class="oa.dao.table.OutBoundDao"></bean>
+	<!-- DAO Template -->
+	<bean id="daoTemplate" class="oa.dao.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+</beans>

@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--售后服务列表</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript">
+		
+		
+			$(document).ready(function(){
+				init();
+				var i=0;
+				var page=1;
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp = (href.split("?"))[1].split("&");
+				var url="/homepageAfterSale";
+				var recordId = tmp[0].split("=")[1];
+				$.post(url,{"recordId":recordId},
+				function (xml){
+					 var Record_Id     		 = $(xml).find("record_Id").text();
+	                 var feedbackpeople      = $(xml).find("feedBackPeople").text();
+	                 var customername      	 = $(xml).find("customerName").text();
+	                 var customertel     	 = $(xml).find("customerTel").text();
+	                 var customerunit    	 = $(xml).find("customerUnit").text();
+	                 var customertype    	 = $(xml).find("customerType").text();
+	                 var description      	 = $(xml).find("description").text();
+				     var trackpeople    	 = $(xml).find("trackPeople").text();
+				     var currentdealer    	 = $(xml).find("currentDealer").text();
+				     var jieguo          	 = $(xml).find("jieguo").text();
+				     var reporttime     	 = $(xml).find("reportTime").text();
+				     var solvetime     		 = $(xml).find("solveTime").text();
+				    
+				     var deptId          	 = $(xml).find("deptId").text();
+				     var postId     		 = $(xml).find("postId").text();
+				     var currentLoginer      = $(xml).find("currentLoginer").text();
+			    
+					  if(jieguo=="null"){
+						    jieguo='';
+					    }
+					    if(solvetime=="null"){
+						    solvetime='';
+					    }
+					 if(customertype=="0"){
+						    customertype="其他";
+					    }else if(customertype=="1"){
+						    customertype = "BGW";
+						}else if(customertype=="2"){
+							customertype = "ZHW";
+						}
+					    
+					    var tmp = "Record_Id="+Record_Id+"&customertype="+customertype+"&feedbackpeople="+feedbackpeople+"&customername="+customername+"&customertel="+customertel+"&customerunit="+customerunit+"&description="+description+"&trackpeople="+trackpeople+"&currentdealer="+currentdealer+"&result="+jieguo+"&reporttime="+reporttime+"&solvetime="+solvetime;			    
+					     if(postId != "7")
+                        	$("#list").append("<tr class='content' id='"+Record_Id+"'><td>"+(i+1)+"</td><td>"+customertype+"</td><td>"+feedbackpeople+
+   	                                 "</td><td>"+customername+"</td><td>"+customertel+"</td><td>"+customerunit+
+   	                                 "</td><td>"+description+"</td><td>"+trackpeople+"</td><td>"+currentdealer+"</td><td><input type='image' src='./images/oa_detail.png' title='详细' onclick=\"javascript: location.href=encodeURI(\'afterTrack.html?"+tmp+"&page1="+page+"\')\"></input></td><td>"+jieguo+"</td><td>"+reporttime+"</td><td>"+solvetime+"</td><td><input type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'afterEdit.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td></tr>");
+   	                    	else{
+   	                    			if(currentLoginer == feedbackpeople&&(currentLoginer == currentdealer||currentLoginer == trackpeople))
+   	                    				$("#list").append("<tr class='content' id='"+Record_Id+"'><td>"+(i+1)+"</td><td>"+customertype+"</td><td>"+feedbackpeople+
+   	                                 "</td><td>"+customername+"</td><td>"+customertel+"</td><td>"+customerunit+
+   	                                 "</td><td>"+description+"</td><td>"+trackpeople+"</td><td>"+currentdealer+"</td><td><input type='image' src='./images/oa_detail.png' title='详细' onclick=\"javascript: location.href=encodeURI(\'afterTrack.html?"+tmp+"&page1="+page+"\')\"></input></td><td>"+jieguo+"</td><td>"+reporttime+"</td><td>"+solvetime+"</td><td><input type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'afterEdit.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td></tr>");
+   	                    			
+   	                    			if(currentLoginer == feedbackpeople&&(currentLoginer != currentdealer&&currentLoginer != trackpeople))
+   	                    				$("#list").append("<tr class='content' id='"+Record_Id+"'><td>"+(i+1)+"</td><td>"+customertype+"</td><td>"+feedbackpeople+
+   	                                 "</td><td>"+customername+"</td><td>"+customertel+"</td><td>"+customerunit+
+   	                                 "</td><td>"+description+"</td><td>"+trackpeople+"</td><td>"+currentdealer+"</td><td><input type='image' src='./images/oa_detail.png' title='详细' onclick=\"javascript: location.href=encodeURI(\'afterTrack.html?"+tmp+"&page1="+page+"\')\"></input></td><td>"+jieguo+"</td><td>"+reporttime+"</td><td>"+solvetime+"</td><td><input type='image' src='./images/oa_edit_g.gif' title='修改')\"></input></td><td><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td></tr>");
+   	                    			
+   	                    			if(currentLoginer != feedbackpeople&&currentLoginer == currentdealer)
+   	                    				$("#list").append("<tr class='content' id='"+Record_Id+"'><td>"+(i+1)+"</td><td>"+customertype+"</td><td>"+feedbackpeople+
+   	                                 "</td><td>"+customername+"</td><td>"+customertel+"</td><td>"+customerunit+
+   	                                 "</td><td>"+description+"</td><td>"+trackpeople+"</td><td>"+currentdealer+"</td><td><input type='image' src='./images/oa_detail.png' title='详细' onclick=\"javascript: location.href=encodeURI(\'afterTrack.html?"+tmp+"&page1="+page+"\')\"></input></td><td>"+jieguo+"</td><td>"+reporttime+"</td><td>"+solvetime+"</td><td><input type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'afterEdit.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/oa_delete_g.png'  title='删除' class='deleteNot'></input></td></tr>");
+   	                    			
+   	                    			if(currentLoginer != feedbackpeople&&currentLoginer != currentdealer)
+   	                    				$("#list").append("<tr class='content' id='"+Record_Id+"'><td>"+(i+1)+"</td><td>"+customertype+"</td><td>"+feedbackpeople+
+   	                                 "</td><td>"+customername+"</td><td>"+customertel+"</td><td>"+customerunit+
+   	                                 "</td><td>"+description+"</td><td>"+trackpeople+"</td><td>"+currentdealer+"</td><td><input type='image' src='./images/oa_detail.png' title='详细' onclick=\"javascript: location.href=encodeURI(\'afterTrack.html?"+tmp+"&page1="+page+"\')\"></input></td><td>"+jieguo+"</td><td>"+reporttime+"</td><td>"+solvetime+"</td><td><input type='image' src='./images/oa_edit_g.gif' title='修改' ></input></td><td><input type='image' src='./images/oa_delete_g.png'  title='删除' class='deleteNot'></input></td></tr>");
+   	                    		}
+   	                                 	
+   	                                 
+                        
+                       register();
+				},
+				
+				'xml');
+				
+				 function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定要删除此条记录吗？")){
+								$.post('/afterSaleDelete', {'recordId':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+	             
+				}
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="afterSale.html?page="+page;
+					}
+				}
+				function init(){
+					
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+			});
+			
+			
+		   </script>
+
+	</head>
+
+	<body>
+		<div id="container">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div style="width:300px" class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>售后详情</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td><img src="images/oa_search.png" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="afterSearch.html" >售后信息查询</a></td>
+						    <td width="10">&nbsp;</td>
+						    <td><img src="images/sq_img_09.png" width="15" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="afterAdd.html" id="addUser">登记</a></td>
+							<td width="10">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="javascript:history.back()" >返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>售后服务详情</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r6">
+						<table id="list" class="listTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+							<tr>
+								<th>序号</th>
+								<th>用户类型</th>
+								<th>反馈人</th>
+								<th>客户联系人</th>
+								<th>联系方式</th>
+								<th>客户单位</th>
+								<th>问题描述</th>
+								<th>跟踪人</th>
+								<th>当前处理人</th>
+								<th>详情</th>
+								<th>状态</th>
+								<th>上报时间</th>
+								<th>解决时间</th>
+								<th colspan="2">操作</th>
+							</tr>
+						</table>
+						</div>
+						<div id="sq_di">
+                  		</div>
+					</div>
+				  <div id="bg_di"></div>
+            	</div>
+		 		 <div id="footer">
+		          </div>
+				</div>
+        
+		</body>
+</html>
+			

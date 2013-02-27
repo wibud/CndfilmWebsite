@@ -1,0 +1,2138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+				"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+				"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.multipart.maxSize" value="10000000000" />
+	<!-- 这里用来配置共用的action -->
+	<package name="global" extends="struts-default" namespace="/">
+
+		<!-- 配置拦截器 -->
+		<interceptors>
+			<interceptor name="exception" class="oa.action.ExceptionInterceptor" />
+			<interceptor-stack name="uapStack">
+				<!-- 顺序有讲究 -->
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="exception" />
+			</interceptor-stack>
+		</interceptors>
+
+		<!-- 将上述拦截器设定为默认拦截器 -->
+		<default-interceptor-ref name="uapStack" />
+
+		<global-results>
+			<result name="exception" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+			<result name="error" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception"
+				result="exception" />
+		</global-exception-mappings>
+
+		<action name="login" class="oa.action.common.UserAction"
+			method="login">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="logout" class="oa.action.common.UserAction"
+			method="logout">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="localUserTree" class="oa.action.common.UserAction"
+			method="localUserTree">
+			<result name="success" type="xslt">
+				<param name="exposedValue">userTree</param>
+				<param name="location">/xsl/userTree.xsl</param>
+			</result>
+		</action>
+
+		<action name="sendMail" class="oa.action.common.SystemAction"
+			method="sendMail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemConfig" class="oa.action.common.SystemAction"
+			method="systemConfig">
+			<result name="success" type="xslt">
+				<param name="exposedValue">config</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="fileUpload" class="oa.action.common.SystemAction"
+			method="fileUpload">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="updatePasswd" class="oa.action.common.UserAction"
+			method="updatePasswd">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="loginInfo" class="oa.action.common.SystemAction"
+			method="loginInfo">
+			<result name="success" type="xslt">
+				<param name="exposedValue">loginInfo</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<!-- 版本发布管理的action -->
+		<action name="myProject" class="oa.action.project.ProjectAction"
+			method="selfProject">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{pjInfoList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="selfRelatedPjInfoList" class="oa.action.project.ProjectAction"
+			method="selfRelatedPjInfoList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{pjInfoList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="selfUserVersion" class="oa.action.version.VersionAction"
+			method="selfUserVersion">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{selfVersionList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+
+		<action name="projectList" class="oa.action.project.ProjectAction"
+			method="projectList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{projectList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="deleteProject" class="oa.action.project.ProjectAction"
+			method="deleteProject">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="addProject" class="oa.action.project.ProjectAction"
+			method="addProject">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="addVersion" class="oa.action.version.VersionAction"
+			method="addVersion">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="downloadVersion" class="oa.action.version.DownloadVersionAction">
+			<result type="stream">
+				<param name="contentType">application/octet-stream;charset=ISO8859-1</param>
+				<param name="inputName">inputStream</param>
+				<!-- 使用经过转码的文件名作为下载文件名，downloadFileName属性对应action类中的方法 getDownloadFileName() -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+			<result name="error">
+				noExsit.html
+			</result>
+		</action>
+
+
+		<action name="versionList" class="oa.action.version.VersionAction"
+			method="versionList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{versionList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="versionListByConditions" class="oa.action.version.VersionAction"
+			method="versionListByConditions">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{versionList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="osList" class="oa.action.version.VersionAction"
+			method="osList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{osList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="productTypeList" class="oa.action.version.VersionAction"
+			method="productTypeList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{productTypeList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="getTestManagerId" class="oa.action.version.VersionAction"
+			method="getTestManagerId">
+			<result name="success" type="xslt">
+				<param name="exposedValue">testMngId</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+
+		<action name="getProjectByDept" class="oa.action.project.ProjectAction"
+			method="getProjectByDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{projectList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="editProject" class="oa.action.project.ProjectAction"
+			method="editProject">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="deleteReport" class="oa.action.version.VersionAction"
+			method="deleteReport">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="getProjectById" class="oa.action.project.ProjectAction"
+			method="getProjectById">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{projectList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="editVersion" class="oa.action.version.VersionAction"
+			method="editVersion">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="fileUploadAction" class="oa.action.common.FileAction"
+			method="UploadFile">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="deleteVersion" class="oa.action.version.VersionAction"
+			method="deleteVersion">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="getVersionById" class="oa.action.version.VersionAction"
+			method="getVersionById">
+			<result name="success" type="xslt">
+				<param name="exposedValue">versionBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="getPermission" class="oa.action.common.PermissionAction"
+			method="getPermission">
+		</action>
+
+		<action name="getAdminId" class="oa.action.common.PermissionAction"
+			method="getAdmin_id">
+			<result name="success" type="xslt">
+				<param name="exposedValue">adminId</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+
+		<action name="getPermissionById" class="oa.action.common.PermissionAction"
+			method="getPermissionById">
+		</action>
+
+		<action name="getPermissionByPosition" class="oa.action.common.PermissionAction"
+			method="getPermissionByPosition">
+		</action>
+
+		<action name="setPermissionByPosition" class="oa.action.common.PermissionAction"
+			method="setPermissionByPosition">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="setPermissionById" class="oa.action.common.PermissionAction"
+			method="setPermissionById">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="deleteVersionDlLog" class="oa.action.version.VersionAction"
+			method="deleteVersionDlLog">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="versionLogList" class="oa.action.version.VersionAction"
+			method="versionLogList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{versionLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="addProjectMember" class="oa.action.project.ProjectAction"
+			method="addProjectMember">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="getMemberList" class="oa.action.project.ProjectAction"
+			method="getMemberList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{projectMemberList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!--Certification这里用来配置登录信息相关的action -->
+		<action name="systemUsbkeyGet" class="oa.action.system.CertificationAction"
+			method="certificationTest">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="editPassword" class="oa.action.system.CertificationAction"
+			method="editPassword">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="loginOA" class="oa.action.system.CertificationAction"
+			method="loginOA">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="changeLoginMethod" class="oa.action.system.CertificationAction"
+			method="changeLoginMethod">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+
+		<action name="getLoginMethod" class="oa.action.system.CertificationAction"
+			method="getLoginMethod">
+			<result name="success" type="xslt">
+				<param name="exposedValue">loginmethod</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+		<!-- 项目实施管理 -->
+		<action name="deleteCommerceProduct" class="oa.action.commerceproject.CommerceProjectAction"
+			method="deleteCommerceProduct">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="addCommerceProduct" class="oa.action.commerceproject.CommerceProjectAction"
+			method="addCommerceProduct">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="allCommerceproductList" class="oa.action.commerceproject.CommerceProjectAction"
+			method="allCommerceproductList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProductBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="logsList" class="oa.action.commerceproject.CommerceProjectAction"
+			method="logsList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProjectLogsBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="searchCommerceProductByCommerceProjectId" class="oa.action.commerceproject.CommerceProjectAction"
+			method="searchCommerceProductByCommerceProjectId">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProductBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="editCommerceProductDetail" class="oa.action.commerceproject.CommerceProjectAction"
+			method="editCommerceProductDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="commerceProjectAboutUserself" class="oa.action.commerceproject.CommerceProjectAction"
+			method="commerceProjectAboutUserself">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProjectBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="allCommerceprojectList" class="oa.action.commerceproject.CommerceProjectAction"
+			method="allCommerceprojectList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProjectBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="searchCommerceProjectByConditions" class="oa.action.commerceproject.CommerceProjectAction"
+			method="searchCommerceProjectByConditions">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProjectBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="searchCommerceProjectByName" class="oa.action.commerceproject.CommerceProjectAction"
+			method="searchCommerceProjectByName">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProjectBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="searchCommerceProjectByApplier" class="oa.action.commerceproject.CommerceProjectAction"
+			method="searchCommerceProjectByApplier">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProjectBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="searchCommerceProjectByClient" class="oa.action.commerceproject.CommerceProjectAction"
+			method="searchCommerceProjectByClient">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{commerceProjectBeanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="applyNewCommerceProject" class="oa.action.commerceproject.CommerceProjectAction"
+			method="applyNewCommerceProject">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="uploadAndSaveresultpaper" class="oa.action.commerceproject.ResultAction"
+			method="uploadAndSaveresultpaper">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="uploadAndSaveAuthorXML" class="oa.action.commerceproject.AuthorAction"
+			method="uploadAndSaveAuthorXML">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="downloadAuthorXml"
+			class="oa.action.commerceproject.DownloadAuthorXmlAction">
+			<result type="stream">
+				<param name="contentType">application/octet-stream;charset=ISO8859-1</param>
+				<param name="inputName">inputStream</param>
+				<!-- 使用经过转码的文件名作为下载文件名，downloadFileName属性对应action类中的方法 getDownloadFileName() -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+			<result name="error">
+				noExsit.html
+			</result>
+		</action>
+		<action name="mpersonComfirm" class="oa.action.commerceproject.CommerceProjectAction"
+			method="mpersonComfirm">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="reMpersonComfirm" class="oa.action.commerceproject.CommerceProjectAction"
+			method="reMpersonComfirm">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="postToManager" class="oa.action.commerceproject.CommerceProjectAction"
+			method="postToManager">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="postToActor" class="oa.action.commerceproject.CommerceProjectAction"
+			method="postToActor">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="getManagersId" class="oa.action.commerceproject.CommerceProjectAction"
+			method="getManagersId">
+			<result name="success" type="xslt">
+				<param name="exposedValue">managers</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+		<action name="actorComfirm" class="oa.action.commerceproject.CommerceProjectAction"
+			method="actorComfirm">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="applyAuthAgain" class="oa.action.commerceproject.CommerceProjectAction"
+			method="applyAuthAgain">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="endCommerceProjectActing" class="oa.action.commerceproject.CommerceProjectAction"
+			method="endCommerceProjectActing">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="reEnd" class="oa.action.commerceproject.CommerceProjectAction"
+			method="reEnd">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="editCommerceProjectDetail" class="oa.action.commerceproject.CommerceProjectAction"
+			method="editCommerceProjectDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="searchCommerceProjectById" class="oa.action.commerceproject.CommerceProjectAction"
+			method="searchCommerceProjectById">
+			<result name="success" type="xslt">
+				<param name="exposedValue">searchcommerceProjectBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="searchCommerceProductById" class="oa.action.commerceproject.CommerceProjectAction"
+			method="searchCommerceProductById">
+			<result name="success" type="xslt">
+				<param name="exposedValue">searchcommerceProductBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!--Certification这里用来配置日志信息相关的action -->
+		<action name="operationRecordlistByTime" class="oa.action.system.OperationRecordAction"
+			method="operationRecordlistByTime">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{operationRecordList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="operationRecordList" class="oa.action.system.OperationRecordAction"
+			method="operationRecordList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{operationRecordList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!-- 项目开发计划与进度 -->
+
+		<action name="projectDetail" class="oa.action.project.ProjectAction"
+			method="projectDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">projectDetail</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="selfUserProject" class="oa.action.project.ProjectAction"
+			method="selfUserProject">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{selfProjectList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="pjProgressList" class="oa.action.project.ProjectAction"
+			method="pjProgressList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{pjInfoList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="projectInfoList" class="oa.action.project.ProjectAction"
+			method="projectInfoList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{pjInfoList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="selfRelatedPjInfoList" class="oa.action.project.ProjectAction"
+			method="selfRelatedPjInfoList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{pjInfoList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="creatProjectPlan" class="oa.action.project.ProjectAction"
+			method="creatProjectPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="upDateProgress" class="oa.action.project.ProjectAction"
+			method="upDateProgress">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="modifieProjectPlan" class="oa.action.project.ProjectAction"
+			method="modifieProjectPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="userIsManager" class="oa.action.system.project.ProjectAction"
+			method="userIsManager">
+			<result name="success" type="xslt">
+				<param name="exposedValue">role</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+
+		<action name="selfProject" class="oa.action.project.ProjectAction"
+			method="selfProject">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{pjInfoList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!-- 资产管理action -->
+		<action name="assetAddNewKind" class="oa.action.asset.AssetAction"
+			method="assetAddNewKind">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetAddNewSubKind" class="oa.action.asset.AssetAction"
+			method="assetAddNewSubKind">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetmodifyKind" class="oa.action.asset.AssetAction"
+			method="assetUpdateKind">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetmodifySubKind" class="oa.action.asset.AssetAction"
+			method="assetUpdateSubKind">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetDelSubKind" class="oa.action.asset.AssetAction"
+			method="assetDelSubKind">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetDelKind" class="oa.action.asset.AssetAction"
+			method="assetDelKind">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetKindShowList" class="oa.action.asset.AssetAction"
+			method="assetKindShowList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetKindList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetSubKindShowList" class="oa.action.asset.AssetAction"
+			method="assetSubKindShowList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetKindList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFindKindByID" class="oa.action.asset.AssetAction"
+			method="assetFindKindByID">
+			<result name="success" type="xslt">
+				<param name="exposedValue">assetKindBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="fassetGetSubKindNum" class="oa.action.asset.AssetAction"
+			method="fassetGetSubKindNum">
+			<result name="success" type="xslt">
+				<param name="exposedValue">assetKindBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetIn" class="oa.action.asset.AssetAction"
+			method="assetIn">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetOut" class="oa.action.asset.AssetAction"
+			method="assetOut">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="fassetAllot" class="oa.action.asset.AssetAction"
+			method="fassetAllot">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFixedTrans" class="oa.action.asset.AssetAction"
+			method="assetFixedTrans">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="fassetRecycle" class="oa.action.asset.AssetAction"
+			method="assetFixedRecycle">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="cassetApply" class="oa.action.asset.AssetAction"
+			method="cassetApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFixedListIA" class="oa.action.asset.AssetAction"
+			method="assetFixedListInedAndAlloted">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFixedListIA2" class="oa.action.asset.AssetAction"
+			method="assetFixedListInedAndAlloted">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFixedListIned" class="oa.action.asset.AssetAction"
+			method="assetFixedListIned">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFixedListAlloted" class="oa.action.asset.AssetAction"
+			method="assetFixedListAlloted">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetShowInLogList" class="oa.action.asset.AssetAction"
+			method="assetInLogList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetShowOutLogList" class="oa.action.asset.AssetAction"
+			method="assetOutLogList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showFassetLYApplyLogList" class="oa.action.asset.AssetAction"
+			method="fassetLYApplyLogList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showFassetGHApplyLogList" class="oa.action.asset.AssetAction"
+			method="fassetGHApplyLogList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showCassetApplyLogList" class="oa.action.asset.AssetAction"
+			method="cassetApplyLogList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showInLogSearchList" class="oa.action.asset.AssetAction"
+			method="assetLogSearchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showOutLogSearchList" class="oa.action.asset.AssetAction"
+			method="assetLogSearchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showLYApplyLogSearchList" class="oa.action.asset.AssetAction"
+			method="assetLogSearchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showGHApplyLogSearchList" class="oa.action.asset.AssetAction"
+			method="assetLogSearchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showCAApplyLogSearchList" class="oa.action.asset.AssetAction"
+			method="assetLogSearchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="showUserCAssetApplyLog" class="oa.action.asset.AssetAction"
+			method="showUserCAssetApplyLog">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="cassetUnauthApplyLogListAll" class="oa.action.asset.AssetAction"
+			method="cassetUnauthApplyLogListAll">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="cassetUnauthApplyLogListRS" class="oa.action.asset.AssetAction"
+			method="cassetUnauthApplyLogListRS">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="cassetUnauthApplyLogListRS1" class="oa.action.asset.AssetAction"
+			method="cassetUnauthApplyLogListRS">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="cassetUnauthApplyLogListRS2" class="oa.action.asset.AssetAction"
+			method="cassetUnauthApplyLogListRS">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="cassetUnauthApplyLogListCom" class="oa.action.asset.AssetAction"
+			method="cassetUnauthApplyLogListCom">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="cassetUnauthApplyLogListCom1" class="oa.action.asset.AssetAction"
+			method="cassetUnauthApplyLogListCom">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="cassetUnauthApplyLogListCom2" class="oa.action.asset.AssetAction"
+			method="cassetUnauthApplyLogListCom">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetLogList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetApplyAuth" class="oa.action.asset.AssetAction"
+			method="assetApplyAuth">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="delUnauthApply" class="oa.action.asset.AssetAction"
+			method="delUnauthApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="checkApply" class="oa.action.asset.AssetAction"
+			method="checkApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFixedList" class="oa.action.asset.AssetAction"
+			method="assetFixedList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetFixedListAll" class="oa.action.asset.AssetAction"
+			method="assetFixedListAll">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetPurchasedIn" class="oa.action.asset.AssetAction"
+			method="assetPurchasedIn">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetPurchasedOut" class="oa.action.asset.AssetAction"
+			method="assetPurchasedOut">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetPurchasedList" class="oa.action.asset.AssetAction"
+			method="assetPurchasedList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="assetPurchasedListAll" class="oa.action.asset.AssetAction"
+			method="assetPurchasedListAll">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{assetList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<!--用户管理系统global action -->
+		<action name="userDetail" class="oa.action.common.UserAction"
+			method="userDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">user</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="currentUserDetail" class="oa.action.common.UserAction"
+			method="currentUserDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">currentUser</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemUserSearch" class="oa.action.common.UserAction"
+			method="userSearch">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{userList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemDeptSearch" class="oa.action.common.UserAction"
+			method="deptSearch">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{deptList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="deptSearch" class="oa.action.common.UserAction"
+			method="deptSearch">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{deptList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+
+		<action name="selfUserEdit" class="oa.action.common.UserAction"
+			method="selfUserEdit">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemUserList" class="oa.action.common.UserAction"
+			method="userList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{userList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+
+		<action name="systemDeptList" class="oa.action.common.UserAction"
+			method="localDeptList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{deptList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="getDeptListByManagerId" class="oa.action.common.UserAction"
+			method="getDeptListByManagerId">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{deptList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemDeptList2" class="oa.action.common.UserAction"
+			method="localDeptList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{deptList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="getPostByDeptId" class="oa.action.common.UserAction"
+			method="getPostByDeptId">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{positionListByDeptId,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemPostList" class="oa.action.common.UserAction"
+			method="postList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{postList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="DeptList" class="oa.action.common.UserAction"
+			method="localDeptList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{deptList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!-- 订票管理 -->
+		<action name="addTicketApply" class="oa.action.ticketapply.TicketApplyAction"
+			method="addTicketApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!-- 普通员工，首页显示本人未确认的订票信息 -->
+		<action name="listByuserId" class="oa.action.ticketapply.TicketApplyAction"
+			method="listByuserId">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{talistByProperty,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<!-- 部门主管，首页显示本部门等待主管审批的和自己未确认的订票信息 -->
+		<action name="listByDept" class="oa.action.ticketapply.TicketApplyAction"
+			method="listByDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{talistByProperty,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<!-- 人事部主管，首页显示等待人事部主管审批和自己未确认的订票信息 -->
+		<action name="listforPersonnelDept" class="oa.action.ticketapply.TicketApplyAction"
+			method="listforPersonnelDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{taList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="listByTicketId" class="oa.action.ticketapply.TicketApplyAction"
+			method="listByTicketId">
+			<result name="success" type="xslt">
+				<param name="exposedValue">taBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="listAll" class="oa.action.ticketapply.TicketApplyAction"
+			method="listAll">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{taList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="searchTicket" class="oa.action.ticketapply.TicketApplyAction"
+			method="searchTicket">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{talistByProperty,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!-- 审批订票申请 -->
+		<action name="approvalTicket" class="oa.action.ticketapply.TicketApplyAction"
+			method="approvalTicket">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!-- 受理订票申请 -->
+		<action name="acceptTicket" class="oa.action.ticketapply.TicketApplyAction"
+			method="acceptTicket">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!-- 确认订票申请 -->
+		<action name="verifyTicket" class="oa.action.ticketapply.TicketApplyAction"
+			method="verifyTicket">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!-- 删除订票申请 -->
+		<action name="deleteTicket" class="oa.action.ticketapply.TicketApplyAction"
+			method="deleteTicket">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="editTicketApply" class="oa.action.ticketapply.TicketApplyAction"
+			method="editTicketApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!-- 加班申请 -->
+		<action name="overtimeStatistics" class="oa.action.formapply.OvertimeApplyAction"
+			method="overtimeStatistics">
+			<result name="success" type="xslt">
+				<param name="exposedValue">overtimeApplyBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		
+		<action name="addOvertimeApply" class="oa.action.formapply.OvertimeApplyAction"
+			method="addOvertimeApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="overtimeApplyList" class="oa.action.formapply.OvertimeApplyAction"
+			method="overtimeApplyList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{overtimeList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="overtimelistById" class="oa.action.formapply.OvertimeApplyAction"
+			method="listById">
+			<result name="success" type="xslt">
+				<param name="exposedValue">overtimeApplyBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="overtimeSearch" class="oa.action.formapply.OvertimeApplyAction"
+			method="searchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{overtimeList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="overtimeDelete" class="oa.action.formapply.OvertimeApplyAction"
+			method="deleteOvertime">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="overtimeListforHomePage" class="oa.action.formapply.OvertimeApplyAction"
+			method="listforHomePage">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{overtimeList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="approvalOvertime" class="oa.action.formapply.OvertimeApplyAction"
+			method="approvalOvertime">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="editOvertime" class="oa.action.formapply.OvertimeApplyAction"
+			method="editOvertime">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!-- 请假申请 -->
+		<action name="addVacancyApply" class="oa.action.formapply.VacancyApplyAction"
+			method="addVacancyApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="vacancyInfoList" class="oa.action.formapply.VacancyApplyAction"
+			method="vacancyList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{vacancyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="vacancyStatistics" class="oa.action.formapply.VacancyApplyAction"
+			method="vacancyStatistics">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{statisticalResult,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="vacancyApplyDetail" class="oa.action.formapply.VacancyApplyAction"
+			method="vacancylistById">
+			<result name="success" type="xslt">
+				<param name="exposedValue">vacancyApplyBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="vacancyDelete" class="oa.action.formapply.VacancyApplyAction"
+			method="deleteVacancy">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="vacancySearch" class="oa.action.formapply.VacancyApplyAction"
+			method="vacancySearchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{vacancyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="vacancyListforHomePage" class="oa.action.formapply.VacancyApplyAction"
+			method="vacancyListforHomePage">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{vacancyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="approvalVacancyApply" class="oa.action.formapply.VacancyApplyAction"
+			method="approvalVacancy">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="editVacancy" class="oa.action.formapply.VacancyApplyAction"
+			method="editVacancy">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!-- 报销单 -->
+		<action name="addClaimApply" class="oa.action.formapply.ClaimApplyAction"
+			method="addClaimApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="claimInfoList" class="oa.action.formapply.ClaimApplyAction"
+			method="claimApplyList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{claimApplyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="claimApplyDetail" class="oa.action.formapply.ClaimApplyAction"
+			method="claimApplyDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">claimApplyBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="claimSearch" class="oa.action.formapply.ClaimApplyAction"
+			method="searchList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{claimApplyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="claimDelete" class="oa.action.formapply.ClaimApplyAction"
+			method="deleteClaimApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="claimListforHomePage" class="oa.action.formapply.ClaimApplyAction"
+			method="listforHomePage">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{claimApplyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="approvalClaimApply" class="oa.action.formapply.ClaimApplyAction"
+			method="approvalClaimApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="editClaimApply" class="oa.action.formapply.ClaimApplyAction"
+			method="editClaimApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+	</package>
+
+
+
+	<!-- 这里用来配置只有系统管理员能使用的action -->
+	<package name="system" extends="global" namespace="/">
+
+		<!-- 这里用来配置只有人事部员工能使用的action -->
+
+
+		<action name="userIsPersonnelDept" class="oa.action.system.SystemUserAction"
+			method="userIsPersonnelDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">role</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemUserEdit" class="oa.action.system.SystemUserAction"
+			method="userEdit">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemUserAdd" class="oa.action.system.SystemUserAction"
+			method="userAdd">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemUserDelete" class="oa.action.system.SystemUserAction"
+			method="userDelete">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+
+
+		<action name="systemDeptAdd" class="oa.action.system.DepartmentAction"
+			method="addDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemDeptEdit" class="oa.action.system.DepartmentAction"
+			method="editDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="systemDeptDelete" class="oa.action.system.DepartmentAction"
+			method="deleteDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="systemConfigEdit" class="oa.action.common.SystemAction"
+			method="systemConfigEdit">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+
+		<action name="getUserByDept" class="oa.action.system.SystemUserAction"
+			method="userListByDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{userListByDept,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+
+
+
+		<action name="localDeptTree" class="oa.action.system.DepartmentAction"
+			method="localDeptTree">
+			<result name="success" type="xslt">
+				<param name="exposedValue">deptTree</param>
+				<param name="location">/xsl/userTree.xsl</param>
+			</result>
+		</action>
+
+
+
+		<action name="moveDept" class="oa.action.system.DepartmentAction"
+			method="moveDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+
+
+		<action name="renameDept" class="oa.action.system.DepartmentAction"
+			method="renameDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+
+		<!--  售后服务记录显示、添加、删除、编辑  -->
+
+		<action name="homepageAfterSale" class="oa.action.aftersale.AfterSaleAction"
+			method="afterSaleDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">afterSale</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="selfUserAfterSale" class="oa.action.aftersale.AfterSaleAction"
+			method="selfUserAfterSale">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{afterCurrent,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="afterSale" class="oa.action.aftersale.AfterSaleAction"
+			method="aftersalerecordlist">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{aftersalerecordList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="afterAdd" class="oa.action.aftersale.AfterSaleAction"
+			method="afterAdd">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="afterSaleDelete" class="oa.action.aftersale.AfterSaleAction"
+			method="aftersaleDelete">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="afterEdit" class="oa.action.aftersale.AfterSaleAction"
+			method="afterEdit">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="afterTrack" class="oa.action.aftersale.AfterSaleAction"
+			method="aftersaletracklist">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{aftersaletrackList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="gotUserbyDept" class="oa.action.aftersale.AfterSaleAction"
+			method="gotUserbyDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{userList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="gotUserbyDept2" class="oa.action.aftersale.AfterSaleAction"
+			method="gotUserbyDept">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{userList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="afterSearchList" class="oa.action.aftersale.AfterSaleAction"
+			method="aftersearchlist">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{aftersalerecordList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="afterSaleExport" class="oa.action.aftersale.AfterSaleAction"
+			method="afterSaleExportXLS">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{path}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="aftersalerecordlistbyid" class="oa.action.aftersale.AfterSaleAction"
+			method="aftersalerecordlistbyid">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{aftersalerecordList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!-- <action name="afterSaleExport" class="oa.action.aftersale.AfterSaleAction" 
+			method="afterSaleExportXLS"> <result name="excel" type="stream"> <param name="contentType">application/octet-stream;charset=ISO8859-1</param> 
+			<param name="inputName">excelStream</param> <param name="contentDisposition">attachment;filename="CyberAftersale.xls"</param> 
+			<param name="bufferSize">4096</param> </result> </action> -->
+
+		<!--Certification管理员上传和储存证书的相关action -->
+
+
+		<action name="uploadCert" class="oa.action.system.CertificationAction"
+			method="uploadAndSaveCertification">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<!--考勤管理action -->
+
+		<action name="uploadExecl" class="oa.action.workAttendance.AttenceAction"
+			method="upload">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="workAttendanceList" class="oa.action.workAttendance.AttenceAction"
+			method="listAttence">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{attenceList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="workAttendanceSearch" class="oa.action.workAttendance.AttenceAction"
+			method="searchAttence">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{searchAttenceList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="workAttendanceEdit" class="oa.action.workAttendance.AttenceAction"
+			method="editAttence">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<!--工作管理action -->
+		<action name="weekPlanList" class="oa.action.workPlan.WeekPlanAction"
+			method="listWeekPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{weekPlanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="addWeekPlan" class="oa.action.workPlan.WeekPlanAction"
+			method="addWeekPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="searchWeekPlan" class="oa.action.workPlan.WeekPlanAction"
+			method="searchWeekPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{searchWeekPlanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="editWeekPlan" class="oa.action.workPlan.WeekPlanAction"
+			method="updateWeekPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="getUserWeekPlan" class="oa.action.workPlan.WeekPlanAction"
+			method="getweekPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">userWeekPlan</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="waitCheckWeekPlan" class="oa.action.workPlan.WeekPlanAction"
+			method="waitCheckPlan">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{waitCheckPlanList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!--个人工作日志action -->
+		<action name="workRecordList" class="oa.action.workPlan.WorkRecordAction"
+			method="listWorkRecord">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{workRecordList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="delWorkRecord" class="oa.action.workPlan.WorkRecordAction"
+			method="delWorkRecord">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="editWorkRecord" class="oa.action.workPlan.WorkRecordAction"
+			method="editWorkRecord">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="searchWorkRecord" class="oa.action.workPlan.WorkRecordAction"
+			method="searchWorkRecord">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{searchWorkRecordList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<action name="addWorkRecord" class="oa.action.workPlan.WorkRecordAction"
+			method="addWorkRecord">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+
+		<action name="checkRecord" class="oa.action.workPlan.WorkRecordAction"
+			method="checkRecord">
+			<result name="success" type="xslt">
+				<param name="exposedValue">flag</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+
+		<!--出差申请action -->
+
+		<action name="businessTripList" class="oa.action.formapply.BusinessTripAction"
+			method="listBusinessTrip">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{businessTripList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="checkCurrentUser" class="oa.action.formapply.BusinessTripAction"
+			method="checkCurrentUser">
+			<result name="success" type="xslt">
+				<param name="exposedValue">flag</param>
+				<param name="location">/xsl/singleValue.xsl</param>
+			</result>
+		</action>
+		<action name="businessTripAdd" class="oa.action.formapply.BusinessTripAction"
+			method="addBusinessTrip">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="businessTripDelete" class="oa.action.formapply.BusinessTripAction"
+			method="delete">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="businessTripDetail" class="oa.action.formapply.BusinessTripAction"
+			method="businessTripDetail">
+			<result name="success" type="xslt">
+				<param name="exposedValue">businessTripBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="businessTripEdit" class="oa.action.formapply.BusinessTripAction"
+			method="updateBusinessTrip">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="searchBusinessTrip" class="oa.action.formapply.BusinessTripAction"
+			method="searchBusinessTrip">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{searchTripList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="businessTripCheck" class="oa.action.formapply.BusinessTripAction"
+			method="checkByManager">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{checkBusinessTripList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="businessTripRemind" class="oa.action.formapply.BusinessTripAction"
+			method="needCheckOrEdit">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{needCheckOrEditList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+
+		<!--绩效管理-->
+		<action name="assignTemplateByPosition" class="oa.action.performance.PerformanceAction"
+			method="assignTemplateByPosition">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="assignTemplateByUser" class="oa.action.performance.PerformanceAction"
+			method="assignTemplateByUser">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="getTemplateByPosition" class="oa.action.performance.PerformanceAction"
+			method="getTemplateByPosition">
+			<result name="success" type="xslt">
+				<param name="exposedValue">templateBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="getTemplateByUser" class="oa.action.performance.PerformanceAction"
+			method="getTemplateByUser">
+			<result name="success" type="xslt">
+				<param name="exposedValue">templateBean</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="addPerformanceTemplate" class="oa.action.performance.PerformanceAction"
+			method="addPerformanceTemplate">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="performanceTemplateList" class="oa.action.performance.PerformanceAction"
+			method="listPerformanceTemplate">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{templateList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="launchAssessByPosition" class="oa.action.performance.PerformanceAction"
+			method="launchAssessByPosition">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="launchAssessByUser" class="oa.action.performance.PerformanceAction"
+			method="launchAssessByUser">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="listSelfResult" class="oa.action.performance.PerformanceAction"
+			method="listSelfResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listSelfResultByPeriod" class="oa.action.performance.PerformanceAction"
+			method="listSelfResultByPeriod">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listSelfResultBySelected" class="oa.action.performance.PerformanceAction"
+			method="listSelfResultBySelected">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listAllResult" class="oa.action.performance.PerformanceAction"
+			method="listAllResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listSelfAssessResult" class="oa.action.performance.PerformanceAction"
+			method="listSelfAssessResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listSelfAssessLeftResult" class="oa.action.performance.PerformanceAction"
+			method="listSelfAssessLeftResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listManagerAssessResult" class="oa.action.performance.PerformanceAction"
+			method="listManagerAssessResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listManagerAssessLeftResult" class="oa.action.performance.PerformanceAction"
+			method="listManagerAssessLeftResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listManagerConfirmResult" class="oa.action.performance.PerformanceAction"
+			method="listManagerConfirmResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listOtherAssessResult" class="oa.action.performance.PerformanceAction"
+			method="listOtherAssessResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listOtherAssessLeftResult" class="oa.action.performance.PerformanceAction"
+			method="listOtherAssessLeftResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="listIdResult" class="oa.action.performance.PerformanceAction"
+			method="listIdResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{performanceResultList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="scoreSelf" class="oa.action.performance.PerformanceAction"
+			method="scoreSelf">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="scoreManager" class="oa.action.performance.PerformanceAction"
+			method="scoreManager">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="scoreOther" class="oa.action.performance.PerformanceAction"
+			method="scoreOther">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="confirmPerformanceResult" class="oa.action.performance.PerformanceAction"
+			method="confirmPerformanceResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="deletePerformanceResult" class="oa.action.performance.PerformanceAction"
+			method="deletePerformanceResult">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="deletePerformanceTemplate" class="oa.action.performance.PerformanceAction"
+			method="deletePerformanceTemplate">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<!--外出管理 -->
+		<action name="addOutBoundApply" class="oa.action.formapply.OutBoundAction"
+			method="addOutBoundApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="outBoundApplyList" class="oa.action.formapply.OutBoundAction"
+			method="outBoundApplyList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{outBoundApplyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="deleteOutBoundApply" class="oa.action.formapply.OutBoundAction"
+			method="deleteOutBoundApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="selfRelatedOutBoundApplyList" class="oa.action.formapply.OutBoundAction"
+			method="selfRelatedOutBoundApplyList">
+			<result name="success" type="xslt">
+				<param name="exposedValue">{outBoundApplyList,startWith,pageCount,count}</param>
+				<param name="location">/xsl/list.xsl</param>
+			</result>
+		</action>
+		<action name="approveOutBoundApply" class="oa.action.formapply.OutBoundAction"
+			method="approveOutBoundApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+		<action name="addBackApply" class="oa.action.formapply.OutBoundAction"
+			method="addBackApply">
+			<result name="success" type="xslt">
+				<param name="exposedValue">result</param>
+				<param name="location">/xsl/default.xsl</param>
+			</result>
+		</action>
+	</package>
+
+
+
+
+</struts>

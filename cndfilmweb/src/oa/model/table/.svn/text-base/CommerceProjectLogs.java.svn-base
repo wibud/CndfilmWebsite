@@ -1,0 +1,81 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="log_id")
+@Entity
+@Table(name="tb_commerceprojectlogs")
+public class CommerceProjectLogs {
+
+	@Id
+	private String log_id;
+	private String commerceproject_id;
+	private String commerceproject_name;
+	private String opperson;
+	private String opdetail;
+	private String optime;
+	private String srcip;
+	private String projectstatebefore;
+	private String desca;
+	public String getLog_id() {
+		return log_id;
+	}
+	public void setLog_id(String logId) {
+		log_id = logId;
+	}
+	public String getCommerceproject_id() {
+		return commerceproject_id;
+	}
+	public void setCommerceproject_id(String commerceprojectId) {
+		commerceproject_id = commerceprojectId;
+	}
+	public String getCommerceproject_name() {
+		return commerceproject_name;
+	}
+	public void setCommerceproject_name(String commerceprojectName) {
+		commerceproject_name = commerceprojectName;
+	}
+	public String getOpperson() {
+		return opperson;
+	}
+	public void setOpperson(String opperson) {
+		this.opperson = opperson;
+	}
+	public String getOpdetail() {
+		return opdetail;
+	}
+	public void setOpdetail(String opdetail) {
+		this.opdetail = opdetail;
+	}
+	public String getOptime() {
+		return optime;
+	}
+	public void setOptime(String optime) {
+		this.optime = optime;
+	}
+	public String getSrcip() {
+		return srcip;
+	}
+	public void setSrcip(String srcip) {
+		this.srcip = srcip;
+	}
+
+
+	public String getDesca() {
+		return desca;
+	}
+	public void setDesca(String desca) {
+		this.desca = desca;
+	}
+	public void setProjectstatebefore(String projectstatebefore) {
+		this.projectstatebefore = projectstatebefore;
+	}
+	public String getProjectstatebefore() {
+		return projectstatebefore;
+	}
+	
+}

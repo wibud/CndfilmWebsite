@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+
+
+//				var userId,userName,userSex,userDepId,userDes;
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("&page1=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+                var laizi  = href.split("&laizi=")[1];       
+				var allrandom     = tmp[0].split("=")[1];
+				var commerceproject_id  = tmp[1].split("=")[1];
+				
+				var commerceproject_name  = tmp[2].split("=")[1];
+				var product_type   = tmp[3].split("=")[1];
+				var softwareVession    = tmp[4].split("=")[1];
+				var product_number  = tmp[5].split("=")[1];
+				var commerceprojectAuthnumber  = tmp[6].split("=")[1];
+				var product_id   = tmp[7].split("=")[1];
+				
+
+				$("#allrandom").val(allrandom);
+		    	$("#commerceproject_id").val(commerceproject_id);				
+				$("#commerceproject_name").val(commerceproject_name);
+				$("#product_type").val(product_type);
+				$("#softwareVession").val(softwareVession);
+				$("#product_number").val(product_number);
+				$("#commerceprojectAuthnumber").val(commerceprojectAuthnumber);
+				$("#product_id").val(product_id);
+			
+/***				$("#feedBackPeople").val(feedbackpeople);
+				$("#customerName").val(customername);
+				$("#customerTel").val(customertel);
+				$("#customerUnit").val(customerunit);
+				$("#description").val(description);
+				$("#trackPeople").val(trackpeople);
+				$("#currentDealer").val(currentdealer);
+				$("#jieguo").val(jieguo);
+				$("#reportTime").val(reporttime);
+				$("#solveTime").val(solvetime);
+***/
+//				$("#userSex option[value='"+userSex+"']").attr("selected","selected");
+//				$("#userName option[value='"+userName+"']").attr("selected","selected");
+
+
+/**				$.post('/systemDeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#userDepId").append("<option value=\""+$(this).find("id").text()+"\">"+$(this).find("name").text()+"</option>");
+								});
+							$("#userDepId option[value='"+userDepId+"']").attr("selected","selected");
+	   	                 },
+	                     'xml');
+**/
+				   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+			        $("#comfirm").click(function(){
+			        	var allrandom     = $('#allrandom').val();
+					    var commerceproject_id     = $('#commerceproject_id').val();
+			        	
+					    var commerceproject_name     = $('#commerceproject_name').val();
+						var product_type   = $('#product_type').val();
+						var softwareVession    = $('#softwareVession').val();
+						var product_number  = $('#product_number').val();
+						var commerceprojectAuthnumber  =$('#commerceprojectAuthnumber').val();
+						var product_id   = $('#product_id').val();
+						
+						
+						
+						if($('#commerceproject_name').val() == ""){
+						alert(" 项目名称不能为空！");
+						return;
+						}
+						
+						if($('#product_type').val() ==  ""){
+						alert(" 产品型号不能为空！");
+						return;
+						}
+						
+						if($('#softwareVession').val() ==  ""){
+						alert(" 软件版本不能为空！");
+						return;
+						}
+						
+	
+						if($('#product_number').val() ==  ""){
+						alert(" 产品数量不能为空！");
+						return;
+						}
+
+						if($('#commerceprojectAuthnumber').val() ==  ""){
+							alert(" 授权点数不能为空！");
+							return;
+							}
+
+	                    $.post('/editCommerceProductDetail', {'allrandom':allrandom,'commerceproject_id':commerceproject_id,'commerceproject_name':commerceproject_name,'product_type':product_type,'softwareVession':softwareVession,'product_number':product_number,'commerceprojectAuthnumber':commerceprojectAuthnumber,'product_id':product_id}, callback, 'xml');
+//	                    $("#pageNav").showPageNav(page2, pageCount, count, url);
+//						alert(liuyan);
+
+//	                    function callback(xml){
+//							var $xml = $(xml);
+
+/****							//这个函数从后台得到xml里面的数据
+							var recode = $xml.find("recode").text();
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+
+							userId    = $xml.find("userId").text();
+							userName  = $xml.find("userName").text();
+							userSex   = $xml.find("userSex").text();
+							userDepId = $xml.find("userDepId").text();
+							userDesc  = $xml.find("userDesc").text();
+
+		                    $("#userId").val(userId);
+							$("#userName").val(userName);
+							$("#userSex").val(userSex);
+							$("#userDepId").val(userDepId);
+							$("#userDesc").val(userDesc);
+*****/
+//						}
+
+
+
+
+
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								alert("修改成功！");
+								location.href="javascript:history.back()";
+							}
+						}
+					});
+
+	//			$("#back").click(
+			//			function(){location.href="allProductList.html?page="+prePage;}
+	//				);
+
+					function init(){
+
+						$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$(this).navi();
+					}
+				
+					
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：产品管理&gt;&nbsp;<strong>修改产品信息</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+										
+							<tr>
+							 <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+							 <td><a href="javascript:history.back()" >返回</a></td>
+						</tr>
+						</table>
+						</div>
+				</td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>修改产品信息</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r6">
+						<table class="sTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+													<tr  style="display:none;">
+								<td class="width_5">项目ID</td>
+								<td class="width_15"><input type="text" id="allrandom" class="width_15" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">产品随机ID</td>
+								<td class="width_15"><input type="text" id="allrandom" class="width_15" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							<tr >
+								<td class="width_5">项目名称</td>
+								<td class="width_15"><input type="text" id="commerceproject_name" class="width_15" style="width:280px" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							<tr >
+								<td class="width_5">产品类型</td>
+								<td class="width_15"><select name="product_type" id="product_type" class="width_15" style="width:280px">
+								        <option value="网络安全管理与检查系统">网络安全管理与检查系统</option>
+								        <option value="一体化安全防护设备（固定式）">一体化安全防护设备（固定式）</option>
+								         <option value="一体化安全防护设备（加固式）">一体化安全防护设备（加固式）</option>
+								        <option value="NetHarwk防火墙">NetHarwk防火墙</option>
+								         <option value="网域星云防火墙（Power V 系列）">网域星云防火墙（Power V 系列）</option>
+								        <option value="天融信防火墙">天融信防火墙</option>
+								         <option value="天融信入侵检测">天融信入侵检测</option>
+								         <option value="启明星辰入侵检测">启明星辰入侵检测</option>								         
+								        <option value="赛博兴安漏洞扫描">赛博兴安漏洞扫描</option>
+								        <option value="绿盟漏洞扫描">绿盟漏洞扫描</option>
+								         <option value="榕基漏洞扫描">榕基漏洞扫描</option>
+								        <option value="北信源补丁分发系统（军用版）">北信源补丁分发系统（军用版）</option>
+								        <option value="瑞星防病毒系统（2008版）">瑞星防病毒系统（2008版）</option>
+								        <option value="瑞星防病毒系统（2009版）">瑞星防病毒系统（2009版）</option>
+								        <option value="瑞星防病毒系统（2010版）">瑞星防病毒系统（2010版）</option>
+								        <option value="江民防病毒系统">江民防病毒系统</option>
+							        </select></td>
+							</tr>
+							
+							<tr >
+								<td class="width_5">软件版本</td>
+								<td class="width_15"><input type="text" id="softwareVession" class="width_15" style="width:280px"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">产品数量</td>
+								<td class="width_15"><input type="text" id="product_number" class="width_15" style="width:280px"></input></td>
+							</tr>
+							
+							<tr>
+								<td class="width_5">授权点数</td>
+								<td class="width_15"><input type="text" id="commerceprojectAuthnumber" class="width_15" style="width:280px"></input></td>
+							</tr>
+						<tr>
+								<td class="width_5">产品序列号</td>
+								
+								   <td class="width_15"><textarea id="product_id" class="width_15" style="width:280px"></textarea>
+								   </td>
+								 
+							    
+							</tr>	
+							
+							
+
+							<tr><td colspan="2">
+							                    <input type="button" value="提交" id="comfirm" class="bt"></input>
+							                    
+							                    <input type="button" value="返回" class="bt" onclick="javascript:history.back()"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+					<div id="sq_di">
+                     		<div id="pageNav">
+                    		</div>
+                  		</div>
+					</div>
+				  <div id="bg_di"></div>
+            	</div>
+		 		 <div id="footer">
+		          </div>
+				</div>
+        
+		</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+				    <link rel="stylesheet" href=".style/css/thickbox.css" type="text/css" media="screen" />
+		
+			<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+		
+		  <script type="text/javascript" src="./scripts/js/thickbox.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+	    	init();	
+	    	    	
+	    	var href = location.href;
+	    		href = decodeURI(href);
+				    var conditions = href.split("conditions=")[1].split("&page1=")[0];
+		
+		    var tmp  = (href.split("?"))[1].split("&"); 
+		    var commerceproject_id  =tmp[0].split("commerceproject_id=")[1];
+		     var commerceproject_name="";
+			 var filepath="";
+			 var commerceprojectapplier_id="";
+			 var actorId="";
+			 var managers="";
+			 var commerceprojectstate="";
+		     var baogaopath = "";
+			var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];
+/*			 var page = href.split("&page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+*/				
+			
+				$.post('/searchCommerceProjectById',
+	                    {'commerceproject_id':commerceproject_id},
+					function(xml){
+				//		$("#content_r table tr:gt(0)").remove();
+				//		var id = 1;
+				//		count = $(xml).find("result").attr("count");
+				//		pageCount = $(xml).find("result").attr("pageCount");
+				//		var startWith = $(xml).find("result").attr("startWith");
+
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+							 commerceproject_id			= $(xml).find("commerceproject_id").text();
+                             commerceproject_name      	= $(xml).find("commerceproject_name").text();
+							 commerceprojectstate		=  $(xml).find("commerceprojectstate").text();
+						     commerceprojectapplier_id			= $(xml).find("commerceprojectapplier_id").text();
+						     filepath                           =$(xml).find("filepath").text();
+						     baogaopath                         =$(xml).find("baogaopath").text();	
+						    var compact_id    				= $(xml).find("compact_id").text();
+						    var clientfactory   			= $(xml).find("clientfactory").text();
+						    var clientperson   				= $(xml).find("clientperson").text();
+						    var clientTel 		= $(xml).find("clientTel").text();
+						    var jcOrNot				=  $(xml).find("jcOrNot").text();
+						    var commerceprojectapplier					=  $(xml).find("commerceprojectapplier").text();
+						    var commerceprojectactor			=  $(xml).find("commerceprojectactor").text();
+						    var planActiontime					=  $(xml).find("planActiontime").text();
+							var commerceprojecttype			= $(xml).find("commerceprojecttype").text();
+//                            var commerceprojectAuthstate      		= $(xml).find("commerceprojectAuthstate").text();
+						    var commerceprojectapplytime    	= $(xml).find("commerceprojectapplytime").text();
+						    var commerceprojectactiontime   			= $(xml).find("commerceprojectactiontime").text();
+						    var endtime                                 =$(xml).find("endtime").text();
+						    var remark   		= $(xml).find("remark").text();
+						    var money				=  $(xml).find("money").text();
+						    var moneytime					=  $(xml).find("moneytime").text();
+						    var mpersonyijian			=  $(xml).find("mpersonyijian").text();
+					        var remark                =$(xml).find("remark").text();
+						    var permission			=  Number($(xml).find("permission").text());
+
+						       $("#commerceprojecttype").text(commerceprojecttype);
+							   $("#commerceproject_name").text(commerceproject_name);
+							   $("#compact_id").text(compact_id);
+							   $("#commerceprojectapplier").text(commerceprojectapplier);
+							   $("#money").text(money);
+							   $("#mpersonyijian").text(mpersonyijian);
+							   $("#commerceprojectstate").text(commerceprojectstate);
+//							   $("#commerceprojectAuthstate").text(commerceprojectAuthstate);
+							   $("#jcOrNot").text(jcOrNot);
+							   $("#commerceprojectapplytime").text(commerceprojectapplytime);
+							   $("#planActiontime").text(planActiontime);
+							   $("#moneytime").text(moneytime);
+							   $("#commerceprojectactiontime").text(commerceprojectactiontime);
+							   $("#endtime").text(endtime);
+							   $("#clientfactory").text(clientfactory);
+							   $("#clientperson").text(clientperson);
+							   $("#clientTel").text(clientTel);
+							   $("#remark").text(remark);
+							   
+							   	if (filepath == "" || filepath == null || filepath == "null") {
+							   		$("#tupian a").attr("disabled", "disabled");
+							   	} else {
+					 				var filepath1 = filepath.split(";");
+									
+									
+									
+									for(var i = 0, len = filepath1.length-1; i< len; i++){
+	
+										var npath = filepath1[i];
+	
+								     		//	 var strInfo ="<td>"+(i+1)+"</td><td><a href="+filepath1[i]+">文件"+(i+1)+"</a></td>";
+	
+										if (i == 0){
+											$("#tupian a").attr("href", "OpenResultServlet.do?filepath=" +npath);					   
+										} else {	//			alert(npath);	     
+								
+								//		$("#pjtable").append("<tr class='content' id='"+i+"'><td>"+(i+1)+"</td><td><img src=OpenResultServlet.do?filepath="+npath+" class='thickbox' rel='gallery-plants'>图片"+(i+1)+"</img></td></tr>");
+								
+											$("#tupian").append("<a href='OpenResultServlet.do?filepath=" +npath+ " 'title='显示反馈文档' class='thickbox' rel='gallery-plants'></a>");
+								//<a href="OpenResultServlet.do?filepath=/d:/download/result/abc/plant1_t.jpg" title="显示反馈文档" class="thickbox" rel="gallery-plants"><img src="OpenResultServlet.do?filepath=/d:/download/result/abc/plant1_t.jpg" alt="Plant 1" /></a>
+										}
+									
+							  		}; 	
+							  	}					      	                		                 		                     	  						      
+							   var member = commerceprojectactor.split(";");
+							   //显示原有成员列表
+							 	var memberId,memberName;
+								for(var i = 0, len = member.length-1; i< len; i++)
+							     {
+							          memberId = member[i].split(",")[0];
+							          memberName = member[i].split(",")[1];
+							          actorId += memberId+",";
+							  $("#member").append("<li value=\""+memberId+"\">"+memberName+"</li>");
+							      };
+							      	                		                 		                     	  						      
+	                    }, 
+	                     'xml'
+            	);	
+
+           	
+		var url = "/searchCommerceProductByCommerceProjectId";
+
+	//			$.fn.showData = function(url,page2){
+	//			page = page2;
+		//			urlT = url+"?page="+page2+"&commerceproject_id="+commerceproject_id;
+					$.post( '/searchCommerceProductByCommerceProjectId',
+		                   {'commerceproject_id':commerceproject_id},
+		//        $(this).handlerData(
+		//			urlT,
+						function(xml){
+							$("#pjtable tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+								var commerceproject_id			= $(this).find("commerceproject_id").text();
+	                            var commerceproject_name      	= $(this).find("commerceproject_name").text();
+							    var allrandom    				= $(this).find("allrandom").text();
+							    var product_type   			= $(this).find("product_type").text();
+							    var softwareVession   				= $(this).find("softwareVession").text();
+							    var product_number 		= $(this).find("product_number").text();
+							    var product_id   = $(this).find("product_id").text();
+							    var commerce_id = $(this).find("commerce_id").text();
+							    var commerceprojectAuthnumber =$(this).find("commerceprojectAuthnumber").text();
+							    var authtext     =$(this).find("authtext").text();
+							   
+							    var tmp = "commerceproject_id="+commerceproject_id;
+							    var tmp1 = "allrandom="+allrandom+"&commerceprojectAuthnumber="+commerceprojectAuthnumber;
+							    var tmp2 = "allrandom="+allrandom+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&product_type="+product_type+"&softwareVession="+softwareVession+"&product_number="+product_number+"&commerceprojectAuthnumber="+commerceprojectAuthnumber+"&product_id="+product_id;
+								var strInfo ="<td>"+ (i+1)+"</td><td>"+product_type+
+		                                 "</td><td>"+softwareVession+"</td><td>"+product_number+"</td><td>"+commerceprojectAuthnumber+"</td><td>"+product_id+"</td>";
+                 //     	var strDownload = null;
+ 				//		strDownload = "<td><input type='image' src='./images/download.gif' title='下载授权证书' onclick=\"javascript: location.href=\'fileDownloadServlet.do?filepath="+authtext+"\'\"></input></td>";
+ 				///		fileDownloadServlet.do?filename=controller.exe
+						//	var strDownload = null;
+						//		strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+//				strDownload = "<td><input type='image' src='./images/download.gif' title='下载授权证书' onclick=\"javascript: location.href=encodeURI(\'downloadAuthorXml?filepath="+authtext+"\')\"></input></td>";
+								
+						/*		if((permission&1) && (path!="")){
+									strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+								}else{
+									strDownload = "<td><img src='./images/download1.jpg'/></td>";
+								}
+						*/	
+					//	var strDetail= null;
+					//	strDetail = "<td><a href='/CommerceProductDetail.html?"+tmp2+"'><img src='./images/search.jpg'  title='详情' /></a></td>";
+		
+				//		var strEdit1 = null;
+				//		strEdit1 = "<td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'commerceProductEdit.html?"+tmp2+"&page1="+page+"\')\"></input></td>";
+				//		var strEdit2 = null;
+				//		strEdit2 = "<td><input type='image' src='./images/edit.gif' title='上传授权证书' onclick=\"javascript: location.href=encodeURI(\'authortextSubmit.html?"+tmp1+"&page1="+page+"\')\"></input></td>";
+				////		var strEdit3 = null;
+				//		strEdit3 = "<td><input type='image' src='./images/edit.gif' title='再次授权' onclick=\"javascript: location.href=encodeURI(\'commerceProjectApplyAuthorAgain.html?"+tmp2+"&page1="+page+"\')\"></input></td>";
+					
+								/*	
+								if(permission&256 || permission&16 || permission&8) {
+									strEdit = "<td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'editVersion.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+								}else{
+									strEdit = "<td><img src='./images/edit1.jpg'/></td>";
+								}
+						*/		
+				//				var strDel = null;
+				//				strDel = "<td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+					/*			
+								if(permission & 4){
+									strDel = "<td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+								}else{
+									strDel = "<td><img src='./images/del1.jpg'/></td>";
+								}
+						*/		
+	                   		$("#pjtable").append("<tr class='content' id='"+allrandom+"'>"+ strInfo+"</tr>");
+		                        id++;
+	                        });
+					//		$("#pageNav").showPageNav(page2, pageCount, count, url);
+	                        //调用注册按钮的事件
+							register();
+						}, 'xml'
+						);
+			
+
+				    function init(){
+				    	$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$("#sidebar").showSideBar();
+						$(this).navi();
+				    }	
+				    	
+				    function register(){
+			               //点击"删除"按钮，弹出是否删除的询问对话框
+			               $(".delete").each(function(index){
+								var $this = $(this);
+								var id = $this.parents('.content').attr('id');
+
+								$this.click(function(){
+									if(confirm("您确定删除吗？")){
+										$.post('/deleteCommerceProduct', {'allrandom':id}, delCallback, 'xml');
+				                	}
+				               });
+			               });
+				    }
+				    //返回成功与否的判断与跳转
+				    function delCallback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							var tmp="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+							location.href="commerceProjectDetail.html?"+tmp;
+						}
+					}
+					
+					$('#baogao').click(function(){					
+						location.href="fileDownloadServlet2.do?baogaopath="+baogaopath;						
+					});	
+					$('#result').click(function(){
+				
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&filepath="+filepath;
+			//			tmp1=encodeURI(tmp1);		
+						 location.href="/resultpaper3.html?"+tmp1;						
+					});		
+					$('#loglist').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						   
+						    $("#commerceproject_id").val(commerceproject_id);				
+						
+							
+						var tmp1="commerceproject_id="+commerceproject_id;
+			//			tmp1=encodeURI(tmp1);		
+						 location.href="/operationRecord.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						
+					});				       	
+			$("#back").click(
+					function(){
+							if(laizi=="list"){
+								location.href="commerceProjectList.html?page="+prePage;
+							}else if (laizi=="search"){
+								location.href="commerceProjectSearchList.html?"+conditions+"&page="+prePage;
+							}
+							else{
+							    location.href="homePage.html";
+							}
+					});
+		
+		});		 
+
+			
+		
+			
+	</script>
+		
+  </head>
+  
+  <body>
+   <div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+				<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：项目列表&gt;&nbsp;<strong>项目详情</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+				<tr>        <td><img src="images/bg_xia.png" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="#" id="baogao">下载工程师实施报告</a></td>
+						    <td width="10">&nbsp;</td>
+						    <td><img src="images/bg_xg.png" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="#"  id="loglist">操作记录</a></td>
+					 
+					 		
+						    <td width="10">&nbsp;</td>
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="#" id ="back">返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>项目详情</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table  class="sTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+				
+						<tr>
+								<td><div>项目名称</div></td>
+								<td class="width_15">
+								  <label id="commerceproject_name"></label>
+							    </td>
+							</tr>
+						<tr>
+								<td><div>合同编号</div></td>
+								<td class="width_15">
+								  <label id="compact_id"></label>
+							    </td>
+							</tr>
+				
+								
+                            <tr>
+								<td><div>项目申请人</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectapplier"></label>
+							    </td>
+							</tr>
+						
+					
+                            <tr>
+								<td><div>已付金额百分比</div></td>
+								<td class="width_15">
+								  <label id="money"></label>
+							    </td>
+							</tr>
+
+                            <tr>
+								<td><div>实施工程师</div></td>
+								<td class="width_15">
+								  <label id="member"></label>
+							    </td>
+							</tr>
+
+							
+                            <tr>
+								<td><div>项目类型</div></td>
+								<td class="width_15">
+								  <label id="commerceprojecttype"></label>
+							    </td>
+							</tr>
+			
+							
+                            <tr>
+								<td><div>项目状态</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectstate"></label>
+							    </td>
+							</tr>
+		
+							
+                            <tr>
+								<td><div>是否集成</div></td>
+								<td class="width_15">
+								  <label id="jcOrNot"></label>
+							    </td>
+							</tr>
+
+							
+                            <tr>
+								<td><div>项目申请时间</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectapplytime"></label>
+							    </td>
+							</tr>
+				
+							
+                            <tr>
+								<td><div>计划执行时间</div></td>
+								<td class="width_15">
+								  <label id="planActiontime"></label>
+							    </td>
+							</tr>
+			
+							
+                            <tr>
+								<td><div>预付款付讫时间</div></td>
+								<td class="width_15">
+								  <label id="moneytime"></label>
+							    </td>
+							</tr>
+		
+                            <tr>
+								<td><div>实际执行时间</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectactiontime"></label>
+							    </td>
+							</tr>
+							<tr>
+								<td><div>项目结束时间</div></td>
+								<td class="width_15">
+								  <label id="endtime"></label>
+							    </td>
+							</tr>
+							
+                            <tr>
+								<td><div>  客户单位名称</div></td>
+								<td class="width_15">
+								  <label id="clientfactory"></label>
+							    </td>
+							</tr>
+
+					         	
+                            <tr>
+								<td><div>客户联系人</div></td>
+								<td class="width_15">
+								  <label id="clientperson"></label>
+							    </td>
+							</tr>
+				
+							
+                            <tr>
+								<td><div>客户联系方式</div></td>
+								<td class="width_15">
+								  <label id="clientTel"></label>
+							    </td>
+							</tr>
+				             <tr>
+								<td><div>备注</div></td>
+								<td class="width_15" id = "tupian">
+								  <a href="#" title="显示反馈文档扫描图片" class="thickbox" rel="gallery-plants">显示反馈文档扫描图片</a>
+							    </td>
+							</tr>
+                           
+									
+					</table>
+				
+				
+						<table id="pjtable" class="listTable"><caption>
+							产品信息
+							</caption>
+								
+							<tr>
+								<th>序号</th>
+				
+								<th>产品类型</th>
+								<th>软件版本</th>
+								<th>产品数量</th>
+								<th>授权点数</th>
+						        <th>产品编码</th>
+						
+								
+							</tr>
+							</table>
+						</div>	
+						<div id="sq_di">
+						<div id="pageNav">
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer">
+		</div>
+		</div>
+
+		</body>
+</html>

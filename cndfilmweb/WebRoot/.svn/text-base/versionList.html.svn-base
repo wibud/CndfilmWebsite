@@ -1,0 +1,376 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>OA系统--版本管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+				//设置权限
+				var dlBeta = 0;
+				var dlGm = 0;
+				var create = 0;
+				$.ajax({url: '/getPermission',
+						data: {},
+						success: function(xml) {
+								dlBeta = $(xml).find("permission").find("versionInfo").find("beta").text();
+								dlGm = $(xml).find("permission").find("versionInfo").find("gm").text();
+								create = $(xml).find("permission").find("versionInfo").find("create").text();
+								chstat = $(xml).find("permission").find("versionInfo").find("chstat").text();
+							},
+						dataType: 'xml',
+						async: false
+				});
+				
+				if(create == 0){
+					$("#addLogo img").remove();
+					$("#addLogo").append("<img src='./images/oa_addbutton_g.png'/>");
+					$("#addVersion").attr("disabled", "disabled");
+				}
+				//翻页
+				var href = decodeURI(location.href);
+			    var page = href.split("page=")[1];
+			    if(page) {
+			    	page = page.split("&")[0].split("#")[0];
+			    }
+			    	
+			    if(!page || page<1)
+			    	page=1;
+			    var pageCount = 0;
+				var count = 0;
+				
+			    //获取搜索条件
+			   var conditions = href.split("conditions=")[1];
+			    if(conditions) {
+			    	conditions = conditions.split("&orderBy=")[0];	
+			    }else{
+			    	conditions = "";
+			    }
+
+			    //获取排序条件
+			    var orderBy = href.split("orderBy=")[1];
+			    	
+			   	if(orderBy){
+			   		orderBy = orderBy.split("&")[0].split("#")[0];
+			   	}else{
+			   		orderBy = " releaseOn desc, productType asc, versionType asc";
+			   	}
+			   	
+
+				var url = "/versionList";
+				if(conditions != "") {
+					url = "/versionListByConditions";
+				}
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = encodeURI(url + "?page=" + page2 + conditions + "&orderBy=" + orderBy);
+					$(this).handlerData(
+						urlT,
+						function(xml){
+							$("#content_r7 table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							var cnt = 0;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+								var version_id		= $(this).find("version_id").text();
+							    var versionName    	= $(this).find("versionName").text();
+							    var number   		= $(this).find("number").text();
+							    var versionType   	= $(this).find("versionType").text();
+							    var productType   	= $(this).find("productType").text();
+							    var deptName   		= $(this).find("deptName").text();
+							    var managerId 		= $(this).find("managerId").text();
+							    var managerName   	= $(this).find("managerName").text();
+							    var update			=  $(this).find("update").text();
+							    var bug				=  $(this).find("bug").text();
+							    var releaseOn		=  $(this).find("releaseOn").text();
+							    var uploadOn		= $(this).find("upload_on").text();
+							    var path			=  $(this).find("path").text();
+							    var filename		=  path.split("/")[1];
+							    var status			=  $(this).find("status").text();
+							    var subVersion		= $(this).find("subVersion").text();
+							    var permissionCode	=  Number($(this).find("permission").text());
+							    var statusStr 		= null;
+							    switch(status) {
+							    	case "0":
+							    		statusStr = "未测试";
+							    		break;
+							    	case "1":
+							    		statusStr = "正在测试";
+							    		break;
+							    	case "2":
+							    		statusStr = "测试通过";
+							    		break;
+							    	case "3":
+							    		statusStr = "测试未通过";
+							    		break;	
+							    	case "4":
+							    		statusStr = "已发布";
+							    		break;
+							    }
+							    var des	= 	$(this).find("des").text();
+			
+							    var col = Number(id)+Number(startWith);
+							    
+							    //计数
+								//cnt++;
+								
+								var th = id.toString();
+								var strShow = "";
+								if (subVersion == "1") {//如果有子版本,则显示折叠图标
+									th +=  "<img class='fold' title='展开' src='./images/oa_fold.png'/>"
+										 + "<img class='fold' title='收起' src='./images/oa_unfold.png' style='display:none'/>";
+									strShow = "";
+								} else if (subVersion == "0") {//如果没有子版本
+									th +=  "<img src='./images/oa_blank.png'/>";
+									strShow = "";
+								} else {//本身为子版本,则不显示,计数减一
+									th = "";
+									strShow = "style='display:none'";
+									id--;
+								}
+								
+								
+							    var tmp = "version_id="+version_id;
+							    
+								var strInfo ="<td class='"+subVersion+"'>"+ th +"</td><td>"+productType+"</td><td>"+versionType+"</td><td>"+versionName
+   	                                 +"</td><td>"+number+"</td><td>"+deptName+"</td><td>"+managerName+"</td><td>"+releaseOn
+   	                                 +"</td><td>"+statusStr+"</td><td>"+des+"</td>";
+								//2进制位 从高到低是 ：修改128、添加Bug64、修改版本状态32、修改测试人员名单16、修改版本号及更新信息8、删除4、下载2、查询版本1
+								var strDownload = null;
+														
+								if((status!=4&&dlBeta=="1") || (status==4&dlGm=="1") || permissionCode&2){
+									if(path==null || path==""){
+										strDownload = "<td><img title='文件不存在' src='./images/oa_download_g.png'/></td>";
+									}else{
+										strDownload = "<td><input type='image' src='./images/oa_downbutton.png' title='下载' onclick=\"javascript: location.href=encodeURI(\'VersionDownloadServlet.do?type=app&filename="+path+"\')\"></input></td>";
+									}
+								}else{
+									strDownload = "<td><img src='./images/oa_download_g.png'/></td>";
+								}
+								
+								var strDownloadLog = "<td><input type='image' src='./images/look.gif' title='操作日志' onclick=\"javascript: location.href=encodeURI(\'versionLogList.html?version_id="+version_id+"&page1="+page+"&conditions="+conditions+"&orderBy="+orderBy+"\')\"></input></td>";
+									
+								var strDetail = null;
+								
+								strDetail = "<td><input type='image' src='./images/oa_detail.png' title='详情' onclick=\"javascript: location.href=encodeURI(\'versionDetail.html?"+tmp+"&page1="+page+"&conditions="+conditions+"&orderBy="+orderBy+"\')\"/></input></a></td>";
+								
+								if(permissionCode & 128) {
+									strEdit = "<td><input type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'editVersion.html?"+tmp+"&page1="+page+"&conditions="+conditions+"&orderBy="+orderBy+"\')\"></input></td>";
+								}else{
+									strEdit = "<td><img src='./images/oa_edit_g.gif'/></td>";
+								}
+								var strDel = null;
+								if(permissionCode & 4){
+									strDel = "<td><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+								}else{
+									strDel = "<td><img src='./images/oa_delete_g.png'/></td>";
+								}
+								//将信息添加至表格中
+                          		$("#content_r7 table").append("<tr " + strShow + " class='content' id='"+version_id+"'>"+ strInfo  + strDetail  + strDownload + strDownloadLog + strEdit + strDel +"</tr>");
+
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav");
+	                        //调用注册按钮的事件
+							register();
+						}
+					);
+				};
+				$(this).showData(url, page, null);
+				
+				//排序
+				$(".order").each(function(index){					
+					$(this).click(function(){
+						orderBy = $(this).attr("id");
+						$(this).showData(url, page);
+					});
+					$(this).css("cursor","hand");
+				});
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+
+				//注册按钮
+			    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/deleteVersion', {'versionId':id}, delCallback, 'xml');
+		                	}
+		                });
+	               });
+	               
+		           //返回成功与否的判断与跳转
+				    function delCallback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							location.href="versionList.html?page=" + page + "&conditions="
+								+ conditions + "&orderBy=" + orderBy;
+						}
+					}
+					
+					$(".fold").each(function(){
+						var id = $(this).parents(".content").attr("id");
+						$(this).click(function(){
+							$("td."+id).parent(".content").toggle();
+							$(this).siblings("img").toggle();
+							$(this).toggle();
+						});
+					});
+	              
+				}		
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000" style="background:url(../../images/bg_banner3.jpg)">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">当前位置：项目管理 &gt;&nbsp;<strong>版本发布管理</strong></div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td width="10">
+													<img src="images/oa_search.png" />
+												</td>
+												<td>
+													<a href="searchVersion.html" target="_self">搜索版本信息</a>
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>												
+												<td width="10">
+													<div id="addLogo">
+														<img src="images/sq_img_09.png" />
+													</div>
+												</td>
+												<td>
+													<a href="addVersion.html" id="addVersion" target="_self">上传版本</a>
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>												
+												<td>
+													<img src="images/bg_fh.gif" width="18" height="18" />
+												</td>
+												<td>
+													<a href="javascript:history.back()">返回</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>版本列表</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="listTable" style="overflow:auto;" border="0" cellpadding="0" cellspacing="0" >
+							<tr title="点击标题以排序">
+								<th width="5%">序号</th>
+								<th width="14%" class="order" id="productType"><a>产品类型</a></th>
+								<th width="8%" class="order" id="versionType"><a>版本类型</a></th>
+								<th width="12%" class="order" id="versionName"><a>版本名称</a></th>
+								<th width="12%" class="order" id="number"><a>版本号</a></th>
+								<th width="8%" class="order" id="deptName"><a>所属部门</a></th>
+								<th width="5%" class="order" id="managerName"><a>项目负责人</a></th>
+								<th width="8%" class="order" id="releaseOn desc"><a>发布时间</a></th>
+								<th width="8%" class="order" id="status">状态</th>
+								<th width="10%" class="order" id="des">备注</th>
+								<th width="10%" colspan="5">操作</th>
+							</tr>
+						</table>
+						<div id="sq_di">
+						<div id="pageNav"></div>
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+           </div>
+			<div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

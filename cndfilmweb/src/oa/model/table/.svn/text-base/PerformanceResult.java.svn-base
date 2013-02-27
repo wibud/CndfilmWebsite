@@ -1,0 +1,176 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id = "performanceResultId")
+@Entity
+@Table(name = "tb_performanceresult")
+public class PerformanceResult {
+	@Id
+	private String performanceResultId; // 绩效考核成绩标识
+	private String templateId; // 绩效考核成绩采用的模板
+	private String launcher; // 绩效考核发起人
+	private String launchTime; // 绩效考核发起时间
+	private String userId; // 绩效考核对象标识
+	private String userName; // 绩效考核对象名
+	private String userDept; // 绩效考核对象所属部门标识
+	private String userPostId; // 绩效考核对象所属部门名
+	private String assessPeriod; // 绩效考核周期
+	private String managerMark; // 绩效考核主管评分情况
+	private String selfMark; // 绩效考核自我评分情况
+	private String otherMark; // 绩效考核互评人评价情况
+	private String weight; // 绩效考核各成绩权重
+	private String totalMark; // 绩效考核总评情况
+	private String status; // 绩效考核状态
+	private String managerAssessOrNot; // 主管评价与否情况
+	private String selfAssessOrNot; // 自我评价与否情况
+	private String otherAssessOrNot; // 互评价与否情况
+
+	public String getPerformanceResultId() {
+		return performanceResultId;
+	}
+
+	public void setPerformanceResultId(String performanceResultId) {
+		this.performanceResultId = performanceResultId;
+	}
+
+	public String getTemplateId() {
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this.templateId = templateId;
+	}
+
+	public String getLauncher() {
+		return launcher;
+	}
+
+	public void setLauncher(String launcher) {
+		this.launcher = launcher;
+	}
+
+	public String getLaunchTime() {
+		return launchTime;
+	}
+
+	public void setLaunchTime(String launchTime) {
+		this.launchTime = launchTime;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserDept() {
+		return userDept;
+	}
+
+	public void setUserDept(String userDept) {
+		this.userDept = userDept;
+	}
+
+	public String getUserPostId() {
+		return userPostId;
+	}
+
+	public void setUserPostId(String userPostId) {
+		this.userPostId = userPostId;
+	}
+
+	public String getAssessPeriod() {
+		return assessPeriod;
+	}
+
+	public void setAssessPeriod(String assessPeriod) {
+		this.assessPeriod = assessPeriod;
+	}
+
+	public String getManagerMark() {
+		return managerMark;
+	}
+
+	public void setManagerMark(String managerMark) {
+		this.managerMark = managerMark;
+	}
+
+	public String getSelfMark() {
+		return selfMark;
+	}
+
+	public void setSelfMark(String selfMark) {
+		this.selfMark = selfMark;
+	}
+
+	public String getOtherMark() {
+		return otherMark;
+	}
+
+	public void setOtherMark(String otherMark) {
+		this.otherMark = otherMark;
+	}
+
+	public String getWeight() {
+		return weight;
+	}
+
+	public void setWeight(String weight) {
+		this.weight = weight;
+	}
+
+	public String getTotalMark() {
+		return totalMark;
+	}
+
+	public void setTotalMark(String totalMark) {
+		this.totalMark = totalMark;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getManagerAssessOrNot() {
+		return managerAssessOrNot;
+	}
+
+	public void setManagerAssessOrNot(String managerAssessOrNot) {
+		this.managerAssessOrNot = managerAssessOrNot;
+	}
+
+	public String getSelfAssessOrNot() {
+		return selfAssessOrNot;
+	}
+
+	public void setSelfAssessOrNot(String selfAssessOrNot) {
+		this.selfAssessOrNot = selfAssessOrNot;
+	}
+
+	public String getOtherAssessOrNot() {
+		return otherAssessOrNot;
+	}
+
+	public void setOtherAssessOrNot(String otherAssessOrNot) {
+		this.otherAssessOrNot = otherAssessOrNot;
+	}
+
+}

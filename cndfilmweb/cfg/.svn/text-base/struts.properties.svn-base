@@ -1,0 +1,18 @@
+struts.i18n.encoding=UTF-8
+struts.locale=zh_CN
+struts.serve.static.browserCache=false
+#文件上传不能超过50M
+struts.multipart.maxSize=10000000000
+
+#---- 以下属性用在开发阶段 ----
+struts.devMode=true
+struts.i18n.reload=true
+struts.configuration.xml.reload=true
+struts.xslt.nocache=true
+
+#---- 以下属性用在部署阶段 ----
+#struts.devMode=false
+#struts.i18n.reload=false
+#struts.configuration.xml.reload=false
+#struts.xslt.nocache=false
+#struts.multipart.saveDir=/usr/local/upload/

@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+            var href = location.href;
+		    var page = href.split("page1=")[1];
+		    if(page)
+		    	page = page.split("&")[0].split("#")[0];
+		    if(!page || page<1)
+		    	page=1;
+			var pageCount = 0;
+			var count = 0;
+			var url = "/logsList";
+	     var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];
+			 var tmp  = (href.split("?"))[1].split("&"); 
+		    var commerceproject_id  =tmp[0].split("commerceproject_id=")[1];
+			   var orderBy = "optime desc";
+			   var conditions = "&commerceproject_id="+commerceproject_id;
+			   
+		$.post('/logsList',
+	                    {'commerceproject_id':commerceproject_id,'orderBy':orderBy},
+			           function(xml){
+						$("#content_r7 table tr:gt(0)").remove();
+						//var id = (page2-1)*20 + 1;
+						var id=1;
+						count = $(xml).find("result").attr("count");
+						pageCount = $(xml).find("result").attr("pageCount");
+						var startWith = $(xml).find("result").attr("startWith");
+
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+						$(xml).find("item").each(function(i){
+							var commerceproject_id			= $(this).find("commerceproject_id").text();
+                            var commerceproject_name      	= $(this).find("commerceproject_name").text();
+                            var opperson     =$(this).find("opperson").text();
+                            var opdetail    =$(this).find("opdetail").text();
+                            var optime     =$(this).find("optime").text();
+                            var srcip   =$(this).find("srcip").text();
+                            var log_id  =$(this).find("log_id").text();
+                            var projectstatebefore  =$(this).find("projectstatebefore").text();
+                            var desca  =$(this).find("desca").text(); 
+							var list = "list";   
+							  
+					     var tmp1 = "commerceproject_id="+commerceproject_id;		
+					     var tmp3 = "commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;			     							  	     
+						var strInfo ="<td>"+ (i+1)+"</td><td>"+commerceproject_name+
+	                                 "</td><td>"+opperson+"</td><td>"+opdetail+"</td><td>"+optime+"</td><td>"+projectstatebefore+"</td><td>"+srcip+"</td><td>"+desca+"</td>";
+
+	
+         	$("#content_r7 table").append("<tr class='content' id='"+log_id+"'>"+ strInfo+"</tr>");
+                  id++;
+            });
+						pageNav(page,pageCount,count,url,"#pageNav");
+                        //调用注册按钮的事件
+			}, 'xml'
+						);
+				 	         	
+			
+				//排序
+				$(".order").each(function(index){					
+					$(this).click(function(){
+						orderBy = $(this).attr("id");
+						$(this).showData(url, page);
+					});
+					$(this).css("cursor","hand");
+				});
+				
+			
+				
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+/*
+				//注册按钮
+			   function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/systemUserDelete', {'userId':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+	               /*$(".deleteNot").click(function(){
+						alert("不能删除admin！");
+		           })*/
+				
+			//注册按钮
+			  
+			
+
+				//返回成功与否的判断与跳转
+			
+			 /*   function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="OperationRecord.html?page="+page;
+					}
+				}*/
+
+			});
+
+        </script>
+
+  </head>
+  
+  <body>
+   <div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+				<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：项目信息&gt;&nbsp;<strong>项目操作记录</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="javascript:history.back()" >返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>操作记录</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="listTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+								<tr>
+							    <th>序号</th>
+								<th>项目名称</th>
+								<th>操作人</th>
+								<th>操作内容</th>
+								<th>操作时间</th>
+								<th>操作状态</th>
+								<th>源IP</th>
+								<th>备注</th>
+								
+								
+							</tr>
+										</table>
+						</div>	
+
+				<div id="sq_di">
+                     		<div id="pageNav">
+                    		
+                  		</div>
+					</div>
+				  <div id="bg_di"></div>
+            	</div>
+		 		 <div id="footer">
+		          </div>
+				</div>
+       </div> 
+  </body>
+</html>

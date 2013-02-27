@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+				"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+				"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<constant name="struts.devMode" value="true" />
+
+	<!-- front -->
+	<package name="front" extends="json-default">
+
+		<!-- 配置拦截器 -->
+		<interceptors>
+			<interceptor name="exception" class="oa.action.ExceptionInterceptor" />
+			<interceptor-stack name="uapStack">
+				<!-- 顺序有讲究 -->
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="exception" />
+			</interceptor-stack>
+		</interceptors>
+
+		<!-- 将上述拦截器设定为默认拦截器 -->
+		<default-interceptor-ref name="uapStack" />
+		<!-- 配置默认action -->
+		<default-action-ref name="index" />
+
+		<global-results>
+			<!-- 下面定义的结果对所有的Action都有效 -->
+			<result name="exception">/404.jsp</result>
+			<result name="login">/login.jsp</result>
+			
+		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception"
+				result="exception" />
+		</global-exception-mappings>
+
+		<action name="login" class="oa.action.user.UserAction" method="checkLogin">
+			<result type="redirectAction" name="success">adminManager</result>
+			<result name="error">/login.jsp</result>
+		</action>
+		
+		<action name="index" class="oa.action.film.FilmAction" method="homePage">
+			<result name="index">/index.jsp</result>
+			<result name="introduce">/detailIntroduce.jsp</result>
+			<result name="contactUs">/contactUs.jsp</result>
+		</action>
+		
+		<action name="filmLibrary" class="oa.action.film.FilmAction" method="filmLibrary">
+			<result name="success">/filmLibrary.jsp</result>
+		</action>
+		
+		<action name="filmDetail" class="oa.action.film.FilmAction" method="filmDetail">
+			<result name="detail">/filmDetail.jsp</result>
+			<result name="comment">/detailComment.jsp</result>
+			<result name="commentary">/detailCommentary.jsp</result>
+			<result name="photo">/detailPhoto.jsp</result>
+			<result name="poster">/detailPoster.jsp</result>
+			<result name="video">/detailVideo.jsp</result>
+			<result name="videoDetail">/seeVideo.jsp</result>
+		</action>
+		
+		<action name="sendMessage" class="oa.action.film.FilmAction"
+			method="sendEmail">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="advancedSearch" class="oa.action.film.FilmAction"
+			method="advancedSearchPage">
+			<result name="success">/advancedSearch.jsp</result>
+		</action>
+		
+		<action name="advancedSearchFilm" class="oa.action.film.FilmAction"
+			method="advancedSearch">
+			<result name="success">/advancedSearchList.jsp</result>
+		</action>
+		
+		<action name="newTrends" class="oa.action.news.NewTrendsAction"
+			method="init">
+			<result name="success" type="dispatcher">/newTrends.jsp</result>
+		</action>
+		
+		<action name="seeNewTrendsDetail" class="oa.action.news.NewTrendsAction"
+			method="seeNewTrendsDetail">
+			<result name="success" type="dispatcher">/detailNewTrends.jsp</result>
+		</action>
+		
+		<action name="userLogin" class="oa.action.user.UserAction" method="checkUserLogin">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="checkUserName" class="oa.action.user.UserAction" method="checkUserName">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="registerPage" class="oa.action.user.UserAction" method="registerPage">
+			<result name="success">/userRegister.jsp</result>
+		</action>
+		
+		<action name="userRegister" class="oa.action.user.UserAction" method="userRegister">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="userModifyPswd" class="oa.action.user.UserAction" method="userModifyPswd">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="undefined">
+			<result>/404.jsp</result>
+		</action>
+		
+	</package>
+
+	<!-- admin使用 -->
+	<package name="admin" extends="front">
+		
+		<!-- 配置拦截器 -->
+		<interceptors>
+			<interceptor name="authority" class="oa.filter.AuthorityInterceptor" />
+			<interceptor-stack name="authorityCheck">
+				<interceptor-ref name="uapStack" />
+				<interceptor-ref name="authority" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<action name="adminManager" class="oa.action.film.FilmAction"
+			method="init">
+			<result name="success">/admainHomePage.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="modifyPswd" class="oa.action.user.UserAction"
+			method="modifyPswd">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="modifyFilmType" class="oa.action.film.FilmAction"
+			method="modifyFilmType">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="modifyBaseInfo" class="oa.action.baseInfo.BaseInfoAction"
+			method="modifyBaseInfo">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="checkFilmName" class="oa.action.film.FilmAction"
+			method="checkFilmName">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="addFilm" class="oa.action.film.FilmAction"
+			method="addFilm">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="delFilm" class="oa.action.film.FilmAction"
+			method="delFilm">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="mutipleDelFilms" class="oa.action.film.FilmAction"
+			method="mutipleDelFilms">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="adminFilmDetail" class="oa.action.film.FilmAction"
+			method="detailFilm">
+			<result name="detail">/admainFilmDetail.jsp</result>
+			<result name="edit">/admainFilmEdit.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="searchFilm" class="oa.action.film.FilmAction"
+			method="searchFilm">
+			<result name="success" type="dispatcher">/admainFilmSearchList.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+
+		<action name="editFilm" class="oa.action.film.FilmAction"
+			method="editFilm">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="addNewTrends" class="oa.action.news.NewTrendsAction"
+			method="addNewTrends">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="listNewTrends" class="oa.action.news.NewTrendsAction"
+			method="listNewTrends">
+			<result name="success" type="dispatcher">/admainManageNews.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="delNewTrends" class="oa.action.news.NewTrendsAction"
+			method="delNewTrends">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="detailNewTrends" class="oa.action.news.NewTrendsAction"
+			method="detailNewTrends">
+			<result name="detail">/admainNewTrendsDetail.jsp</result>
+			<result name="edit">/admainNewTrendsEdit.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="editNewTrends" class="oa.action.news.NewTrendsAction"
+			method="editNewTrends">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="listUsers" class="oa.action.user.UserAction"
+			method="listUsers">
+			<result name="success" type="dispatcher">/admainManageUsers.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="mutipleRuleUsers" class="oa.action.user.UserAction"
+			method="mutipleRuleUsers">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="delUser" class="oa.action.user.UserAction"
+			method="delUser">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="adminUserDetail" class="oa.action.user.UserAction"
+			method="detailUser">
+			<result name="detail">/admainUserDetail.jsp</result>
+			<result name="edit">/admainUserEdit.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="editUser" class="oa.action.user.UserAction"
+			method="editUser">
+			<result name="success" type="json"></result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+		<action name="searchUser" class="oa.action.user.UserAction"
+			method="searchUser">
+			<result name="success" type="dispatcher">/admainUserSearchList.jsp</result>
+			<interceptor-ref name="authorityCheck"/> 
+		</action>
+		
+	</package>
+</struts>

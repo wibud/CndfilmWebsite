@@ -1,0 +1,239 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/oa/!svn/ver/3125/src/trunk/CyberOA/src/oa/model/table
+END
+OutBound.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/oa/!svn/ver/3026/src/trunk/CyberOA/src/oa/model/table/OutBound.java
+END
+AssetSubKind.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/oa/!svn/ver/3066/src/trunk/CyberOA/src/oa/model/table/AssetSubKind.java
+END
+OvertimeApply.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/oa/!svn/ver/2643/src/trunk/CyberOA/src/oa/model/table/OvertimeApply.java
+END
+Department.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/oa/!svn/ver/3066/src/trunk/CyberOA/src/oa/model/table/Department.java
+END
+Position.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/oa/!svn/ver/1166/src/trunk/CyberOA/src/oa/model/table/Position.java
+END
+AfterSaleRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/oa/!svn/ver/2879/src/trunk/CyberOA/src/oa/model/table/AfterSaleRecord.java
+END
+CommerceProjectActing.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/oa/!svn/ver/1688/src/trunk/CyberOA/src/oa/model/table/CommerceProjectActing.java
+END
+User.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/oa/!svn/ver/2961/src/trunk/CyberOA/src/oa/model/table/User.java
+END
+Asset.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/oa/!svn/ver/3007/src/trunk/CyberOA/src/oa/model/table/Asset.java
+END
+OS.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/oa/!svn/ver/1431/src/trunk/CyberOA/src/oa/model/table/OS.java
+END
+CommerceProject.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/oa/!svn/ver/3021/src/trunk/CyberOA/src/oa/model/table/CommerceProject.java
+END
+WorkRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/oa/!svn/ver/2217/src/trunk/CyberOA/src/oa/model/table/WorkRecord.java
+END
+ProductType.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/oa/!svn/ver/2760/src/trunk/CyberOA/src/oa/model/table/ProductType.java
+END
+Log_archive.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/oa/!svn/ver/893/src/trunk/CyberOA/src/oa/model/table/Log_archive.java
+END
+Version.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/oa/!svn/ver/3041/src/trunk/CyberOA/src/oa/model/table/Version.java
+END
+VersionLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/oa/!svn/ver/2762/src/trunk/CyberOA/src/oa/model/table/VersionLog.java
+END
+CAssetApplyLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/oa/!svn/ver/3107/src/trunk/CyberOA/src/oa/model/table/CAssetApplyLog.java
+END
+ClaimApply.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/oa/!svn/ver/2282/src/trunk/CyberOA/src/oa/model/table/ClaimApply.java
+END
+CommerceProduct.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/oa/!svn/ver/2955/src/trunk/CyberOA/src/oa/model/table/CommerceProduct.java
+END
+ProjectMember.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/oa/!svn/ver/882/src/trunk/CyberOA/src/oa/model/table/ProjectMember.java
+END
+OperationRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/oa/!svn/ver/897/src/trunk/CyberOA/src/oa/model/table/OperationRecord.java
+END
+PositionTemplate.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/oa/!svn/ver/2989/src/trunk/CyberOA/src/oa/model/table/PositionTemplate.java
+END
+PerformanceResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/oa/!svn/ver/3072/src/trunk/CyberOA/src/oa/model/table/PerformanceResult.java
+END
+Project.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/oa/!svn/ver/1445/src/trunk/CyberOA/src/oa/model/table/Project.java
+END
+CommerceProjectLogs.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/oa/!svn/ver/2942/src/trunk/CyberOA/src/oa/model/table/CommerceProjectLogs.java
+END
+WeekPlan.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/oa/!svn/ver/3105/src/trunk/CyberOA/src/oa/model/table/WeekPlan.java
+END
+System_config.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/oa/!svn/ver/884/src/trunk/CyberOA/src/oa/model/table/System_config.java
+END
+CommerceProjectAuthapply.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/oa/!svn/ver/3066/src/trunk/CyberOA/src/oa/model/table/CommerceProjectAuthapply.java
+END
+WorkAttendance.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/oa/!svn/ver/3066/src/trunk/CyberOA/src/oa/model/table/WorkAttendance.java
+END
+Template.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/oa/!svn/ver/2999/src/trunk/CyberOA/src/oa/model/table/Template.java
+END
+Sys_loginf.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/oa/!svn/ver/892/src/trunk/CyberOA/src/oa/model/table/Sys_loginf.java
+END
+Certification.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/oa/!svn/ver/883/src/trunk/CyberOA/src/oa/model/table/Certification.java
+END
+AssetKind.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/oa/!svn/ver/3066/src/trunk/CyberOA/src/oa/model/table/AssetKind.java
+END
+AssetOpeLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/oa/!svn/ver/3107/src/trunk/CyberOA/src/oa/model/table/AssetOpeLog.java
+END
+Permission.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/oa/!svn/ver/2972/src/trunk/CyberOA/src/oa/model/table/Permission.java
+END
+TicketApply.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/oa/!svn/ver/2644/src/trunk/CyberOA/src/oa/model/table/TicketApply.java
+END
+BusinessTrip.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/oa/!svn/ver/3016/src/trunk/CyberOA/src/oa/model/table/BusinessTrip.java
+END
+VacancyApply.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/oa/!svn/ver/2645/src/trunk/CyberOA/src/oa/model/table/VacancyApply.java
+END
+AfterSaleTrack.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/oa/!svn/ver/3059/src/trunk/CyberOA/src/oa/model/table/AfterSaleTrack.java
+END

@@ -1,0 +1,27 @@
+.nav {
+  margin-bottom: 18px;
+  margin-left: 0;
+  list-style: none;
+}
+
+.nav > li > a {
+  display: block;
+  height:33px;
+}
+
+.nav > li > a:hover {
+  text-decoration: none;
+  color: #fff;
+  background: url(../img/bg-menu-item-green.gif) top right no-repeat;
+  padding-left:40px;
+  padding-top:7px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.nav-list > li > a {
+  font-size: 12px;
+  font-weight: bold;
+  color:#fff;
+  padding:7px 23px;
+}

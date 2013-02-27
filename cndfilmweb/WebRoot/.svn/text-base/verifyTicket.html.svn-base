@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--确认订票</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+		
+		   $(document).ready(function(){
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var ticketId = href.split("ticketId=")[1].split("&")[0].split("#")[0];
+				
+				var confirmName="";
+				$.post('/currentUserDetail',
+					{},
+					function(xml){
+				       confirmName=$(xml).find("userName").text();
+				    },
+				    'xml');
+				    
+				$.post('/listByTicketId',
+				       {'ticketId':ticketId},
+					   function(xml) {
+					         var userId	= $(xml).find("userId").text();
+							 var userName = $(xml).find("username").text();
+							 var userDept = $(xml).find("deptName").text();
+							 var depature = $(xml).find("depature").text();
+							 var destination = $(xml).find("destination").text();
+							 var depatureTime = $(xml).find("depatureTime").text();
+							 var trafficWay = $(xml).find("trafficWay").text();
+							 var way="";
+							 var trafficType =  $(xml).find("trafficType").text();
+							 var ticketInfo = $(xml).find("ticketInfo").text();
+							 var bookReason = $(xml).find("bookReason").text();
+							 var telephone = $(xml).find("telephone").text();
+							 var headerAttitude= $(xml).find("headerAttitude").text();//领导意见（主管）
+							 var ticketTime = $(xml).find("ticketTime").text();
+							 var ticketNum = $(xml).find("ticketNum").text();
+							 var clientName = $(xml).find("clientName").text();
+							 var clientInfo = $(xml).find("clientInfo").text();
+							 var approval1Name = $(xml).find("approval1Name").text();
+							 var approval1Date = $(xml).find("approval1Date").text();
+							 var approval2Name = $(xml).find("approval2Name").text();
+							 var approval2Date = $(xml).find("approval2Date").text();
+                             var temp1="";
+                             var temp2="";
+                             
+                             
+                             if(ticketTime=="null"){
+                                ticketTime="暂无";
+                             }
+								 
+							 if(ticketNum=="null"){
+							    ticketNum="暂无";
+							 }
+							 
+							 if(clientName=="null"||clientName==""){
+							    $("#client1").hide();
+							 }else{
+							    $("#client1").show();
+							 }
+							 
+							 if(clientInfo=="null"||clientInfo==""){
+							    $("#client2").hide();
+							 }else{
+							    $("#client2").show();
+							 }
+							 	 
+							 if(headerAttitude=="0"){
+							      temp1="等待审批";
+							      temp2="等待审批";
+							 }	
+							 if(headerAttitude=="1"){
+							      temp1="审批通过";
+							      temp2="等待审批";
+							 }
+							 
+							 if(headerAttitude=="2"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							 }
+							 if(headerAttitude=="3"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							 }
+							 if(headerAttitude=="-1"){
+							      temp1="审批不通过";
+							      temp2="等待审批";
+							 }
+							 
+							 if(headerAttitude=="-2"){
+							      temp1="审批通过";
+							      temp2="审批不通过";
+							       
+							 }
+							 
+							 if(headerAttitude=="-3"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							 }
+							 
+							 switch(trafficWay){
+								    case '11':way="飞机-单程";break;
+								    case '12':way="飞机-双程";break;
+								    case '21':way="普通火车-单程";break;
+								    case '22':way="普通火车-双程";break;
+								    case '31':way="高铁-单程";break;
+								    case '32':way="高铁-双程";break;
+								    case '41':way="动车-单程";break;
+								    case '42':way="动车-双程";break;
+								    case '51':way="长途汽车-单程";break;
+								    case '52':way="长途汽车-双程";break;
+								    default:way="";break; 
+							}
+							
+				            $("#userName").text(userName);
+				            $("#userDept").text(userDept);
+				            $("#Depature").text(depature);
+				            $("#Destination").text(destination);
+				            $("#DepatureTime").text(depatureTime);
+				            $("#trafficWay").text(way);
+				            $("#trafficType").text(trafficType);
+				            $("#bookReason").text(bookReason);
+				            $("#ticketInfo").text(ticketInfo);
+				            $("#ticketTime").text(ticketTime);
+				            $("#ticketNum").text(ticketNum);
+				            $("#headerAttitude").text(temp1);
+				            $("#confirmState").text(temp2);
+				            $("#clientName").text(clientName);
+				            $("#clientInfo").text(clientInfo);
+				            $("#approval1Name").text(approval1Name);
+				            $("#approval1Date").text(approval1Date);
+				            $("#approval2Name").text(approval2Name);
+				            $("#approval2Date").text(approval2Date);
+				
+				//点击确定按钮，对编辑后的数据进行提交
+			    $("#confirm").click(function(){
+				    var state=$("#bookingState").val();
+				    /*$.post('/currentUserDetail',
+					       {},
+					       function(xml){
+				               confirmName=$(xml).find("userName").text();
+				           },
+				           'xml');*/
+				    if(confirmName==""||confirmName=="null"){
+				       alert("确认人姓名不能为空");
+				       return;
+				    }
+				    
+				    $.post('/verifyTicket',{'ticketId':ticketId,'headerAttitude':state,'confirmName':confirmName},callback, 'xml');
+				       function callback(xml){
+							var $xml = $(xml);
+							//这个函数从后台得到xml里面的数据
+							var recode = Number($xml.find("recode").text());
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}												
+							alert("提交成功！");
+							location.href="ticketInfoList.html";
+
+						}
+							function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+							    alert("提交成功！");
+								location.href="ticketInfoList.html";
+							}
+						}
+					 
+				 });
+				 
+			});
+                function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   }
+		   });
+		</script>
+</head>
+<body>
+      <div id="container2">
+	    <div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+		 </div>
+		 <div id="content">
+	          <div id="main">
+	           <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页&gt;&nbsp;
+										<strong>审批订票</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					  </div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>审批订票申请</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r7">
+					<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+					   <tr>
+						<td width="30%"><label class="required">*</label>订票人姓名：</td>
+						<td width="70%"><label id="userName"></label>
+					    </td>
+					   </tr>
+					   <tr>
+					   <td><label class="required">*</label>订票人部门：</td>
+					   <td><label id="userDept"></label></td>
+					  </tr>
+					  <tr id="client1">
+                      <td><label class="required">*</label>客户姓名：</td>
+                      <td><label id="clientName"/></td>
+                      </tr>
+                      <tr id="client2">
+                      <td><label class="required">*</label>客户详细信息：</td>
+                      <td><label id="clientInfo"/></td> 
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>出发地：</td>
+                      <td><label id="Depature"/></td>
+                      </tr>
+                      <tr>
+					  <td><label class="required">*</label>目的地：</td>
+					  <td><label id="Destination"/></td>
+					  </tr>
+					  <tr>
+					  <td><label class="required">*</label>出行日期：</td>
+					  <td><label id="DepatureTime"/></td>				
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>出行方式：</td>
+                      <td><label id="trafficWay"/></td>
+                      </tr>
+                      <tr>
+                      <td>票务类型：</td>
+                      <td><label id="trafficType"/></td>
+                      </tr>
+                      <tr>
+                      <td>订票理由：</td>
+                      <td><label id="bookReason"/></td>
+                      </tr>
+                      <tr>
+                      <td>候选方案：</td>
+                      <td><label id="ticketInfo"/></td>
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>票务时间：</td>
+                      <td><label id="ticketTime"/></td>
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>票务班次：</td>
+                      <td><label id="ticketNum"/></td>
+                      </tr>
+                      <tr>
+                      <td>部门主管/分管领导审批：</td>
+                      <td>审批意见：<label id="headerAttitude"></label><p/>
+                                                                    审批人： <label id="approval1Name"></label><p/>
+                                                                     审批时间   ：<label id="approval1Date"></label> 
+                      </td>
+                      </tr>
+                      <tr>
+                      <td>人事部审批：</td>
+                      <td>审批意见：<label id="confirmState"></label><p/>
+                                                                     审批人：<label id="approval2Name"></label><p/>
+                                                                     审批时间：<label id="approval2Date"></label>
+                      </td>
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>您的意见:</td>
+                      <td>
+                      <select id="bookingState" style="width: 180px">
+                      <option value="3" selected="selected">确认订票</option>
+                      <option value="-3">拒绝订票</option>
+                      </select>
+					  </td>
+                      </tr>
+				      </table>
+				      <br/>
+				      <input class="bt" type="button" id="confirm" value="提交"/>
+					  <input class="bt" type="button" value="返回" onclick="javascript:history.back()"/>
+			    </div>
+			  </div>
+			  <div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+</body>
+</html>

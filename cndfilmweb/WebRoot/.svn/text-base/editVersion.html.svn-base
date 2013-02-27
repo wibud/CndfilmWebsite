@@ -1,0 +1,812 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改版本信息</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+			 	
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var version_id = href.split("version_id=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				
+				//获取搜索条件
+			   var conditions = href.split("conditions=")[1];
+			    if(conditions) {
+			    	conditions = conditions.split("#")[0];	
+			    }else{
+			    	conditions = "";
+			    }
+			    
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+				//获取权限
+				var chstat = "";
+				$.ajax({
+					url: '/getPermission',
+					data: {},
+					async: false,
+					success: function(xml) {
+						chstat = $(xml).find("permission").find("versionInfo").find("chstat").text();
+					},
+					dataType: 'xml'
+				});
+				//初始化产品类型列表
+	            $.ajax({
+	            	url: '/productTypeList',
+	            	data: {},
+	            	async: false,
+	            	success: function(xml){
+	            				$(xml).find("item").each(function(){							      
+									$("#productType").append("<option value=\""+$(this).find("top_level").text()+"\">"+$(this).find("top_level").text()+"</option>");
+								});
+	            			},
+	            	dataType: 'xml'		
+	            });
+				//初始化操作系统选项
+	            $.ajax({
+	            	url:'/osList',
+	            	data:{},
+	            	async: false,
+	            	success:function(xml) {
+	            			var cnt = 0;
+	            			$(xml).find("item").each(function(){
+	            				$("#osList").append("<input type='checkbox' value='"+$(this).find("os_name").text()+"'/>"+$(this).find("os_name").text());
+	            				if(++cnt % 3 == 0) {
+	            					$("#osList").append("<br />");
+	            				}
+	            			});
+	            		},
+	            		dataType:'xml'
+	            });
+				//初始化memberDept,addMember列表
+				$.ajax({
+					url: '/DeptList',
+	                data: {},
+	                async: false,
+	                success: function(xml){
+							$(xml).find("item").each(function(){							      
+									$("#memberDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});
+	   	                 },
+	                dataType: 'xml'
+	            });
+	            $.ajax({
+	            	url: '/getUserByDept',
+	            	async: false,
+				    data: {'userDeptId':$("#memberDept").val()},
+				    success: function(xml){
+								$(xml).find("item").each(function(){
+											var id =$(this).find("userId").text();
+											var name = $(this).find("userName").text();
+											dup = false;
+											//添加待选人员
+											$("#removeMember option").each(function(){
+												if(id == $(this).val()) {
+													dup = true;
+												}
+											});
+											if(!dup) {
+												$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+											}
+									});
+				   	          },
+				    dataType: 'xml'
+				});
+
+				$.post('/getVersionById',
+	                    {'versionId':version_id},
+	                    function(xml){
+								$(xml).find("result").each(function(i){
+									var version_id			= $(this).find("version_id").text();
+								    var versionName    		= $(this).find("versionName").text();
+								    var number   			= $(this).find("number").text();
+								    var versionType 		= $(this).find("versionType").text();
+								    var productType			= $(this).find("productType").text();
+								    var deptId				= $(this).find("deptId").text();
+								    var deptName			= $(this).find("deptName").text();
+								    var managerId 			= $(this).find("managerId").text();
+								    var managerName   		= $(this).find("managerName").text();
+								    var update				= $(this).find("update").text();
+								    var updateReport		= $(this).find("updateReport").text();
+								    var strMember			= $(this).find("member").text();
+								    var bug					= $(this).find("bug").text();
+								    var testReport			= $(this).find("testReport").text();
+								    var upload_on			= $(this).find("upload_on").text();
+								    var path				= $(this).find("path").text();
+								    var os					= $(this).find("os").text();
+								    //var releaseOn			= $(this).find("releaseOn").text();
+								    var status				= $(this).find("status").text();
+								    var permission			= Number($(this).find("permission").text());
+								   
+								   $("#versionName").text(versionName);
+								   $("#number").val(number);
+								   $("#deptName").text(deptName);
+								   $("#managerName").text(managerName);
+								   $("#update").text(update);
+								   //显示原来的版本类型和产品类型
+								   $("#versionType option[value='"+versionType+"']").attr("selected","selected");
+								   $("#productType option[value='"+productType+"']").attr("selected","selected");
+								   var member = strMember.split(";");
+								   	//显示原有成员列表
+								 	var memberId,memberName;
+									for(var i = 0, len = member.length-1; i< len; i++)
+								     {
+								          memberId = member[i].split(",")[0];
+								          memberName = member[i].split(",")[1];
+								          $("#removeMember").append("<option value=\""+memberId+"\">"+memberName+"</option>");
+								      }
+								    //显示适用操作系统
+								    var osName = os.split("/");
+								    $(":checkbox").each(function(){
+								    	var value = $(this).attr("value");
+								    	if($.inArray(value,osName) >= 0) {
+								    		$(this).attr("checked", "checked");
+								    	}
+								    });
+								   $("#bug").text(bug); 
+								   
+								   if (updateReport!=null && updateReport!=""){
+								   		$("#uploadUpdateReport").hide();
+								   		$("#downloadUpdateReport").append("<a href='/VersionDownloadServlet.do?type=updateReport&filename="+updateReport+"'>下载</a>&nbsp;");
+								   		if (permission & 8 || status <= 1 ) {
+								   			$("#downloadUpdateReport").append("<a id='deleteUpdateReport' href='#'>删除报告</a>");
+								   		}
+								   }
+								   
+								   if (testReport!=null && testReport!=""){
+								   		$("#uploadTestReport").hide();
+								   		$("#downloadTestReport").append("<a href='/VersionDownloadServlet.do?type=testReport&filename="+testReport+"'>下载</a>&nbsp;");
+								   		if (permission & 64 || status <= 1) {
+								   			$("#downloadTestReport").append("<a id='deleteTestReport' href='#'>删除报告</a>");
+								  		}
+								   } 
+								   
+								   
+								   $("#upload_on").text(upload_on); 
+								   $("#status option[value='"+status+"']").attr("selected","selected");
+								   //2进制位 从高到低是 ：修改128、添加Bug64、修改版本状态32、修改测试人员名单16、修改版本号及更新信息8、删除4、下载2、查询版本1
+								   if(!(permission & 16)) {
+								   		$("#memberDept").attr("disabled", "disabled");
+								   		$("#addMember").attr("disabled", "disabled");
+								   		$("#removeMember").attr("disabled", "disabled");
+								   }
+								   if(!(permission & 8)) {
+								   		$("#number").attr("disabled", "disabled");
+								   		$("#update").attr("disabled", "disabled");
+								   		$("#versionType").attr("disabled", "disabled");
+								   		$("#productType").attr("disabled", "disabled");
+								   		$("#osList input").attr("disabled", "disabled");
+								   		$("#updateReport").attr("disabled", "disabled");
+								   		$("#deleteUpdateReport").attr("disabled", "disalbed");
+								   		//$("#releaseOn").attr("disabled", "disabled");
+								   }
+								   if(!(permission & 64)){
+								 		$("#bug").attr("disabled", "disabled");
+								 		$("#fileToUpload").attr("disabled", "disabled");
+								 		$("#deleteTestReport").attr("disabled", "disabled");
+								   }
+								   if(!(permission & 32)){
+								 		$("#status").attr("disabled", "disabled");
+								   }
+//								   if(status > 1 ) {
+//								   		$("#memberDept").attr("disabled", "disabled");
+//								   		$("#addMember").attr("disabled", "disabled");
+//								   		$("#removeMember").attr("disabled", "disabled");
+//								   		$("#number").attr("disabled", "disabled");
+//								   		$("#update").attr("disabled", "disabled");
+//								   		$("#versionType").attr("disabled", "disabled");
+//								   		$("#productType").attr("disabled", "disabled");
+//								   		$("#osList input").attr("disabled", "disabled");
+//								   		//$("#bug").attr("disabled", "disabled");
+//								 		$("#fileToUpload").attr("disabled", "disabled");
+//								 		$("#releaseOn").attr("disabled", "disabled");
+//								   }
+								 										
+		   	                	 });
+		   	                	 $("#deleteUpdateReport").click(function() {
+		   	                	 	if(!confirm("您确定删除吗？")) {
+		   	                	 		return;
+		   	                	 	}
+					             	$.post("/deleteReport",
+					             			{"versionId":version_id, "type":"updateReport"},
+					             			function(xml){
+					             				//这个函数从后台得到xml里面的数据
+												var recode = $(xml).find("recode").text();
+												if(recode != 0){
+													alert($(xml).find("errormsg").text());
+													return;
+												}else{
+													alert("删除成功!");
+													$("#downloadUpdateReport").hide();
+													$("#uploadUpdateReport").show();
+												}
+					             			},
+					             			'xml'
+					             	);
+					             });
+		   	                	 $("#deleteTestReport").click(function() {
+		   	                	 	if(!confirm("您确定删除吗？")) {
+		   	                	 		return;
+		   	                	 	}
+					             	$.post("/deleteReport",
+					             			{"versionId":version_id, "type":"testReport"},
+					             			function(xml){
+					             				//这个函数从后台得到xml里面的数据
+												var recode = $(xml).find("recode").text();
+												if(recode != 0){
+													alert($(xml).find("errormsg").text());
+													return;
+												}else{
+													alert("删除成功!");
+													$("#downloadTestReport").hide();
+													$("#uploadTestReport").show();
+												}
+					             			},
+					             			'xml'
+					             	);
+					             	
+					             }); 
+	   	               	},
+	                     'xml'
+	              );
+	             
+					//动态更新待选成员列表
+	             $('#memberDept').change(function(){
+		           			$("#addMember option").remove();
+		            		var dept = $('#memberDept').val();
+		            		var dup;
+		            		$.post('/getUserByDept',
+		                    {'userDeptId':dept},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+									var id =$(this).find("userId").text();
+									var name = $(this).find("userName").text();
+									dup = false;
+									$("#removeMember option").each(function(){
+										if(id == $(this).val()) {
+											dup = true;
+										}
+									});
+									if(!dup) {
+										$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+									}
+								});
+		   	                 },
+		                     'xml');
+	            });   
+				
+				$("#fileToUpload").change(function() {
+			    	var filepath = $("#fileToUpload").val();
+			    	var reg = new RegExp(/\.*(\.txt|\.doc|\.docx|\.xls|\.xlsx|\.pdf)$/);
+					if(!filepath.match(reg)){
+							alert("请选择txt,doc,docx,xls,xlsx,pdf格式的文件！");
+							$("#fileToUpload").val(null);
+							return;
+						}
+		    	});
+		    	
+		    	$("#updateReport").change(function() {
+			    	var filepath = $("#updateReport").val();
+			    	var reg = new RegExp(/\.*(\.txt|\.doc|\.docx|\.xls|\.xlsx|\.pdf)$/);
+					if(!filepath.match(reg)){
+							alert("请选择txt,doc,docx,xls,xlsx,pdf格式的文件！");
+							$("#updateReport").val(null);
+							return;
+						}
+		    	});
+		    	
+			   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+		        $("#comfirm").click(function(){
+		        	var number  = $("#number").val();
+		        	var versionType = $("#versionType option:selected").val();
+					var productType = $("#productType option:selected").val();
+				    var update  	= $("#update").val();
+					var bug      	= $("#bug").val();
+					var status  	= $("#status").val();
+					//var releaseOn	= $("#releaseON").val();
+					var strMember = "";
+                    $("#removeMember option").each(function() {
+                    	var id = $(this).val();
+                    	var name = $(this).text();
+                    	strMember += id + "," + name + ";";
+                    });
+                    var os = "";
+                  		$("#osList input:checked").each(function(){
+            					var value = $(this).attr("value");
+            					os += value+"/";
+            		});
+            		
+            		if (status==1 && strMember=="") {
+            			if(!confirm("未指定测试人员,仍然继续?")) {
+            				return;
+            			}
+            		}
+            		path =  $("#updateReport").val();
+            		if ((status==2 || status==3) && (bug==null||bug=="") 
+            				&& (path==null||path=="")) {
+            			if (!confirm("未添加仍存在的问题或提交测试报告,仍然继续?")) {
+            				return;
+            			}
+            		}
+            		
+                    $.post("/editVersion", {"versionId":version_id,"number":number,"versionType":versionType,"productType":productType,"update":update,"os":os,"member":strMember,"bug":bug,"status":status}, callback, "xml");
+					
+                    function callback(xml){
+						var $xml = $(xml);
+
+						//这个函数从后台得到xml里面的数据
+						var recode = $xml.find("recode").text();
+						if(recode != 0){
+							alert($xml.find("errormsg").text());
+							return ;
+						}
+						
+						//上传测试报告
+						var filepath = $('#fileToUpload').val();
+						if(filepath) {
+							fileUpload(version_id, "testReport", "fileToUpload");
+							return;
+						}
+						//上传更新报告
+						filepath = $("#updateReport").val();
+						if (filepath) {
+							fileUpload(version_id, "updateReport", "updateReport");
+							return;
+						}
+						
+						alert("修改成功！");
+                 			location.href="versionList.html?page="+prePage+"&conditions="+conditions;
+					}
+
+					
+					if($("#mail").attr('checked') == "checked"){
+						//发送邮件
+						var currentUserName = "";
+						$.ajax({
+							url:"/currentUserDetail",
+							async:false,
+							method:"post",
+							success: function(xml){
+								currentUserName = $(xml).find("userName").text();
+							},
+							dataTyep: "xml"
+						});
+						var testManagerId;
+						$.ajax({
+							url:"/getTestManagerId",
+							async:false,
+							method:"post",
+							success: function(xml){
+								testManagerId = $(xml).find("result");
+							},
+							dataTyep: "xml"
+						});
+						var content = currentUserName +"修改了一个版本，版本的名称叫 "+ $("#versionName").text() +" "+number +"，请您及时处理。";
+						$.post('/sendMail',
+								{'mailTo':testManagerId,'subject':"一个最近修改的版本",'content':content},
+								function(databack){
+									var recode = $(databack).find("recode").text();
+									if(recode != 0){
+										alert($(databack).find("errormsg").text());
+									}
+								},
+								'xml'
+						);
+					}
+				});
+				
+				function fileUpload(folderName, type, id){
+            		//starting setting some animation when the ajax starts and completes
+			     	 $("#loading")
+			        .ajaxStart(function(){
+			            $(this).show();
+			        })
+			        .ajaxComplete(function(){
+			            $(this).hide();
+			        });
+					var filepath = $("#" + id).val();
+					if(!filepath){
+						alert("请选择文件");
+						return false;
+					}
+					$.ajaxFileUpload({
+						url:			"fileUploadAction",
+						secureuri:		false,
+						fileElementId:	id,
+						dataType:		"xml",
+						data: {//加入的文本参数  
+						            "folderName": folderName,
+						            "type"		: type 
+						        },  
+						success:		function(xml, status){
+											var recode = $(xml).find("result").text();
+						        			if(recode != 0){
+						        				alert($(xml).find("errormsg").text());
+						        			}else {
+						        				alert("报告上传成功！");
+						        				location.href="versionList.html?page="+prePage+"&conditions="+conditions;
+						        			}
+										},
+						error:			function(data, status, e){
+											alert("上传出错！");
+										}
+						});
+						return false;
+				     
+				};
+					
+				function init(){
+
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+				  //添加成员
+	            $("#addMember").dblclick(function(){
+					$("#addMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#removeMember").append(option);
+						$(this).remove();
+					});
+				});  
+				//删除成员  
+				$("#removeMember").dblclick(function(){
+					$("#removeMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#addMember").append(option);
+						$(this).remove();
+					});
+				});
+				
+				$("#back").click(function(){
+                  		location.href="versionList.html?page="+prePage+"&conditions="+conditions;
+                });	  
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="300">
+									<div class="biao" align="left">
+										当前位置：首页 &gt;&nbsp;
+										<strong>修改版本信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改版本信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									产品类型
+								</td>
+								<td>
+									<select id="productType" class="wideSelText"></select>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									版本类型
+								</td>
+								<td>
+									<select id="versionType" class="wideSelText">
+										<option value="安装包">
+											安装包
+										</option>
+										<option value="升级包">
+											升级包
+										</option>
+										<option value="补丁包">
+											补丁包
+										</option>
+									</select>
+								</td>
+							</tr>							
+							<tr>
+								<td>
+									版本名称
+								</td>
+								<td class="width_15">
+									<label id="versionName"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									版本号
+								</td>
+								<td>
+									<div>
+										<input type="text" id="number" class="wideSelText" />
+									</div>
+								</td>
+							</tr>
+<!--							<tr>-->
+<!--								<td>-->
+<!--									发布日期-->
+<!--								</td>-->
+<!--								<td class="width_15">-->
+<!--									<div>-->
+<!--										<input id="releaseOn" class="wideSelText" readonly="readonly" onclick="setday(this)"></input>-->
+<!--									</div>-->
+<!--								</td>-->
+<!--							</tr>-->
+							<tr>
+								<td>
+									<label class="required">
+										*
+									</label>
+									适用的操作系统
+								</td>
+								<td>
+									<div id="osList"></div>
+								</td>
+
+							</tr>
+							<tr>
+								<td>
+									所属部门
+								</td>
+								<td>
+									<label class="wideSelText" id="deptName"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										负责人
+									</div>
+								</td>
+								<td>
+									<label class="wideSelText" id="managerName"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										更新说明
+									</div>
+								</td>
+								<td>
+									<div>
+										<textarea name="update" id="update" cols="45" rows="5"
+											class="wideSelText"></textarea>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									提交更新报告
+								</td>
+								<td>
+									<div id="uploadUpdateReport">
+									<img id="loading" src="images/loading.gif" style="display: none" />
+									<input type="file" id="updateReport" name="file" class="wideSelText"/>
+									</div>
+									<div id="downloadUpdateReport">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									测试成员
+								</td>
+								<td align="center">
+									<table  border="0" cellspacing="0" cellpadding="0">
+									<tr>
+									<td style="border:0" colspan="3">
+									<select name="memberDept" id="memberDept" class="wideSelText">
+										<option value="-1">&nbsp;</option>
+							        </select>
+							        </td>
+							        </tr>
+							        <tr>
+							        <td style="border:0">
+									<select id="addMember" multiple="multiple" title="双击以添加" style="width:130px" >							       
+							        </select>
+							        </td>
+							        <td style="border:0">
+							   		<img src="images/arrow_two_head.png" style="float:left"></img>
+							   		</td>
+							   		<td style="border:0">
+							   		<select id="removeMember" multiple="multiple" title="双击以删除" style="width:130px">
+							        </select>
+							        </td>
+							        </tr>
+							       </table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										仍存在的问题
+									</div>
+								</td>
+								<td class="width_15">
+									<div>
+										<textarea name="bug" id="bug" cols="45" rows="5"
+											class="wideSelText"></textarea>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									提交测试报告
+								</td>
+								<td id="testReport">
+									<div id="uploadTestReport">
+									<img id="loading" src="images/loading.gif" style="display: none" />
+									<input type="file" id="fileToUpload" name="file" class="wideSelText" />
+									</div>
+									<div id="downloadTestReport">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										上传时间
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="upload_on"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										状态
+									</div>
+								</td>
+								<td class="width_15">
+									<div>
+										<select name="status" id="status" class="wideSelText">
+											<option value="0">
+												未测试
+											</option>
+											<option value="1">
+												正在测试
+											</option>
+											<option value="2">
+												测试通过
+											</option>
+											<option value="3">
+												测试未通过
+											</option>
+											<option value="4">
+												已发布
+											</option>
+										</select>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										<input id="mail" type="checkbox" value="mail" />
+									</div>
+								</td>
+								<td class="width_15">
+									<div>
+										邮件通知
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<input class="bt" type="button" value="保存修改" id="comfirm"></input>
+									<input class="bt" type="button" id="back" value="返回"></input>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

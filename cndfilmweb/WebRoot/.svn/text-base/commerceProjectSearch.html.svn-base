@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+				init();
+				   //获取排序条件
+	/*		    var orderBy = href.split("orderBy=")[1];
+			    	
+			   	if(orderBy){
+			   		orderBy = orderBy.split("&")[0].split("#")[0];
+			   	}else{
+			   		orderBy = "commerceprojectapplytime";
+			   	}
+			   	*/
+			   	
+			   		//获取部门以及该部门的成员
+				$.post('/systemDeptList',{},
+							function(xml){
+								$("#dept").append("<option value=\"\">"+"—部门—"+"</option>");
+								$(xml).find("item").each(function(){
+									$("#dept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");									
+									});
+																		
+								$.post('/gotUserbyDept',
+										{'dept': $('#dept').val()},
+										function(xml){
+							$("#commerceprojectapplier").append("<option value=\"\">"+"—不选择—"+"</option>");
+											$(xml).find("item").each(function(){
+							$("#commerceprojectapplier").append("<option value=\"\"></option>");
+												$("#commerceprojectapplier").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+											});										
+										},
+										'xml');
+							},
+						'xml');
+																		
+				//人员随着部门改变而改变
+				$('#dept').change(function(){
+					$("#commerceprojectapplier option").remove();
+					var dept1 = $('#dept').val();
+					$.post('/gotUserbyDept',
+						{'dept':dept1},
+						function(xml){
+							$(xml).find("item").each(function(){
+								$("#commerceprojectapplier").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+							});
+						},
+					'xml');
+				
+				});
+				$("#comfirm1").click(function(){
+				
+		        	
+		               var commerceproject_name      	= $('#commerceproject_name').val();
+		             
+		               var commerceprojectapplier      	= $('#commerceprojectapplier').val();
+		            
+		               var clientfactory      	= $('#clientfactory').val();
+					    var clientperson    		= $('#clientperson').val();
+					    
+					 if($('#commerceproject_name').val() ==  ""&&$('#commerceprojectapplier').val()==""&&$('#clientfactory').val()==""&&$('#clientperson').val()==""){
+					alert("查询条件不能为空！");
+					return;
+					}
+		    
+					    var tmp="commerceproject_name="+commerceproject_name+"&commerceprojectapplier="+commerceprojectapplier+"&clientfactory="+clientfactory+"&clientperson="+clientperson;
+						 location.href="/commerceProjectSearchList.html?"+tmp;
+				
+		              
+				   });        
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+
+			}
+			});
+
+		</script>
+
+  </head>
+  
+  <body>
+   <div id="container">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+				<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：项目列表&gt;&nbsp;<strong>查询项目</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						   
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="javascript:history.back()" >返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>查询项目</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r6">
+						<table class="sTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+				<tr >
+								<td class="width_5">项目名称</td>
+								<td class="width_15"><input type="text" id="commerceproject_name" class="width_15" style="width:280px"></input></td>
+							</tr>
+						
+							
+                    	<tr >
+								<td class="width_5">项目申请人</td>
+								<td class="width_15"><select name="dept" id="dept" class="dept" style="width:130px">
+							        </select>
+							        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        <select  id="commerceprojectapplier" style="width:130px" >
+							        </select></td>
+							</tr>
+								<tr >
+								<td class="width_5">客户单位名称</td>
+								<td class="width_15"><input type="text" id="clientfactory" class="width_15"style="width:280px"></input></td>
+							</tr>
+							
+							<tr >
+								<td class="width_5">客户联系人</td>
+								<td class="width_15"><input type="text" id="clientperson" class="width_15" style="width:280px"></input></td>
+							</tr>
+							</table>
+							<tr>
+					
+					<td><input type="button" id="comfirm1" value="查询" class="bt"></input></td>
+					</tr>
+				
+						</div>	
+						<div id="sq_di">
+						<div id="pageNav">
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer">
+			</div>
+		</div>
+
+		</body>
+</html>

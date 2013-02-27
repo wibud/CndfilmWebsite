@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>OA系统--部门查询</title>
+	
+  
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+        <script type="text/javascript">
+			$(document).ready(function(){
+
+				init();
+
+				var deptName,dept_id,person_in_charge,deptDes;
+
+				$('#comfirm').click(function(){
+					var deptName       = $('#dept_name').val();
+					var fatherdeptName      = $('#fatherdept_name').val();  
+				
+					var deptDesc       = $('#deptDesc').val();
+					
+					if($('#deptName').val() == ""){
+						alert("部门名称不能为空");
+						return;
+                    }
+
+                    $.post('/systemDeptAdd', {'dept_name':deptName,'fatherdept_name':fatherdeptName,'deptDesc':deptDesc}, callback, 'xml');
+
+					function callback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							location.href="systemDeptList.html";
+						}
+					}
+				});
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+//$.post是一个固定的函数用于前后台通信,里面有四个参数 第一个是上传的url 第二个是上传的参数,第三个是后台处理完回传给前台的函数，第四个是回传的类型//
+
+				$.post('/systemDeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#dept_id").append("<option value=\""+$(this).find("id").text()+"\">"+$(this).find("name").text()+"</option>");
+								});
+							$("#dept_id option[value='"+dept_id+"']").attr("selected","selected");
+	   	                 },
+	                     'xml');
+
+			});
+
+		</script>
+
+  </head>
+  
+  <body>
+    <div id="container">
+			<div id="header"></div>
+			<div id="content">
+				<div id="main">
+					<div id="content_r">
+						<table class="bTable">
+							<caption>查找部门信息</caption>
+							<tr>
+								<td>部门名称</td>
+								<td class="width_15"><input type="text" id="deptName" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">父部门名称</td>
+								<td class="width_15">
+								    <select name="fatherdept_name" id="fatherdept_name" class="width_15">
+								       
+							        </select>
+							    </td>
+							</tr>
+						
+						    <tr>
+								<td>备注</td>
+								<td><input type="text" id="deptDesc" class="width_15"></input></td>
+							</tr>
+							<tr><td colspan="2"><input type="button" id="comfirm" value="确定"></input>
+							                    <input type="button" value="返回" onclick="javascript:location.href='systemDeptList.html'"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+			</div>
+
+			<div id="footer"></div>
+
+		</div> <br/>
+  </body>
+</html>

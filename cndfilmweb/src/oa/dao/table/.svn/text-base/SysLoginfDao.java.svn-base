@@ -1,0 +1,107 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.Sys_loginf;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class SysLoginfDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(SysLoginfDao.class);
+	// property constants
+	public static final String LOG_ID = "log_id";		//日志标识
+	public static final String LOG_TYPE = "log_type";
+	public static final String WRI_TIME = "wri_time";
+	public static final String USER_ID = "user_id";
+	public static final String USER_NAME = "user_name";
+	public static final String ROLE_ID = "role_id";
+	public static final String ROLE_NAME = "role_name";
+	public static final String SRC_IP = "src_ip";
+	public static final String OPERATION = "operation";
+	public static final String OPER_RST = "oper_rst";
+	public static final String LOG_DESC = "log_desc";
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(Sys_loginf transientInstance) {
+		log.debug("saving Sys_loginf instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(Sys_loginf persistentInstance) {
+		log.debug("deleting Sys_loginf instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(Sys_loginf instance) {
+		log.debug("update Sys_loginf instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public Sys_loginf findById(Long id) {
+		log.debug("getting Sys_loginf instance with id: " + id);
+		try {
+			Sys_loginf instance = (Sys_loginf) super.get("oa.model.table.Sys_loginf", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Sys_loginf> findByExample(Integer pageNo, Sys_loginf instance) {
+		log.debug("find Sys_loginf instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Sys_loginf", instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Sys_loginf> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding Sys_loginf instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.Sys_loginf", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+
+	public ResultList<Sys_loginf> findAll(Integer pageNo) {
+		log.debug("finding all Sys_loginf instances");
+		try {
+			return super.find(pageNo, "oa.model.table.Sys_loginf");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+
+}

@@ -1,0 +1,75 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="la_id")
+@Entity
+@Table(name="tb_logarchive")
+public class Log_archive {
+	@Id
+	private String la_id;		//归档ID
+	private String file_name;	//归档文件名
+	private String start_time;	//归档阶段开始时间
+	private String end_time;	//归档阶段结束时间
+	private String add_time;	//归档生成时间
+	private String oper_id;		//归档人ID
+	private String oper_name;	//归档人名称
+	private String is_delete;	//是否已删除
+	
+	
+	public String getLa_id() {
+		return la_id;
+	}
+	public void setLa_id(String la_id) {
+		this.la_id = la_id;
+	}
+	public String getFile_name() {
+		return file_name;
+	}
+	public void setFile_name(String file_name) {
+		this.file_name = file_name;
+	}
+	public String getStart_time() {
+		return start_time;
+	}
+	public void setStart_time(String start_time) {
+		this.start_time = start_time;
+	}
+	public String getEnd_time() {
+		return end_time;
+	}
+	public void setEnd_time(String end_time) {
+		this.end_time = end_time;
+	}
+	public String getAdd_time() {
+		return add_time;
+	}
+	public void setAdd_time(String add_time) {
+		this.add_time = add_time;
+	}
+	public String getOper_id() {
+		return oper_id;
+	}
+	public void setOper_id(String oper_id) {
+		this.oper_id = oper_id;
+	}
+	public String getOper_name() {
+		return oper_name;
+	}
+	public void setOper_name(String oper_name) {
+		this.oper_name = oper_name;
+	}
+	public String getIs_delete() {
+		return is_delete;
+	}
+	public void setIs_delete(String is_delete) {
+		this.is_delete = is_delete;
+	}
+	
+	
+}

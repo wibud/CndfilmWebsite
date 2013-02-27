@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>OA系统--部门订票审批</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+	<script type="text/javascript">
+	    showIncludeFile();
+	    showIncludeThickBoxAjaxingFile();
+	</script>
+	<script type="text/javascript">
+	    $(document).ready(function(){
+		    init();
+			
+			//翻页
+			var href = location.href;
+			var page = href.split("page=")[1];
+			if(page)
+			   page = page.split("&")[0].split("#")[0];
+			if(!page || page<1)
+			   page=1;
+			var pageCount = 0;
+			var count = 0;
+			var url = "/listByDept";
+			
+			$.fn.showData = function(url,page2){
+			   page = page2;
+			   urlT = url+"?page="+page2;
+			   $(this).handlerData(
+			            urlT,
+						function(xml){
+							$("#content_r table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+								}
+							$(xml).find("item").each(function(i){
+							     var ticketId = $(this).find("ticketId").text();
+								 var userId	= $(this).find("userId").text();
+								 var userName = $(this).find("username").text();
+								 var userDept = $(this).find("deptName").text();
+								 var userPost = $(this).find("position").text();
+								 var depature = $(this).find("depature").text();
+								 var destination = $(this).find("destination").text();
+								 var depatureTime = $(this).find("depatureTime").text();
+								 var trafficWay = $(this).find("trafficWay").text();
+								 var trafficType =  $(this).find("trafficType").text();
+								 var ticketPrice = $(this).find("ticketPrice").text();
+								 var ticketInfo = $(this).find("ticketInfo").text();
+								 var bookReason = $(this).find("bookReason").text();
+								 var telephone = $(this).find("telephone").text();
+                                 var userEmail = $(this).find("email").text();
+								 var headerEmail = $(this).find("headerEmail").text();
+								 var headerAttitude= $(this).find("headerAttitude").text();//领导意见（主管）
+								 var bookingState = $(this).find("bookingState").text();//申请订票状态（用户）
+								 var confirmState = $(this).find("confirmState").text();//受理订票状态（人事部）
+								 
+								/* alert(ticketId);alert(userId);alert(userName);alert(userDept);
+								 alert(userPost);alert(depature);alert(destination);alert(depatureTime);
+								 alert(trafficeWay);alert(trafficeType);alert(trafficePrice);alert(ticketInfo);
+								 alert(bookReason);alert(telephone);alert(userEmail);alert(headerEmail);*/
+								 /*
+								 var DepatureInfo = new Array[5];
+								 DepatureInfo[0] = $(this).find("depature").text();
+								 DepatureInfo[1] = $(this).find("destination").text();
+								 DepatureInfo[2] = $(this).find("depatureTime").text();
+								 DepatureInfo[3] = $(this).find("trafficWay").text();
+								 DepatureInfo[4] = $(this).find("bookReason").text();
+								 
+								 var TicketInformation = new Array[3];
+								 TicketInformation[0] = $(this).find("ticketPrice").text();
+								 TicketInformation[1] = $(this).find("ticketInfo").text();
+								 TicketInformation[2] = $(this).find("trafficeType").text();
+								 */
+								 var tmp="ticketId="+ticketId;
+								 var bookingInfo1="<tr class='content' id='"+ticketId+"'><td>"+(i+1)+"</td><td>"+userName+"</td><td>"+userDept+"</td><td>"+userPost+"</td><td>"+depature+"</td><td>"+destination+"</td><td>"+depatureTime+"</td><td>"+trafficWay+"</td><td>"+trafficType+"</td><td>"+bookReason+"</td><td>"+ticketInfo+"</td><td>"+ticketPrice+"</td><td>"+telephone+"</td><td>"+userEmail+"</td><td>"+headerEmail+"</td><td>"+headerAttitude+"</td><td>"+bookingState+"</td><td>"+confirmState+"</td>";
+								 
+								 var bookingInfo2="<td><input  type='image' src='./images/look.gif'  title='是否审批' onclick=\"javascript: location.href=encodeURI(\'approvalTicket.html?"+tmp+"&page1="+page+"\')\"></input></td></tr>";
+								 $("#content_r table").append(bookingInfo1+bookingInfo2);	
+								 id++;							 
+							});
+							$("#pageNav").showPageNav(page2, pageCount, count, url);
+					}
+			   );
+			};
+			$(this).showData(url,page);
+			function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="selfUserTicket.html?page="+page;
+					}
+				}
+		});  
+	</script>
+
+</head>
+
+<body>
+		<div id="container">
+		  <div id="header"></div>
+		    <div id="content">
+			 <div id="sidebar">
+			  <div id="main">
+			    <div id="content_r">
+		           <table id="sortTable" border="1" class="listTable">
+				    <caption>部门订票审批</caption>
+					<tr>
+					  <th>序号</th>
+					  <th>姓名</th>
+					  <th>部门</th>
+					  <th>职位</th>
+					  <th>出发地</th>
+					  <th>目的地</th>
+					  <th>出行日期</th>
+					  <th>出行方式</th>
+					  <th>票务类型</th>
+					  <th>订票原因</th>
+					  <th>票务班次</th>
+					  <th>票务价格</th>
+					  <th>联系电话</th>
+					  <th>用户邮箱</th>
+					  <th>主管邮箱</th>
+					  <th>审批意见</th>
+					  <th>申请状态</th>
+					  <th>受理状态</th>
+					  <th>操作</th>
+					</tr>
+                  </table>
+                  <script type="text/javascript" src="./scripts/js/rowView.js"></script>
+				  <div id="pageNav"></div>
+			    </div>
+			   </div>	
+			  </div>
+			</div>
+
+			<div id="footer"></div>
+		</div>
+</body>
+</html>

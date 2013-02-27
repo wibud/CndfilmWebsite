@@ -1,0 +1,135 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.lang.Integer;
+import oa.dao.BaseDao;
+import oa.model.table.CAssetApplyLog;
+import oa.util.ResultList;
+
+//import oa.bean.asset.AssetBean;
+@SuppressWarnings("unchecked")
+public class CAssetApplyLogDao extends BaseDao {
+	private static final Logger log = LoggerFactory
+			.getLogger(CAssetApplyLogDao.class);
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public CAssetApplyLog findByPropertyReturnOnly(String propertyName,
+			String value) {
+		log.debug("finding CAssetApplyLog instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			ResultList<CAssetApplyLog> user = super.find(null,
+					"oa.model.table.CAssetApplyLog", propertyName, value);
+			if (java.lang.Integer.parseInt(user.getCount()) == 0)
+				return null;
+
+			else
+				return user.get(0);
+
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public void save(CAssetApplyLog transientInstance) {
+		log.debug("saving CAssetApplyLog instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(CAssetApplyLog persistentInstance) {
+		log.debug("deleting CAssetApplyLog instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(CAssetApplyLog instance) {
+		log.debug("update CAssetApplyLog instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public CAssetApplyLog findById(String id) {
+		log.debug("getting CAssetApplyLog instance with id: " + id);
+		try {
+			CAssetApplyLog instance = (CAssetApplyLog) super.get(
+					"oa.model.table.CAssetApplyLog", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<CAssetApplyLog> findByExample(Integer pageNo,
+			CAssetApplyLog instance) {
+		log.debug("find CAssetApplyLog instances with example");
+		try {
+			return super
+					.find(pageNo, "oa.model.table.CAssetApplyLog", instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<CAssetApplyLog> findByProperty(Integer pageNo,
+			String propertyName, String value) {
+		log.debug("finding CAssetApplyLog instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.CAssetApplyLog",
+					propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<CAssetApplyLog> findByCondition(Integer pageNo,
+			String conditions) {
+		log.debug("finding CAssetApplyLog instance with conditions: "
+				+ conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.CAssetApplyLog",
+					conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<CAssetApplyLog> findAll(Integer pageNo) {
+		log.debug("finding all CAssetApplyLog instances");
+		try {
+			return super.find(pageNo, "oa.model.table.CAssetApplyLog");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+}

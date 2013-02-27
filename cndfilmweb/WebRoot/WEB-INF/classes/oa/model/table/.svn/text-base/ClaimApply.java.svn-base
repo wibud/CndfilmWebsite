@@ -1,0 +1,183 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="claim_id")
+@Entity
+@Table(name="tb_claim")
+public class ClaimApply {
+    
+	@Id
+	private String claim_id;//序号
+	private String claim_serialnumber;//报销编号
+	private String user_id;//申请人ID
+	private String apply_name;//申请人
+	private String dept_id;
+	private String apply_date;//申请时间
+	private String claim_type;
+	private String description;//事由
+	private String claim_date;//事由时间
+	private Integer total_amount;
+	private String rmb;
+	private String form_number;
+	private Integer approval_state;
+	private String dept_manager; 
+	private String approval_attitude1;
+	private String second_manager;
+	private String approval_attitude2;
+	private String respons_person;
+	private String approval_attitude3;
+	private String cashier;
+	private String payee;
+	
+	@Id
+	public String getClaim_id() {
+		return claim_id;
+	}
+	public void setClaim_id(String claim_id) {
+		this.claim_id = claim_id;
+	}
+	public String getClaim_serialnumber() {
+		return claim_serialnumber;
+	}
+	public void setClaim_serialnumber(String claim_serialnumber) {
+		this.claim_serialnumber = claim_serialnumber;
+	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+	public String getApply_name() {
+		return apply_name;
+	}
+	public void setApply_name(String apply_name) {
+		this.apply_name = apply_name;
+	}
+	public String getDept_id() {
+		return dept_id;
+	}
+	public void setDept_id(String dept_id) {
+		this.dept_id = dept_id;
+	}
+	public String getApply_date() {
+		return apply_date;
+	}
+	public void setApply_date(String apply_date) {
+		this.apply_date = apply_date;
+	}
+	public String getClaim_type() {
+		return claim_type;
+	}
+	public void setClaim_type(String claim_type) {
+		this.claim_type = claim_type;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getClaim_date() {
+		return claim_date;
+	}
+	public void setClaim_date(String claim_date) {
+		this.claim_date = claim_date;
+	}
+	public Integer getTotal_amount() {
+		return total_amount;
+	}
+	public void setTotal_amount(Integer total_amount) {
+		this.total_amount = total_amount;
+	}
+	public String getRmb() {
+		return rmb;
+	}
+	public void setRmb(String rmb) {
+		this.rmb = rmb;
+	}
+	public String getForm_number() {
+		return form_number;
+	}
+	public void setForm_number(String form_number) {
+		this.form_number = form_number;
+	}
+	
+	public Integer getApproval_state() {
+		return approval_state;
+	}
+	public void setApproval_state(Integer approval_state) {
+		this.approval_state = approval_state;
+	}
+	public String getDept_manager() {
+		return dept_manager;
+	}
+	public void setDept_manager(String dept_manager) {
+		this.dept_manager = dept_manager;
+	}
+	public String getApproval_attitude1() {
+		return approval_attitude1;
+	}
+	public void setApproval_attitude1(String approval_attitude1) {
+		this.approval_attitude1 = approval_attitude1;
+	}
+	public String getSecond_manager() {
+		return second_manager;
+	}
+	public void setSecond_manager(String second_manager) {
+		this.second_manager = second_manager;
+	}
+	public String getApproval_attitude2() {
+		return approval_attitude2;
+	}
+	public void setApproval_attitude2(String approval_attitude2) {
+		this.approval_attitude2 = approval_attitude2;
+	}
+	public String getRespons_person() {
+		return respons_person;
+	}
+	public void setRespons_person(String respons_person) {
+		this.respons_person = respons_person;
+	}
+	public String getApproval_attitude3() {
+		return approval_attitude3;
+	}
+	public void setApproval_attitude3(String approval_attitude3) {
+		this.approval_attitude3 = approval_attitude3;
+	}
+	public String getCashier() {
+		return cashier;
+	}
+	public void setCashier(String cashier) {
+		this.cashier = cashier;
+	}
+	public String getPayee() {
+		return payee;
+	}
+	public void setPayee(String payee) {
+		this.payee = payee;
+	}
+	
+	@Override
+	public String toString() {
+		return "ClaimApply [claim_id=" + claim_id + ", claim_serialnumber="
+				+ claim_serialnumber + ", user_id=" + user_id + ", apply_name="
+				+ apply_name + ", dept_id=" + dept_id + ", apply_date="
+				+ apply_date + ", description=" + description + ", claim_date="
+				+ claim_date + ", total_amount=" + total_amount
+				+ ", form_number=" + form_number + ", approval_state="
+				+ approval_state + ", dept_manager=" + dept_manager
+				+ ", approval_attitude1=" + approval_attitude1
+				+ ", second_manager=" + second_manager
+				+ ", approval_attitude2=" + approval_attitude2
+				+ ", respons_person=" + respons_person
+				+ ", approval_attitude3=" + approval_attitude3 + ", cashier="
+				+ cashier + ", payee=" + payee + "]";
+	}
+		
+}

@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改考勤信息</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+
+				/*var userId,userName,userSex,userDeptId,userPostName,userPlaceInfo，userTempDeptName，userTempPostName，userAddress,userTel,userMobile,userEmail,userIp,userDes;*/
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var userId = href.split("attenceId=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var flag	=href.split("flag=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+
+				var attenceId           = tmp[0].split("=")[1];
+				var deptId          	= tmp[1].split("=")[1];
+				var deptName           	= tmp[2].split("=")[1];
+				var attenceTime         = tmp[3].split("=")[1];
+				var amStartTime      	= tmp[4].split("=")[1];
+				var amEndTime     		= tmp[5].split("=")[1];
+				var pmStartTime       	= tmp[6].split("=")[1];
+				var pmEndTime           = tmp[7].split("=")[1];
+				var remark        		= tmp[8].split("=")[1];
+				var userName			= tmp[9].split("=")[1];
+				var amStartHour			=amStartTime.split(":")[0];
+				var amStartMinute		=amStartTime.split(":")[1];
+				var amEndHour			=amEndTime.split(":")[0];
+				var amEndMinute			=amEndTime.split(":")[1];
+				var pmStartHour			=pmStartTime.split(":")[0];
+				var pmStartMinute		=pmStartTime.split(":")[1];
+				var pmEndHour			=pmEndTime.split(":")[0];
+				var pmEndMinute			=pmEndTime.split(":")[1];
+				
+				$("#attenceTime").val(attenceTime);
+				$("#remark").val(remark);
+				$("#amStartHour").val(amStartHour);
+				$("#amStartMinute").val(amStartMinute);
+				$("#amEndHour").val(amEndHour);
+				$("#amEndMinute").val(amEndMinute);
+				$("#pmStartHour").val(pmStartHour);
+				$("#pmStartMinute").val(pmStartMinute);
+				$("#pmEndHour").val(pmEndHour);
+				$("#pmEndMinute").val(pmEndMinute);
+				$("#userName").val(userName);
+				$("#deptName").val(deptName);
+			
+	                     
+	                     
+
+
+				   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+			        $("#comfirm").click(function(){
+					  
+						var attenceTime         = $('#attenceTime').val();
+					    var amStartHour         = $("#amStartHour").val();
+				     	var amStartMinute       = $("#amStartMinute").val();
+					    var amEndHour          	= $("#amEndHour").val();
+					    var amEndMinute         = $("#amEndMinute").val();
+					    var pmStartHour         = $("#pmStartHour").val();
+					    var pmStartMinute       = $("#pmStartMinute").val();
+					    var pmEndHour          	= $("#pmEndHour").val();
+					    var pmEndMinute         = $("#pmEndMinute").val();
+					    var remark          	= $("#remark").val();
+					    
+					    var amStartTime        	= amStartHour+':'+amStartMinute;
+						var amEndTime      		= amEndHour+':'+amEndMinute;
+						var pmStartTime     	= pmStartHour+':'+pmStartMinute;
+					    var pmEndTime       	= pmEndHour+':'+pmEndMinute;
+					    
+						var judge1				=/[0-1][0-9]\:[0-5][0-9]/;
+						var judge2				=/[2][0-3]\:[0-5][0-9]/;
+						
+						if($('#deptId').val() == ""){
+							alert("用户部门不能为空");
+							return;
+		                }
+		                if($('#attenceTime').val()==""){
+		                	alert("日期不能为空");
+							return;
+		                }
+		                if(amStartHour!=""||amStartMinute!=""){
+		                	if(!judge1.test(amStartTime)){
+		                		if(!judge2.test(amStartTime)){
+		                			alert("上午上班时间格式不正确");
+									return;
+		                		}
+		                	}
+		                }
+		                if(amEndHour!=""||amEndMinute!=""){
+		                	if(!judge1.test(amEndTime)){
+		                		if(!judge2.test(amEndTime)){
+		                			alert("上午下班时间格式不正确");
+									return;
+		                		}
+		                	}
+		                }
+		                if(pmStartHour!=""||pmStartMinute!=""){
+		                	if(!judge1.test(pmStartTime)){
+		                		if(!judge2.test(pmStartTime)){
+		                			alert("下午下班时间格式不正确");
+									return;
+		                		}
+		                	}
+		                }
+		                 if(pmEndHour!=""||pmEndMinute!=""){
+		                	if(!judge1.test(pmEndTime)){
+		                		if(!judge2.test(pmEndTime)){
+		                			alert("下午下班时间格式不正确");
+									return;
+		                		}
+		                	}
+		                }
+		                
+		                
+		                
+						
+	                    $.post('/workAttendanceEdit', {'attenceId':attenceId,'attenceTime':attenceTime,'amStartTime':amStartTime,'amEndTime':amEndTime,'pmStartTime':pmStartTime,'pmEndTime':pmEndTime,'remark':remark}, callback, 'xml');
+
+	                    function callback(xml){
+							var $xml = $(xml);
+
+							//这个函数从后台得到xml里面的数据
+							var recode = $xml.find("recode").text();
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+
+													
+							alert("修改成功！");
+							if(flag == 1){
+								location.href="attenceList.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+
+						}
+
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								if(flag == 1){
+									location.href="attenceList.html?page="+prePage;
+								}else{
+									location.href="javascript:history.back()";
+								}
+							}
+						}
+					});
+
+					$("#back").click(
+						function(){
+							if(flag == 1){
+								location.href="attenceList.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+						}
+					);
+
+					function init(){
+
+						$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$("#sidebar").showSideBar();
+						$(this).navi();
+					}
+			
+
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：日常管理 &gt;考勤管理&gt;&nbsp;
+										<strong>修改考勤信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改考勤信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="width_5"><label class="required">*</label>姓名</td>
+								<td class="width_15"><input type="text" id="userName" class="width_10" disabled="disabled" ></input></td>
+							</tr>
+							<tr>
+								<td class="width_5"><label class="required">*</label>部门</td>
+								<td class="width_15"><input type="text" id="deptName" class="width_10" disabled="disabled" ></input></td>
+							</tr>
+							<tr>
+							      <td class="width_5"><label class="required">*</label>日期</td>
+							      <td class="width_15"><input id="attenceTime" class="width_10" onclick="setday(this)" readonly="readonly"></input></td>
+					        </tr>
+							<tr>
+								<td>上午上班时间 (hh:mm)</td>
+								<td class="width_15"><input type="text" id="amStartHour" style="width:50px"></input>&nbsp;：&nbsp;<input type="text" id="amStartMinute" style="width:50px"></input></td>
+							</tr>
+							<tr>
+								<td>上午下班时间 (hh:mm)</td>
+								<td class="width_15"><input type="text" id="amEndHour" style="width:50px"></input>&nbsp;：&nbsp;<input type="text" id="amEndMinute" style="width:50px"></input></td>
+							</tr>
+							<tr>
+								<td>下午上班时间 (hh:mm)</td>
+								<td class="width_15"><input type="text" id="pmStartHour" style="width:50px"></input>&nbsp;：&nbsp;<input type="text" id="pmStartMinute" style="width:50px"></input></td>
+							</tr>
+							<tr>
+								<td>下午下班时间 (hh:mm)</td>
+								<td class="width_15"><input type="text" id="pmEndHour" style="width:50px"></input>&nbsp;：&nbsp;<input type="text" id="pmEndMinute" style="width:50px"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">备注</td>
+								<td class="width_15"><textarea id="remark" class="width_10"></textarea></td>
+							</tr>
+							<tr><td colspan="2">
+							                    <input class="bt" type="button" value="确定" id="comfirm"></input>
+							                    <input class="bt" type="button" value="返回" id="back"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+			</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

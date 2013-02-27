@@ -1,0 +1,242 @@
+package oa.model.table;
+
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="ticketId")
+@Entity
+@Table(name="tb_ticket")
+public class TicketApply {
+	@Id
+	private String ticketId;//Ticket序号
+	private String userId;//用户ID
+	private String userName;//用户名
+	private String userDept; //部门
+	private String depature; //出发地
+	private String destination;//到达地
+	private String depatureTime;//出发时间
+	private String trafficWay;//出行方式
+	private String trafficType;//票务类型
+	private String telephone;//电话
+	private String ticketInfo;//候选方案
+	private String bookReason;//出行理由
+	private Integer headerAttitude;//部门主管的意见
+	private String personInCharge;//部门负责人
+	private String secondManager;//部门第二负责人
+	private String ticketTime;
+	private String ticketNum;
+	private String approvalAttitude1;
+	private String approvalAttitude2;
+	private String clientName;
+	private String clientInfo;
+    private String applyId;//申请人
+    private String approval1Name;//部门审批人
+    private Date approval1Date;//部门主管审批日期
+    private String approval2Name;//分管领导审批人
+    private Date approval2Date;//分管领导审批日期
+    private String confirmName;
+    private Date confirmDate;
+	
+	//getter和setter方法
+	@Id  
+	public String getTicketId() {
+		return this.ticketId;
+	}
+	public void setTicketId(String ticketId) {
+		this.ticketId = ticketId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserDept() {
+		return userDept;
+	}
+	public void setUserDept(String userDept) {
+		this.userDept = userDept;
+	}
+	public String getDepature() {
+		return depature;
+	}
+	public void setDepature(String depature) {
+		this.depature = depature;
+	}
+	public String getDestination() {
+		return destination;
+	}
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
+	public String getDepatureTime() {
+		return depatureTime;
+	}
+	public void setDepatureTime(String depatureTime) {
+		this.depatureTime = depatureTime;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+	public String getTicketInfo() {
+		return ticketInfo;
+	}
+	public void setTicketInfo(String ticketInfo) {
+		this.ticketInfo = ticketInfo;
+	}
+	public String getBookReason() {
+		return bookReason;
+	}
+	public void setBookReason(String bookReason) {
+		this.bookReason = bookReason;
+	}
+
+	public String getTrafficWay() {
+		return trafficWay;
+	}
+	public void setTrafficWay(String trafficWay) {
+		this.trafficWay = trafficWay;
+	}
+	public String getTrafficType() {
+		return trafficType;
+	}
+	public void setTrafficType(String trafficType) {
+		this.trafficType = trafficType;
+	}
+	public Integer getHeaderAttitude() {
+		return headerAttitude;
+	}
+	public void setHeaderAttitude(Integer headerAttitude) {
+		this.headerAttitude = headerAttitude;
+	}
+	public String getPersonInCharge() {
+		return personInCharge;
+	}
+	public void setPersonInCharge(String personInCharge) {
+		this.personInCharge = personInCharge;
+	}
+	public String getSecondManager() {
+		return secondManager;
+	}
+	public void setSecondManager(String secondManager) {
+		this.secondManager = secondManager;
+	}
+	
+	public String getTicketTime() {
+		return ticketTime;
+	}
+	public void setTicketTime(String ticketTime) {
+		this.ticketTime = ticketTime;
+	}
+	public String getTicketNum() {
+		return ticketNum;
+	}
+	public void setTicketNum(String ticketNum) {
+		this.ticketNum = ticketNum;
+	}
+	public String getApprovalAttitude1() {
+		return approvalAttitude1;
+	}
+	public void setApprovalAttitude1(String approvalAttitude1) {
+		this.approvalAttitude1 = approvalAttitude1;
+	}
+	public String getApprovalAttitude2() {
+		return approvalAttitude2;
+	}
+	public void setApprovalAttitude2(String approvalAttitude2) {
+		this.approvalAttitude2 = approvalAttitude2;
+	}
+	public String getClientName() {
+		return clientName;
+	}
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+	public String getClientInfo() {
+		return clientInfo;
+	}
+	public void setClientInfo(String clientInfo) {
+		this.clientInfo = clientInfo;
+	}
+	
+	public String getApplyId() {
+		return applyId;
+	}
+	public void setApplyId(String applyId) {
+		this.applyId = applyId;
+	}
+	
+	public String getApproval1Name() {
+		return approval1Name;
+	}
+	public void setApproval1Name(String approval1Name) {
+		this.approval1Name = approval1Name;
+	}
+	@Temporal(TemporalType.DATE)
+	public Date getApproval1Date() {
+		return approval1Date;
+	}
+	public void setApproval1Date(Date approval1Date) {
+		this.approval1Date = approval1Date;
+	}
+	public String getApproval2Name() {
+		return approval2Name;
+	}
+	public void setApproval2Name(String approval2Name) {
+		this.approval2Name = approval2Name;
+	}
+	@Temporal(TemporalType.DATE)
+	public Date getApproval2Date() {
+		return approval2Date;
+	}
+	public void setApproval2Date(Date approval2Date) {
+		this.approval2Date = approval2Date;
+	}
+	public String getConfirmName() {
+		return confirmName;
+	}
+	public void setConfirmName(String confirmName) {
+		this.confirmName = confirmName;
+	}
+	@Temporal(TemporalType.DATE)
+	public Date getConfirmDate() {
+		return confirmDate;
+	}
+	public void setConfirmDate(Date confirmDate) {
+		this.confirmDate = confirmDate;
+	}
+	@Override
+	public String toString() {
+		return "TicketApply [ticketId=" + ticketId + ", userId=" + userId
+				+ ", userName=" + userName + ", userDept=" + userDept
+				+ ", depature=" + depature + ", destination=" + destination
+				+ ", depatureTime=" + depatureTime + ", trafficWay="
+				+ trafficWay + ", trafficType=" + trafficType + ", telephone="
+				+ telephone + ", ticketInfo=" + ticketInfo + ", bookReason="
+				+ bookReason + ", headerAttitude=" + headerAttitude
+				+ ", personInCharge=" + personInCharge + ", secondManager="
+				+ secondManager + ", ticketTime=" + ticketTime + ", ticketNum="
+				+ ticketNum + ", approvalAttitude1=" + approvalAttitude1
+				+ ", approvalAttitude2=" + approvalAttitude2 + ", clientName="
+				+ clientName + ", clientInfo=" + clientInfo + ", applyId="
+				+ applyId + "]";
+	}
+	
+}

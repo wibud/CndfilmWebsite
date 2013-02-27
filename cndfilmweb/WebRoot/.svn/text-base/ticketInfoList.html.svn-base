@@ -1,0 +1,455 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>OA系统</title>
+    <link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="./scripts/js/page.js"></script>
+    <script type="text/javascript">
+	    showIncludeFile();
+	    showIncludeThickBoxAjaxingFile();
+	</script>
+ 	<script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript">
+	    $(document).ready(function(){
+		    init();
+			$(".tabs").tabs({
+					collapsible: true,
+					selected: 0
+			});	
+			$("#ticket").click(function() {
+				location.href = "ticketInfoList.html";
+			});
+			$("#overtime").click(function() {
+				location.href = "overtimeInfoList.html";
+			});			
+			$("#vacancy").click(function() {
+				location.href = "vacancyInfoList.html";
+			});
+			$("#outBound").click(function() {
+				location.href = "outBoundApplyList.html";
+			});		    
+			//翻页
+			var href = location.href;
+			var page = href.split("page=")[1];
+			if(page)
+			   page = page.split("&")[0].split("#")[0];
+			if(!page || page<1)
+			   page=1;
+			var pageCount = 0;
+			var count = 0;
+			var j=0;
+			var url = "/listAll";
+			
+			var currentuserId="";
+			var currentuserName="";
+			$.post('/currentUserDetail',
+					{},
+				    function(xml){
+				        currentuserId=$(xml).find("userId").text();
+				        currentuserName=$(xml).find("userName").text();
+				    },
+				    'xml');
+			
+			var permission="";
+			var acceptpermission="";
+			$.post('/getPermission',
+				   {},
+				   function(xml) {
+					    permission = $(xml).find("result").text();
+					    acceptpermission = $(xml).find("permission").find("ticketApplyInfo").find("accept").text();
+				   },
+				   'xml');
+			
+			$.fn.showData = function(url,page2){
+			   page = page2;
+			   urlT = url+"?page="+page2;
+			   $(this).handlerData(
+			            urlT,
+						function(xml){
+							$("#ticketInfoList tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+								}
+							$(xml).find("item").each(function(i){
+							     var ticketId = $(this).find("ticketId").text();
+								 var userId	= $(this).find("userId").text();
+								 var userName = $(this).find("username").text();
+								 var userDept = $(this).find("deptName").text();
+								 var depature = $(this).find("depature").text();
+								 var destination = $(this).find("destination").text();
+								 var depatureTime = $(this).find("depatureTime").text();
+								 var trafficWay = $(this).find("trafficWay").text();
+								 var way="";
+								 var trafficType =  $(this).find("trafficType").text();
+								 var ticketInfo = $(this).find("ticketInfo").text();
+								 var bookReason = $(this).find("bookReason").text();
+								 var telephone = $(this).find("telephone").text();
+								 var headerAttitude= $(this).find("headerAttitude").text();//领导意见（主管）
+								 var state="";
+								 var personInCharge = $(this).find("personInCharge").text();
+								 var secondManager = $(this).find("secondManager").text();
+								 var approval2Name=$(this).find("approval2Name").text();
+								 var confirmName=$(this).find("confirmName").text();
+								 var applyId = $(this).find("applyId").text();
+								 var applyName=$(this).find("applyName").text();
+								 
+								  switch(headerAttitude){
+								    case '0':state="等待部门经理/分管领导审批";break;
+								    case '1':state="等待人事部审批";break;
+								    case '2':state="等待申请人确认";break;
+								    case '3':state="申请人已确认";break;
+								    case '-1':state="部门经理/分管领导审批不通过";break;
+								    case '-2':state="人事部审批不通过";break;
+								    case '-3':state="订票被拒绝";break;
+								    default:state="";break;
+								  }
+								 
+								 if(headerAttitude=="3"){
+								    if(applyName==confirmName){
+								       state="申请人已确认";
+								    }else if(userName==confirmName){
+								       state="订票人已确认";
+								    }
+								 }
+								 switch(trafficWay){
+								    case '11':way="飞机-单程";break;
+								    case '12':way="飞机-双程";break;
+								    case '21':way="普通火车-单程";break;
+								    case '22':way="普通火车-双程";break;
+								    case '31':way="高铁-单程";break;
+								    case '32':way="高铁-双程";break;
+								    case '41':way="动车-单程";break;
+								    case '42':way="动车-双程";break;
+								    case '51':way="长途汽车-单程";break;
+								    case '52':way="长途汽车-双程";break;
+								    default:way="";break; 
+								 }
+								 
+								 var col = Number(id)+Number(startWith);
+								 var tmp="ticketId="+ticketId;
+								 var bookingInfo1="<tr class='content' id='"+ticketId+"'><td>"+(i+1)+"</td><td>"+userName+"</td><td>"+userDept+"</td><td>"+depature+"</td><td>"+destination+"</td><td>"+depatureTime+"</td><td>"+way+"</td><td>"+trafficType+"</td><td>"+telephone+"</td><td id='headerAttitude'>"+state+"</td>";
+								 
+								 var bookingInfo2="<td><input  type='image' src='./images/oa_detail.png'  title='查看详情' onclick=\"javascript: location.href=encodeURI(\'ticketApplyDetail.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+						     	if(headerAttitude=="-1" || headerAttitude=="-2" || headerAttitude=="-3"){
+						     	    var bookingInfo3="<td id='approval1'><input type='button' value='修改' title='修改' class='approval1'></input></td>"+"<td id='personInCharge' style='display:none'>"+personInCharge+"<td id='secondManager' style='display:none'>"+secondManager+"</td><td id='applyId' style='display:none'>"+applyId+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+						     	}else if(headerAttitude=="2"){
+						     	    var bookingInfo3="<td id='approval1'><input type='button' value='确认' title='确认' class='approval1'></input></td>"+"<td id='personInCharge' style='display:none'>"+personInCharge+"<td id='secondManager' style='display:none'>"+secondManager+"</td><td id='applyId' style='display:none'>"+applyId+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+						     	}else{
+						     	    var bookingInfo3="<td id='approval1'><input type='button' value='审批' title='审批' class='approval1'></input></td>"+"<td id='personInCharge' style='display:none'>"+personInCharge+"<td id='secondManager' style='display:none'>"+secondManager+"</td><td id='applyId' style='display:none'>"+applyId+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+						     	}
+						     	
+						     	if(applyId==currentuserId && headerAttitude=="0"){
+						     	    var bookingInfo4="<td><input  type='image' src='./images/oa_edit.gif'  title='修改' onclick=\"javascript: location.href=encodeURI(\'editTicketApply.html?"+tmp+"&page1="+page+"\')\"></input></td><td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+						     	}else if(applyId==currentuserId && (headerAttitude=="-1"||headerAttitude=="-2"||headerAttitude=="-3")){
+						     	    var bookingInfo4="<td><input  type='image' src='./images/oa_edit_g.gif'></input></td><td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+						     	}else if(headerAttitude=="2" && acceptpermission=="1" && currentuserName==approval2Name){
+						     	    var bookingInfo4="<td><input  type='image' src='./images/oa_edit.gif'  title='修改' onclick=\"javascript: location.href=encodeURI(\'acceptTicketApply2.html?"+tmp+"&page1="+page+"\')\"></input></td><td><input type='image' src='./images/oa_delete_g.png' title='删除'/></td>"; 
+						     	}else{
+						     	    var bookingInfo4="<td><input  type='image' src='./images/oa_edit_g.gif'></input></td><td><input type='image' src='./images/oa_delete_g.png' title='删除'/></td>";
+						     	}
+								 $("#ticketInfoList").append(bookingInfo1+bookingInfo2+bookingInfo4+bookingInfo3);	
+								 id++;	
+								 j++;						 
+							});
+					//		$("#pageNav").showPageNav(page2, pageCount, count, url);
+							pageNav(page2,pageCount,count,url,"#pageNav");
+							register();
+							register1();
+					}
+			   );
+			};
+			$(this).showData(url,page);
+			function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="ticketInfoList.html?page="+page;
+					}
+				}
+				
+				//注册按钮
+				function register() {
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/deleteTicket', {'ticketId':id}, delCallback, 'xml');
+		                	}
+		                });
+	               });
+	            }
+	            
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+				//		location.href="ticketSearchList.html?page="+page;
+						location.href="ticketInfoList.html?page="+page;
+					}
+				}
+				
+				function register1(){
+				     var currentuserId;
+				     var currentuserdeptName;
+				     $.post('/currentUserDetail',
+						                 {},
+						                 function(xml){
+				                             currentuserId=$(xml).find("userId").text();
+				                             currentuserDeptName=$(xml).find("userDeptName").text();
+				     $(".approval1").each(function(index){
+							var $this = $(this);
+							var id = $this.parents('.content').attr('id');
+							var row=$this.parent("td").parent("tr");
+							var content=$("#headerAttitude",row).text();
+						    var state1="等待部门经理/分管领导审批";
+						    var state2="等待人事部审批";
+						    var state3="等待申请人确认";
+						    
+						    var state4="部门经理/分管领导审批不通过";
+						    var state5="人事部审批不通过";
+						    var state6="申请人已确认";
+						    //var currentuserId;
+						    var personInCharge=$("#personInCharge",row).text();
+						    var secondManager=$("#secondManager",row).text();
+						    var applyId =$("#applyId",row).text();
+						    var userId =$("#userId",row).text();
+						    
+						    $this.attr("disabled", true);
+						    if((content==state1)&&(personInCharge==currentuserId ||secondManager==currentuserId)){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="ticketId="+id;
+									    location.href="/approvalTicket.html?"+tmp;
+			                        });
+						    }
+						    
+						    if(content==state1 && currentuserDeptName=="公司高管"){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="ticketId="+id;
+									    location.href="/approvalTicket.html?"+tmp;
+			                        });
+						    }
+						    
+						    if(content==state2){
+						           $.post('/getPermission',
+				                          {},
+				                          function(xml) {
+					                            var permission1 = $(xml).find("result").text();
+					                            var ticketpermission = $(xml).find("permission").find("ticketApplyInfo").find("accept").text();
+					                            if (ticketpermission == 0) {
+							                        $this.attr("disabled", true);
+						                        }else{
+						                            $this.attr("disabled", false);
+						                        }
+						                   },
+						            'xml');
+						            
+						            $this.click(function(){
+							            tmp="ticketId="+id;
+									    location.href="/acceptTicketApply.html?"+tmp;
+			                        });
+						           
+						    }
+						    if(content==state3 && (applyId==currentuserId || userId==currentuserId)){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="ticketId="+id;
+									    location.href="/verifyTicket.html?"+tmp;
+			                         });
+						    }
+						     if((applyId==currentuserId || userId==currentuserId) && (content==state4 || content==state5)){
+						           $this.attr("disabled", false);
+						           $this.click(function(){
+							            tmp="ticketId="+id;
+									    location.href="/editTicketApply.html?"+tmp;
+			                       });
+						    }
+		               });
+		               },
+					'xml');
+				}
+		});  
+	</script>
+
+    <link href="style/css/global.css" rel="stylesheet" type="text/css" />
+</head>
+
+	<body>
+		<div id="container2">
+			<div id="header" style="background: url(../../images/bg_banner5.jpg)"
+				class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：日常管理&gt;&nbsp;
+										<strong>订票管理</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<img src="images/bg_yh.gif" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a href="ticketApplySearch.html" id="seekDept">订票单查询</a>
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<img src="images/sq_img_09.png" width="15" height="18" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a href="addTicketApply.html" id="addDept">申请订票</a>
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<img src="images/bg_fh.gif" width="18" height="18" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a href="javascript:history.back()">返回</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<div class="tabs" id="lable1"
+							style="position: relative; z-index: 0; background-color: #F5F5F5">
+							<ul>
+								<li>
+									<a id="ticket" href="#tabs-1">订票管理</a>
+								</li>
+								<li>
+									<a id="overtime" href="#tabs-1">加班管理</a>
+								</li>
+								<li>
+									<a id="vacancy" href="#tabs-1">请假管理</a>
+								</li>
+								<li>
+									<a id="outBound" href="#tabs-1">外出管理</a>
+								</li>
+							</ul>
+							<div id="#tabs-1">
+								<table id="ticketInfoList" class="listTable"
+									style="width: 100%" border="0">
+									<tr>
+										<th width="40">
+											序号
+										</th>
+										<th width="50">
+											姓名
+										</th>
+										<th width="80">
+											部门
+										</th>
+										<th width="70">
+											出发地
+										</th>
+										<th width="70">
+											目的地
+										</th>
+										<th width="90">
+											出行日期
+										</th>
+										<th width="80">
+											出行方式
+										</th>
+										<th width="100">
+											票务类型
+										</th>
+										<th width="80">
+											联系电话
+										</th>
+										<th width="180">
+											审批状态
+										</th>
+										<th colspan="4">
+											操作
+										</th>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+					</div>
+					<div id="sq_di">
+						<div id="pageNav"></div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+				<div id="footer"></div>
+			</div>
+		</div>
+	</body>
+</html>
+

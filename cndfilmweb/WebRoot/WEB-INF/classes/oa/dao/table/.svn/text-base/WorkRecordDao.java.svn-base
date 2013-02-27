@@ -1,0 +1,140 @@
+package oa.dao.table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.WorkRecord;
+import oa.util.ResultList;
+import java.util.List;
+@SuppressWarnings("unchecked")
+public class WorkRecordDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(WorkRecordDao.class);
+	// property constants
+	public static final String WORKRECORD_ID="workrecord_id";		   	
+	public static final String USER_ID="user_id";	 	  	
+	public static final String DEPT_ID="dept_id";		    	
+	public static final String CREATE_TIME="create_time";		 	
+	public static final String FINISH_TASK="finish_task";	    	
+	public static final String IDEA="idea";         
+	public static final String REMARK="remark";  
+	public static final String EXIST_MATTER="exist_matter"; 
+	
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(WorkRecord instance) {
+		log.debug("saving WorkRecord instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(WorkRecord instance) {
+		log.debug("deleting WorkRecord instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(WorkRecord instance) {
+		log.debug("update WorkRecord instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public WorkRecord findById(String id) {
+		log.debug("getting WorkRecord instance with id: " + id);
+		try {
+			WorkRecord instance = (WorkRecord) super.get("oa.model.table.WorkRecord", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public ResultList<WorkRecord> findByExample(Integer pageNo, WorkRecord workRecord) {
+		log.debug("find WorkRecord instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.WorkRecord", workRecord);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<WorkRecord> findAll(Integer pageNo) {
+		log.debug("finding all WorkRecord instances");
+		try {
+			return super.find(pageNo, "oa.model.table.WorkRecord");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<WorkRecord> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding WorkRecord instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.WorkRecord", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<WorkRecord> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding WorkRecord instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.WorkRecord", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public List<WorkRecord> findByHQL(Integer pageNo, String hql){
+		log.debug("finding WorkRecord instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding count instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+			}
+	
+}
+
+
+
+

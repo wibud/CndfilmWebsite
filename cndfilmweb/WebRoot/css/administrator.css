@@ -1,0 +1,129 @@
+.shortcutbutton{
+	height:100px;
+	background:url(../img/shortcut-button-bg.gif) no-repeat;
+	padding-top:15px;
+	
+}
+
+.shortcutbutton:hover{
+	background:#fff;
+}
+
+.accordion-toggle{
+	background:url(../img/bg_heading.png) repeat-x bottom left ;
+	font-size:12px;
+	font-weight:bold;
+	color:#222;
+}
+
+.accordion-toggle:hover{
+	text-decoration:none;
+	
+}
+
+.accordion-inner{
+	background-color:#fff;
+}
+
+.popover-title{
+	color:#ee5f5b;
+	background-color:#fff;
+}
+th{
+	white-space:nowrap;
+}
+
+a{
+	color:#222;
+}
+
+a:hover{
+	text-decoration:none;
+	color:#555;
+}
+.tooltip {
+	font-size:12px;
+}
+
+/*************** Pagination ***************/
+
+.myPagination {
+	text-align: right;
+	padding: 20px 0 5px 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+.myPagination a {
+	margin: 0 5px 0 0;
+	padding: 3px 6px;
+}
+
+.myPagination a.number {
+	border: 1px solid #ddd;
+	-webkit-border-radius: 3px 3px 3px 3px;
+     -moz-border-radius: 3px 3px 3px 3px;
+          border-radius: 3px 3px 3px 3px;
+}
+
+.myPagination a.current {
+	background: #469400 url('../img/bg-button-green.gif') top left repeat-x !important;
+	border-color: #459300 !important;
+	color: #fff !important;
+}
+				
+.myPagination a.current:hover {
+	text-decoration: underline;
+}
+
+.MultiFile-wrap{
+	width:400px;	
+}
+
+.input-xxlarge{
+	width:400px;	
+}
+
+.bulk-actions {
+	padding: 15px 0 5px 0;
+}
+
+.tfoot{
+	width:100%;	
+}
+
+.sp{
+	background:url(../img/sp.png) repeat-x bottom;
+	padding-bottom:20px;
+	margin-bottom:30px;
+}
+
+.pull-text-right{
+	text-align:right;
+}
+
+.pull-text-left{
+	text-align:left;
+}
+
+.pt10{
+	padding-top:10px;	
+}
+
+.pt30{
+	padding-top:30px;	
+}
+
+.fixed{
+	position:fixed;
+}
+
+.detail,
+.delete,
+.edit{
+	cursor: pointer;	
+}
+
+#galleria{
+	height:500px
+}
+

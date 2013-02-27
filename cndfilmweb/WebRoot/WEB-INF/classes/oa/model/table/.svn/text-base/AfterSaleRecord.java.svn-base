@@ -1,0 +1,98 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="record_id")
+@Entity
+@Table(name="tb_aftersalerecord")
+public class AfterSaleRecord {
+	@Id
+	private String record_id;		//售后服务纪录标识
+	private String feedbackpeople;		//反馈人姓名
+	private String customername;			//客户姓名
+	private String customertel;			//客户电话
+	private String customerunit;			//客户单位
+	private String customertype;			//用户类型
+	private String description;		//问题描述
+	private String trackpeople;		//问题跟踪人
+	private String currentdealer;	//当前处理人
+	private String result;    //处理结果
+	private String reporttime;      //上报时间
+	private String solveTime;       //解决时间
+	
+	public String getRecord_id() {
+		return record_id;
+	}
+	public void setRecord_id(String recordId) {
+		record_id = recordId;
+	}
+	public String getFeedBackPeople() {
+		return feedbackpeople;
+	}
+	public void setFeedBackPeople(String feedbackpeople) {
+		this.feedbackpeople = feedbackpeople;
+	}
+	public String getCustomerName() {
+		return customername;
+	}
+	public void setCustomerName(String customername) {
+		this.customername = customername;
+	}
+	public String getCustomerTel() {
+		return customertel;
+	}
+	public void setCustomerTel(String customertel) {
+		this.customertel = customertel;
+	}
+	public String getCustomerUnit() {
+		return customerunit;
+	}
+	public void setCustomerUnit(String customerunit) {
+		this.customerunit = customerunit;
+	}
+	public String getCustomertype() {
+		return customertype;
+	}
+	public void setCustomertype(String customertype) {
+		this.customertype = customertype;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getTrackPeople() {
+		return trackpeople;
+	}
+	public void setTrackPeople(String trackpeople) {
+		this.trackpeople = trackpeople;
+	}
+	public String getCurrentDealer() {
+		return currentdealer;
+	}
+	public void setCurrentDealer(String currentdealer) {
+		this.currentdealer = currentdealer;
+	}
+	public String getResult() {
+		return result;
+	}
+	public void setResult(String result) {
+		this.result = result;
+	}
+	public String getReportTime() {
+		return reporttime;
+	}
+	public void setReportTime(String reporttime) {
+		this.reporttime = reporttime;
+	}
+	public void setSolveTime(String solveTime) {
+		this.solveTime = solveTime;
+	}
+	public String getSolveTime() {
+		return solveTime;
+	}
+}

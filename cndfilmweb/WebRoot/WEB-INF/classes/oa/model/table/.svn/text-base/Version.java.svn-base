@@ -1,0 +1,242 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.bean.version.VersionBean;
+import oa.dao.DatabaseAnno;
+import oa.util.CommonUtil;
+
+@DatabaseAnno(id = "version_id")
+@Entity
+@Table(name = "tb_version")
+public class Version {
+	@Id
+	private String version_id; // 版本标识
+	private String versionName; // 版本名称
+	private String deptId; // 部门ID
+	private String deptName; // 部门名称
+	private String number; // 版本号
+	private String versionType; // 版本类型
+	private String productType; // 产品类型
+	private String manager; // 版本负责人
+	private String managerName; // 版本负责人姓名
+	private String update_info; // 版本更新信息
+	private String updateReport; // 更新报告
+	private String member; // 测试成员
+	private String bug; // 仍存在的问题
+	private String upload_on; // 上传时间
+	private String path; // 文件路径
+	private String status; // 版本状态
+	private String os; // 适用操作系统
+	private String des; // 备注
+	private String testReport; // 测试报告路径
+	private String subVersion; // 子版本
+	private String releaseOn; // 发布时间
+	private String fileSize;
+
+	public VersionBean toBean() {
+		VersionBean versionBean = new VersionBean();
+		versionBean.setVersion_id(CommonUtil.noNullString(version_id)); // 版本标识
+		versionBean.setVersionName(CommonUtil.noNullString(versionName)); // 项目名称
+		versionBean.setNumber(CommonUtil.noNullString(number)); // 版本号
+		versionBean.setVersionType(CommonUtil.noNullString(versionType)); // 版本类型
+		versionBean.setProductType(CommonUtil.noNullString(productType)); // 产品类型
+		versionBean.setDeptId(CommonUtil.noNullString(deptId)); // 部门ID
+		versionBean.setDeptName(CommonUtil.noNullString(deptName)); // 部门名称
+		versionBean.setManagerId(CommonUtil.noNullString(manager));// 版本负责人ID
+		versionBean.setManagerName(CommonUtil.noNullString(managerName));// 版本负责人姓名
+		versionBean.setUpdate(CommonUtil.noNullString(update_info)); // 版本更新信息
+		versionBean.setUpdateReport(CommonUtil.noNullString(updateReport)); // 版本更新报告路径
+		versionBean.setMember(CommonUtil.noNullString(member)); // 测试人员
+		versionBean.setBug(CommonUtil.noNullString(bug)); // 仍存在的问题
+		versionBean.setTestReport(CommonUtil.noNullString(testReport));
+		versionBean.setUpload_on(CommonUtil.noNullString(upload_on)); // 上传时间
+		versionBean.setPath(CommonUtil.noNullString(path)); // 文件路径
+		versionBean.setStatus(CommonUtil.noNullString(status)); // 版本状态
+		versionBean.setOs(CommonUtil.noNullString(os)); // 适用的操作系统
+		versionBean.setDes(CommonUtil.noNullString(des)); // 备注
+		versionBean.setSubVersion(CommonUtil.noNullString(subVersion)); // 子版本
+		versionBean.setReleaseOn(CommonUtil.noNullString(releaseOn));// 发布时间
+		versionBean.setFileSize(CommonUtil.noNullString(fileSize));
+		return versionBean;
+	}
+	
+	public String getVersion_id() {
+		return version_id;
+	}
+
+	public void setVersion_id(String version_id) {
+		this.version_id = version_id;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getVersionType() {
+		return versionType;
+	}
+
+	public void setVersionType(String versionType) {
+		this.versionType = versionType;
+	}
+
+	public String getProductType() {
+		return productType;
+	}
+
+	public void setProductType(String productType) {
+		this.productType = productType;
+	}
+
+	public String getManager() {
+		return manager;
+	}
+
+	public void setManager(String manager) {
+		this.manager = manager;
+	}
+
+	public String getUpdate_info() {
+		return update_info;
+	}
+
+	public void setUpdate_info(String update_info) {
+		this.update_info = update_info;
+	}
+
+	public String getUpdateReport() {
+		return updateReport;
+	}
+
+	public void setUpdateReport(String updateReport) {
+		this.updateReport = updateReport;
+	}
+
+	public String getBug() {
+		return bug;
+	}
+
+	public void setBug(String bug) {
+		this.bug = bug;
+	}
+
+	public String getUpload_on() {
+		return upload_on;
+	}
+
+	public void setUpload_on(String upload_on) {
+		this.upload_on = upload_on;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getDes() {
+		return des;
+	}
+
+	public void setDes(String des) {
+		this.des = des;
+	}
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public void setVersionName(String versionName) {
+		this.versionName = versionName;
+	}
+
+	public String getMember() {
+		return member;
+	}
+
+	public void setMember(String member) {
+		this.member = member;
+	}
+
+	public String getOs() {
+		return os;
+	}
+
+	public void setOs(String os) {
+		this.os = os;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
+
+	public String getManagerName() {
+		return managerName;
+	}
+
+	public void setManagerName(String managerName) {
+		this.managerName = managerName;
+	}
+
+	public String getTestReport() {
+		return testReport;
+	}
+
+	public void setTestReport(String testReport) {
+		this.testReport = testReport;
+	}
+
+	public String getSubVersion() {
+		return subVersion;
+	}
+
+	public void setSubVersion(String subVersion) {
+		this.subVersion = subVersion;
+	}
+
+	public String getReleaseOn() {
+		return releaseOn;
+	}
+
+	public void setReleaseOn(String releaseOn) {
+		this.releaseOn = releaseOn;
+	}
+
+	public String getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+
+}

@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+   <title>OA系统</title>
+   <!--导入JavaScript  -->
+   <script type="text/javascript" src="./scripts/js/page.js"></script>
+   <script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+   </script>
+   <script type="text/javascript">
+       $(document).ready(function(){
+	       init();
+ 
+           var userId="";
+           var userName="";
+           var deptId="";
+           var applyTime="";
+           var applyType="";
+           var applyReason="";
+           var applyStartTime="";
+           var applyEndTime="";
+           var totalDay="";
+           var remark="";
+           var personInCharge="";
+           var secondManager="";
+           
+           $.post('/currentUserDetail',
+					{},
+					function(xml){
+				       userId=$(xml).find("userId").text();
+				       deptId=$(xml).find("userDeptId").text();
+				       userName=$(xml).find("userName").text();
+				       $.post('/systemDeptSearch',
+	                     {'deptId':deptId},
+	                      function(xml){
+	                          $(xml).find("item").each(function(){
+	                                   personInCharge=$(this).find("personInCharge").text();
+	                                   secondManager=$(this).find("secondManager").text();
+	                          }); 
+	                     },
+	                    'xml');
+				    },
+		  'xml');
+           
+	       $('#confirm').click(function(){
+	              applyReason=$('#applyReason').val();
+	              applyType=$('#applyType').val(); 
+	              remark=$('#remark').val();
+	              applyStartTime=$("#applyStartTime").val();
+	              applyEndTime=$("#applyEndTime").val();
+	              
+	              //计算总天数
+	              var startTime=applyStartTime.replace(/-/g,"/");
+	              var endTime=applyEndTime.replace(/-/g,"/");
+                  var day1=new Date(startTime);
+                  var day2=new Date(endTime);
+                  var time=day2.getTime()-day1.getTime();
+                  var days=parseInt(time/(1000 * 60 * 60 * 24))+1;
+                  totalDay=days;
+                  
+                  //获取当前时间
+                  var now = new Date();
+                  var year = now.getFullYear();
+                  var temp=now.getMonth();
+                  var hour = now.getHours();
+                  if(Number(hour)<10){
+                     hour = "0"+hour;
+                  }
+                  var minut =now.getMinutes();
+                  if(Number(minut)<10){
+                     minut = "0"+minut;
+                  }
+                  var second = now.getSeconds();
+                  if(Number(second)<10){
+                     second = "0"+second;
+                  }
+                  var month=Number(temp)+1;
+                  if(Number(month)<10){
+                     month="0"+month;
+                  }
+                  var day=now.getDate();
+                  if(Number(day)<10){
+                     day="0"+day;
+                  }
+                  applyTime=year+"-"+month+"-"+day+" "+hour+":"+minut+":"+second;
+                  
+	              $.post('/addVacancyApply',{'deptId':deptId,'userId':userId,'userName':userName,'applyType':applyType,'applyReason':applyReason,'applyTime':applyTime,'applyStartTime':applyStartTime,'applyEndTime':applyEndTime,'totalDay':totalDay,'remark':remark,'personInCharge':personInCharge,'secondManager':secondManager},callback, 'xml');
+	              function callback(databack){			         
+				           var recode = $(databack).find("recode").text();
+						   if(recode != 0){
+							  alert($(databack).find("errormsg").text());
+						   }else {
+						    alert("添加成功！");
+							location.href='vacancyInfoList.html';
+						   }
+				  }  
+				  
+	       });
+	       function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   } 
+	   });
+   </script>
+   
+</head>
+
+   <body>
+		<div id="container2">
+		  <div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		    <div id="content">
+	          <div id="main">
+	           <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：请假管理 &gt;&nbsp;
+										<strong>申请请假</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>请假申请单</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r">
+					<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+					   <tr>
+					   <td width="30%"><label class="required">*</label>请假类别：</td>
+					   <td width="70%"><select id="applyType" style="width: 180px">
+					                       <option value="" selected="selected"></option>
+					                       <option value="事假">事假</option>
+					                       <option value="病假">病假</option>
+					                       <option value="婚假">婚假</option>
+					                       <option value="丧假">丧假</option>
+					                       <option value="调休">调休</option>
+					                       <option value="其他">其他(备注中说明)</option>
+					                       </select></td>
+					   </tr>
+					   <tr>
+                       <td><label class="required">*</label>请假开始时间:</td>
+                       <td><input readonly="readonly" id="applyStartTime" onclick="setday(this)" size="30"/><p/>
+                       </td>
+                       </tr>
+                       <tr>
+                       <td><label class="required">*</label>请假结束时间:</td>
+                       <td><input readonly="readonly" id="applyEndTime" onclick="setday(this)" size="30"/><p/>
+                       </td>
+                       </tr>
+                       <tr>
+                       <td>请假原因：</td>
+                       <td><textarea id="applyReason" cols="25" rows="4"></textarea></td>
+                       </tr>
+                       
+                       <tr>
+                       <td>备注：</td>
+                       <td><textarea id="remark" cols="25" rows="4"></textarea></td>
+                       </tr>
+				       </table>
+				       <br/>
+				       <input class="bt" type="button" id="confirm" value="确定"/>
+					   <input class="bt" type="button" value="返回" onclick="javascript:history.back()"/>
+			    </div>
+			  </div>
+			  <div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+   </body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+		
+		   $(document).ready(function(){
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var applyId = href.split("applyId=")[1].split("&")[0].split("#")[0];
+				/*var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}*/
+				
+				var currentuserName;
+				$.post('/currentUserDetail',
+					{},
+					function(xml){
+				       currentuserName=$(xml).find("userName").text();
+				    },
+				    'xml');
+				
+				$.post('/overtimelistById',
+				       {'applyId':applyId},
+					   function(xml) {
+							 var userName = $(xml).find("userName").text();
+							 var userDept = $(xml).find("deptName").text();
+							 var applyTime = $(xml).find("applyTime").text();
+							 var applyReason = $(xml).find("applyReason").text();
+							 var applyStartTime = $(xml).find("applyStartTime").text();
+							 var applyEndTime = $(xml).find("applyEndTime").text();
+							 var totalHour = $(xml).find("totalHour").text();
+							 var remark =  $(xml).find("remark").text();
+							 var bmJudgement = $(xml).find("bmJudgement").text();
+							 var approval1Name="";
+							 var approval2Name="";
+							 var approval3Name="";
+								 
+				            $("#userName").text(userName);
+				            $("#userDept").text(userDept);
+				            $("#applyTime").text(applyTime);
+				            $("#applyStartTime").text(applyStartTime);
+				            $("#applyEndTime").text(applyEndTime);
+				            $("#applyReason").text(applyReason);
+				            $("#totalHour").text(totalHour);
+				            $("#remark").text(remark);
+				            
+			                $("#confirm").click(function(){
+			                     var temp="";
+			                     if(bmJudgement=="等待部门主管审批"){
+			                         if($("#bmJudgement").val()=="1"){
+			                            temp="等待分管领导审批";
+			                         }else if($("#bmJudgement").val()=="0"){
+			                            temp="部门主管审批不通过";
+			                         }
+			                         approval1Name=currentuserName;
+			                     }
+			                     if(bmJudgement=="等待分管领导审批"){
+			                         if($("#bmJudgement").val()=="1"){
+			                            temp="等待人事部审批";
+			                         }else if($("#bmJudgement").val()=="0"){
+			                            temp="分管领导审批不通过";
+			                         }
+			                         approval2Name=currentuserName;
+			                     }
+			                     if(bmJudgement=="等待人事部审批"){
+			                         if($("#bmJudgement").val()=="1"){
+			                            temp="人事部审批通过";
+			                         }else if($("#bmJudgement").val()=="0"){
+			                            temp="人事部审批不通过";
+			                         }
+			                         approval3Name=currentuserName;
+			                     }
+			                      
+			                     $.post('/approvalOvertime',
+			                            {'applyId':applyId,'bmJudgement':temp,'approval1Name':approval1Name,'approval2Name':approval2Name,'approval3Name':approval3Name},
+			                            callback,
+			                            'xml');
+			                     function callback(xml){
+							            var $xml = $(xml);
+							            //这个函数从后台得到xml里面的数据
+							            var recode = Number($xml.find("recode").text());
+							            if(recode){
+								            alert($xml.find("errormsg").text());
+								            return ;
+							            }												
+							            alert("提交成功！");
+							            location.href="overtimeInfoList.html";
+
+						         }
+					             function callback(databack){
+							            var recode = $(databack).find("recode").text();
+							            if(recode!=0){
+								            alert($(databack).find("errormsg").text());
+							            }else {
+							                alert("提交成功！");
+								        location.href="overtimeInfoList.html";
+							            }
+						        }
+				          });
+			});
+                function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   }
+		   });
+		</script>
+</head>
+<body>
+      <div id="container2">
+	  <div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+		 </div>
+		 <div id="content">
+	          <div id="main">
+	           <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页&gt;&nbsp;
+										<strong>审批加班申请</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>审批加班申请</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r7">
+					<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+					   <tr>
+					   <td width="30%">申请人姓名：</td>
+					   <td width="70%"><label id="userName"></label></td>
+					   </tr>
+					   <tr>
+					   <td>申请人部门：</td>
+					   <td class="width_15"><label id="userDept"></label></td>
+					  </tr>
+					  <tr>
+					  <td>申请时间：</td>
+					  <td class="width_15"><label id="applyTime"></label></td>
+                      </tr>
+                      <tr>
+                      <td>加班开始时间：</td>
+                      <td class="width_15"><label id="applyStartTime"></label></td>
+                      </tr>
+                      <tr>
+                      <td>加班结束时间：</td>
+                      <td class="width_15"><label id="applyEndTime"></label></td>
+                      </tr>
+                      <tr>
+					  <td>加班原因：</td>
+					  <td class="width_15"><label id="applyReason"></label></td>
+					  </tr>
+					  <tr>
+					  <td>总计时长：</td>
+					  <td class="width_15"><label id="totalHour"></label></td>				
+                      </tr>
+                      <tr>
+                      <td>备注：</td>
+                      <td class="width_15"><label id="remark"></label></td>
+                      </tr>
+                      <tr>
+                      <td>您的审批意见：</td>
+                      <td><select id="bmJudgement" style="width: 180px">
+                          <option value="1" selected="selected">审批通过</option>
+                          <option value="0">审批不通过</option>
+                          </select>
+                      </td>
+                      </tr>
+                      <tr>
+                      <td>您的审批结论：</td>
+                      <td class="width_15"><textarea id="approvalAttitude1" cols="25" rows="4"></textarea></td>
+                      </tr>
+				      </table>
+				      <br/>
+				      <input class="bt" type="button" id="confirm" value="提交"/>
+					  <input class="bt" type="button" value="返回" onclick="javascript:history.back()"/>
+			    </div>
+			  </div>
+			  <div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+</body>
+</html>

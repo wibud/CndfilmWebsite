@@ -1,0 +1,24 @@
+package oa.util;
+
+import org.springframework.core.task.TaskExecutor;
+
+import oa.util.CyberRunnable;
+
+public class CyberExecutor {
+
+	private TaskExecutor executor;
+	
+	public void execute(CyberRunnable runnable){
+		executor.execute(runnable);
+	}
+
+	public TaskExecutor getExecutor() {
+		return executor;
+	}
+
+	public void setExecutor(TaskExecutor executor) {
+		this.executor = executor;
+	}
+	
+	
+}

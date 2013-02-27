@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>OA系统--导入用户信息</title>
+		<link rel="stylesheet" href="./style/css/line.css" type="text/css" media="screen" charset="utf-8" />
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+		
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	    	init();	    	
+		    function init(){
+		    	$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+		    }
+		    $("#id_imp").change(function() {
+		    	var filepath = $('#id_imp').val();
+		    	var reg = new RegExp(/\.pfx|\.p7b$/);
+				if(!filepath.match(reg)){
+						alert("请选择pfx或p7b格式的文件！");
+						$('#id_imp').val(null);
+						return;
+					}
+		    });
+
+		    $('#upload').click(function(){
+				var filepath = $('#id_imp').val();
+				if(!filepath){
+					alert("请选择文件");
+					return false;
+				}
+				//if(filepath.substring(filepath.length - 4) != ".pem"){
+				//	alert("上传文件要求为pem格式");
+				//	return false;
+				//}
+				var reg = new RegExp(/\.pfx|\.p7b$/);
+				if(!filepath.match(reg)){
+						alert("请选择pfx或p7b格式的文件！");
+						return;
+					}
+				
+				$.ajaxFileUpload({
+					url:			"uploadCert",
+					type:			"POST",
+					secureuri:		false,
+					fileElementId:	"id_imp",
+					dataType:		"xml",
+					success:		function(xml, status){
+										var recode = $(xml).find("recode").text();
+					        			if(recode != 0){
+					        				alert($(xml).find("errormsg").text());
+					        			}else {
+					        				alert("初始化成功！证书已导入！");
+					        			}
+									},
+					error:			function(data, status, e){
+										alert("初始化出错！");
+									}
+				});
+
+				return false;
+		    });
+
+		});
+
+	</script>
+
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：用户管理&gt;用户信息管理&gt;&nbsp;
+										<strong>导入用户信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+
+
+
+					</div>
+
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>导入用户信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<div>
+							<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td>
+										请选择上传文件（pfx或p7b格式）:
+									</td>
+									<td colspan="2">
+										<input name="file" type="file" id="id_imp" />
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="3">
+										<input class="bt" type="button" id="upload"
+											value="上传"></input>
+										&nbsp;&nbsp;
+										<input class="bt" type="button" value="返回"
+											onclick="javascript:history.back()"></input>
+									</td>
+								</tr>
+							</table>
+						</div>
+
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>
+

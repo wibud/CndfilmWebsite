@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+
+				
+
+				$('#comfirm').click(function(){
+					var time1       = $('#time1').val();
+					var time2      = $('#time2').val();  
+				
+				
+					
+					if($('#time1').val() == ""){
+						alert("起始时间不能为空");
+						return;
+                    }
+                    if($('#time2').val() == ""){
+						alert("终止时间不能为空");
+						return;
+                    }
+                  
+                    var tmp="time1="+time1+"&time2="+time2; 
+                	tmp=encodeURI(tmp);       
+                    location.href="/partOperationRecordList.html?"+tmp;
+
+
+				});
+                    
+		/*			function callback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							location.href="operationRecord.html";
+						}
+					}
+				});
+         */
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+//$.post是一个固定的函数用于前后台通信,里面有四个参数 第一个是上传的url 第二个是上传的参数,第三个是后台处理完回传给前台的函数，第四个是回传的类型//
+
+	/*			$.post('/operationRecord',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){
+									$("#dept_id").append("<option value=\""+$(this).find("id").text()+"\">"+$(this).find("name").text()+"</option>");
+								};
+							$("#dept_id option[value='"+dept_id+"']").attr("selected","selected");
+	   	                 },
+	                     'xml');
+				*/
+			});
+
+		</script>
+
+  </head>
+  
+  <body>
+   <div id="container">
+			<div id="header"></div>
+			
+			<div id="content">
+				<div id="main">
+					<div id="content_r">
+					<table border="1" class="listTable">
+					
+						<center>
+						<form name="form_set" method="post" action="form_rec.asp"><br/>
+						<fieldset>
+						<legend>显示全部记录</legend>
+						<input type="button" value="提取全部记录" onclick="javascript:location.href='operationRecord.html'"></input>
+						</fieldset>
+						<fieldset>
+						<legend>显示选定时间段内操作记录</legend>
+						起始时间:请按nnnn-yy-rr:hh:mm:ss格式书写<input type="text" size="20"/><br/>
+						<br/>
+						终止时间:请按nnnn-yy-rr:hh:mm:ss格式书写<input type="text" size="20"/><br/>
+						<input type="button" id="comfirm" value="提取符合要求的记录"></input>
+				
+						
+						</fieldset>
+					
+							</form>
+					</center>
+				</table>
+					</div>
+				</div>
+
+            </div>
+            	
+            <div id="footer"></div>
+
+         </div>
+  </body>
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		
+			<script type="text/javascript" src="./scripts/js/ajaxfileupload.js"></script>
+		<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+		
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	    	init();	
+	    	    	
+	    	var href = location.href;
+		        href = decodeURI(href);
+			var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];
+		    var tmp  = (href.split("?"))[1].split("&"); 
+		    var commerceproject_id  =tmp[0].split("=")[1];
+	/*	     var commerceproject_name  =tmp[1].split("=")[1];
+		    var filepath  =tmp[2].split("=")[1];
+		    var commerceprojectapplier_id  = tmp[3].split("=")[1];
+		    var actorId = tmp[4].split("=")[1];
+		    var managers = tmp[5].split("=")[1];
+		    var commerceprojectstate=tmp[6].split("=")[1];
+		    
+		    $("#commerceproject_id").val(commerceproject_id);				
+			$("#commerceproject_name").val(commerceproject_name);
+			$("#filepath").val(filepath);
+			$("#commerceprojectapplier_id").val(commerceprojectapplier_id);
+			$("#actorId").val(actorId);
+			$("#commerceprojectstate").val(commerceprojectstate);
+		*/
+			 
+			var page = href.split("page=")[1];
+		    if(page)
+		    	page = page.split("&")[0].split("#")[0];
+		    if(!page || page<1)
+		    	page=1;
+			var pageCount = 0;
+			var count = 0;
+			
+			
+			var commerceproject_name  ="";
+		    var filepath  ="";
+		    var commerceprojectapplier_id  = "";
+		    var actorId = "";
+		    var managers = "";
+		    var commerceprojectstate="";
+		    var money = "";
+			var currentUserId;
+			$.ajax({
+						url:"/currentUserDetail",
+						async:false,
+						method:"post",
+						success: function(xml){
+							currentUserId = $(xml).find("userId").text();
+						},
+						dataTyep: "xml"
+			});
+			
+		//获取权限
+			var applyProjectPermission;
+			var editProductPermission;
+			var mpersonPermission;
+			$.ajax({
+		type: 'POST',
+		async: false,
+		url: "/getPermission",
+		success:	
+				function(xml){
+				applyProjectPermission=Number($(xml).find("permission").find("commerceProject").find("applyproject").text());
+				editProductPermission=Number($(xml).find("permission").find("commerceProject").find("editproduct").text());
+	            mpersonPermission=Number($(xml).find("permission").find("commerceProject").find("mperson").text());
+	            
+	           
+				},
+			 dataTyep: "xml" 
+			});
+			
+			
+			
+		$.ajax({
+		type: 'POST',
+		async: false,
+		url: "/searchCommerceProjectById",
+		data:  {'commerceproject_id':commerceproject_id},
+		success:	function(xml){
+				//		$("#content_r table tr:gt(0)").remove();
+				//		var id = 1;
+				//		count = $(xml).find("result").attr("count");
+				//		pageCount = $(xml).find("result").attr("pageCount");
+				//		var startWith = $(xml).find("result").attr("startWith");
+
+						var recode = $(xml).find("recode").text();
+						if(recode){
+							alert($(xml).find("errormsg").text());
+						}
+							 commerceproject_id			= $(xml).find("commerceproject_id").text();
+                             commerceproject_name      	= $(xml).find("commerceproject_name").text();
+							 commerceprojectstate		=  $(xml).find("commerceprojectstate").text();
+						     commerceprojectapplier_id			= $(xml).find("commerceprojectapplier_id").text();
+						     filepath                           =$(xml).find("filepath").text();
+						     managers                      =$(xml).find("managers").text();
+						    var compact_id    				= $(xml).find("compact_id").text();
+						    var clientfactory   			= $(xml).find("clientfactory").text();
+						    var clientperson   				= $(xml).find("clientperson").text();
+						    var clientTel 		= $(xml).find("clientTel").text();
+						    var jcOrNot				=  $(xml).find("jcOrNot").text();
+						    var commerceprojectapplier					=  $(xml).find("commerceprojectapplier").text();
+						    var commerceprojectactor			=  $(xml).find("commerceprojectactor").text();
+						    var planActiontime					=  $(xml).find("planActiontime").text();
+							var commerceprojecttype			= $(xml).find("commerceprojecttype").text();
+						    var commerceprojectapplytime    	= $(xml).find("commerceprojectapplytime").text();
+						    var commerceprojectactiontime   			= $(xml).find("commerceprojectactiontime").text();
+						    var endtime                                 =$(xml).find("endtime").text();
+						    var remark   		= $(xml).find("remark").text();
+						     money				=  $(xml).find("money").text();
+						    var moneytime					=  $(xml).find("moneytime").text();
+						    var mpersonyijian			=  $(xml).find("mpersonyijian").text();
+					        var remark                =$(xml).find("remark").text();
+
+						    
+						   $("#commerceproject_name").text(commerceproject_name);
+						   $("#compact_id").text(compact_id);
+						   $("#commerceprojectapplier").text(commerceprojectapplier);
+						   $("#commerceprojectapplier_id").text(commerceprojectapplier_id);
+						   $("#money").text(money);
+						   $("#mpersonyijian").text(mpersonyijian);
+						   $("#commerceprojectstate").text(commerceprojectstate);
+						   $("#commerceprojecttype").text(commerceprojecttype);
+						   $("#jcOrNot").text(jcOrNot);
+						   $("#commerceprojectapplytime").text(commerceprojectapplytime);
+						   $("#planActiontime").text(planActiontime);
+						   $("#moneytime").text(moneytime);
+						   $("#commerceprojectactiontime").text(commerceprojectactiontime);
+						   $("#endtime").text(endtime);
+						   $("#clientfactory").text(clientfactory);
+						   $("#clientperson").text(clientperson);
+						   $("#clientTel").text(clientTel);
+						   $("#remark").text(remark);
+						   $("#filepath").text(filepath);
+						   $("#commerceprojectstate").text(commerceprojectstate);
+						   var member = commerceprojectactor.split(";");
+						   //显示原有成员列表
+						 	var memberId = "";
+						 	var memberName = "";
+						 	
+							for(var i = 0, len = member.length-1; i< len; i++)
+						    {
+					          memberId = member[i].split(",")[0];
+					          memberName = member[i].split(",")[1];
+					          actorId += memberId+",";
+						  		$("#member").append("<li value=\""+memberId+"\">"+memberName+"</li>");
+						     };
+							// 控制各个按钮的显示
+					  		if(currentUserId.replace(/[ ]/g,"") == commerceprojectapplier_id.replace(/[ ]/g,"") && commerceprojectstate.replace(/[ ]/g,"")=="预付款已讫"){
+									$('#chooseactor').attr("disabled", false);
+							}else{
+									$('#chooseactor').hide();
+							}			
+						 	if(mpersonPermission==1 && commerceprojectstate.replace(/[ ]/g,"")=="合同已签订"){
+									$('#mperson').attr("disabled", false);
+							}else{
+									$('#mperson').hide();
+							}
+						    if(commerceprojectstate.indexOf("确定实施")!=-1 && (actorId.indexOf(currentUserId)!=-1)){
+									$('#actorcom').attr("disabled", false);
+							}else{
+									$('#actorcom').hide();
+							}	
+							if((currentUserId.replace(/[ ]/g,"")==commerceprojectapplier_id.replace(/[ ]/g,"")||actorId.indexOf(currentUserId)!=-1)&&(commerceprojectstate.replace(/[ ]/g,"")=="合同已签订"||commerceprojectstate.replace(/[ ]/g,"")=="正在实施"||commerceprojectstate.replace(/[ ]/g,"")=="安排实施"||commerceprojectstate.replace(/[ ]/g,"")=="确定实施"||commerceprojectstate.replace(/[ ]/g,"")=="预付款已讫")){
+									$('#addproduct').attr("disabled", false);
+							}else{
+									$('#addproduct').hide();
+							}
+							 if(actorId.indexOf(currentUserId)!=-1&&(commerceprojectstate.replace(/[ ]/g,"")=="正在实施")){
+									$('#endprj').attr("disabled", false);
+							}else{
+									$('#endprj').hide();
+							}
+							if(managers.indexOf(currentUserId)!=-1&&commerceprojectstate.replace(/[ ]/g,"")=="安排实施"){
+									$('#managercom').attr("disabled", false);
+							}else{
+									$('#managercom').hide();
+							}		
+							if(currentUserId.replace(/[ ]/g,"")==commerceprojectapplier_id.replace(/[ ]/g,"") && commerceprojectstate.replace(/[ ]/g,"")=="结束实施"){
+									$('#upload').attr("disabled", false);
+							}else{
+									$('#upload').hide();
+							}
+							 if(currentUserId.replace(/[ ]/g,"")==commerceprojectapplier_id.replace(/[ ]/g,"")&&(commerceprojectstate.replace(/[ ]/g,"")=="结束实施"||commerceprojectstate.replace(/[ ]/g,"")=="正在解决")){
+									$('#reEnd').attr("disabled", false);
+							}else{
+									$('#reEnd').hide();
+							}		
+							if(mpersonPermission==1&&commerceprojectstate.replace(/[ ]/g,"")=="回访客户无问题"){
+									$('#reMoney').attr("disabled", false);
+							}else{
+									$('#reMoney').hide();
+							}     	                		                 		                     	  						      
+	                    }, 
+	                 dataTyep: "xml"    
+            	});	
+
+
+						
+		
+
+				
+				
+			   $.ajax({
+					type: 'POST',
+					async: false,
+					url: "/searchCommerceProductByCommerceProjectId",
+					data:  {'commerceproject_id':commerceproject_id},
+					success:function(xml){
+										$("#pjtable tr:gt(0)").remove();
+										var id = 1;
+										count = $(xml).find("result").attr("count");
+										if(count==0){
+											$('#chooseactor').hide();
+											$('#mperson').hide();
+											$('#actorcom').hide();
+											$('#endprj').hide();
+											$('#managercom').hide();
+											$('#upload').hide();
+											if(currentUserId.replace(/[ ]/g,"") == commerceprojectapplier_id.replace(/[ ]/g,"")){
+											alert("该项目尚无产品，请尽快添加产品！");
+											return;
+											}else{
+											alert("该项目尚未添加产品，暂时不能操作，请静候申请人添加产品！");
+											return;
+											}
+										}
+										pageCount = $(xml).find("result").attr("pageCount");
+										var startWith = $(xml).find("result").attr("startWith");
+			
+										var recode = $(xml).find("recode").text();
+										if(recode){
+											alert($(xml).find("errormsg").text());
+										}
+										$(xml).find("item").each(function(i){
+											 commerceproject_id			= $(this).find("commerceproject_id").text();
+				                             commerceproject_name      	= $(this).find("commerceproject_name").text();
+										    var allrandom    				= $(this).find("allrandom").text();
+										    var product_type   			= $(this).find("product_type").text();
+										    var softwareVession   				= $(this).find("softwareVession").text();
+										    var product_number 		= $(this).find("product_number").text();
+										    var product_id   = $(this).find("product_id").text();
+										    var commerce_id = $(this).find("commerce_id").text();
+										    var commerceprojectAuthnumber =$(this).find("commerceprojectAuthnumber").text();
+										    var authtext     =$(this).find("authtext").text();
+										    var authstate     =$(this).find("authstate").text();
+										   
+										    var tmp = "commerceproject_id="+commerceproject_id;
+										    var tmp1 = "allrandom="+allrandom+"&commerceprojectAuthnumber="+commerceprojectAuthnumber;
+										    var tmp2 = "allrandom="+allrandom+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&product_type="+product_type+"&softwareVession="+softwareVession+"&product_number="+product_number+"&commerceprojectAuthnumber="+commerceprojectAuthnumber+"&product_id="+product_id;
+											var strInfo ="<td>"+ (i+1)+"</td><td>"+product_type+
+					                                 "</td><td>"+softwareVession+"</td><td>"+product_number+"</td><td>"+commerceprojectAuthnumber+"</td><td>"+product_id+"</td>";
+			                      	
+			                      	
+			                      	var strDownload = null;
+			                      	if(authtext!=""&&commerceprojectstate!="尾款已结清"){
+			 						strDownload = "<td><input type='image' src='./images/oa_downbutton.png' title='下载授权文件' onclick=\"javascript: location.href=\'fileDownloadServlet.do?filepath="+authtext+"\'\"></input></td>";
+			 						}else{
+			 						strDownload = "<td><img src='./images/oa_download_g.png' title='下载授权文件'/></td>";
+			 						}
+			 				//		fileDownloadServlet.do?filename=controller.exe
+									//	var strDownload = null;
+									//		strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+			//				strDownload = "<td><input type='image' src='./images/download.gif' title='下载授权证书' onclick=\"javascript: location.href=encodeURI(\'downloadAuthorXml?filepath="+authtext+"\')\"></input></td>";
+											
+									/*		if((permission&1) && (path!="")){
+												strDownload = "<td><a  class='download' href='/upload/"+path+"'><img src='./images/download.gif'  title='下载' /></a></td>";
+											}else{
+												strDownload = "<td><img src='./images/download1.jpg'/></td>";
+											}
+									*/	
+								//	var strDetail= null;
+								//	strDetail = "<td><a href='/CommerceProductDetail.html?"+tmp2+"'><img src='./images/search.jpg'  title='详情' /></a></td>";
+					          if((currentUserId.replace(/[ ]/g,"") == commerceprojectapplier_id.replace(/[ ]/g,"")||actorId.indexOf(currentUserId)!=-1)&& (authstate.indexOf("授权中")!=-1&&commerceprojectstate!="合同已签订"&& commerceprojectstate!="预付款已讫"&&commerceprojectstate!="尾款已结清")) {
+									strEdit2 = "<td><input type='image' src='./images/bg_shang.png' title='生成授权文件' onclick=\"javascript: location.href=encodeURI(\'authortextSubmit.html?"+tmp1+"&page1="+page+"\')\"></input></td>";
+								}else{
+									strEdit2 = "<td><img src='./images/bg_shang1.png' title='生成授权文件'/></td>";
+								}
+								
+					            if(currentUserId.replace(/[ ]/g,"") == commerceprojectapplier_id.replace(/[ ]/g,"")&& authstate.indexOf("已授权")!=-1 && authtext!=""&&commerceprojectstate!="尾款已结清") {
+									strEdit3 = "<td><input type='image' src='./images/edit.gif' title='再次授权' onclick=\"javascript: location.href=encodeURI(\'commerceProjectApplyAuthorAgain.html?"+tmp2+"&page1="+page+"\')\"></input></td>";
+								}else{
+									strEdit3 = "<td><img src='./images/edit1.jpg' title='再次授权'/></td>";
+								}
+			     				if((currentUserId.replace(/[ ]/g,"") == commerceprojectapplier_id.replace(/[ ]/g,"")||actorId.indexOf(currentUserId)!=-1)&&(commerceprojectstate=="合同已签订")) {
+									strEdit1 = "<td><input type='image' src='./images/oa_edit.gif' title='修改' class='edit'></input></td>";
+									//onclick=\"javascript: location.href=encodeURI(\'commerceProductEdit.html?"+tmp2+"&page1="+page+"\')\"
+							//strEdit1 = "<td><input type='image' src='./images/oa_edit.gif' title='修改' id='eit' )\"></input></td>";
+								}else{
+									strEdit1 = "<td><img src='./images/oa_edit_g.gif' title='修改'/></td>";
+								}
+								/*	
+											if(permission&256 || permission&16 || permission&8) {
+												strEdit = "<td><input type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'editVersion.html?"+tmp+"&page1="+page+"\')\"></input></td>";
+											}else{
+												strEdit = "<td><img src='./images/edit1.jpg'/></td>";
+											}
+									*/	
+									if(currentUserId.replace(/[ ]/g,"") == commerceprojectapplier_id.replace(/[ ]/g,"")&&commerceprojectstate=="合同已签订") {
+											strDel = "<td><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+								}else{
+									strDel = "<td><img src='./images/oa_delete_g.png' title='删除'/></td>";
+								}	
+										/*	
+											if(permission & 4){
+												strDel = "<td><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+											}else{
+												strDel = "<td><img src='./images/del1.jpg'/></td>";
+											}
+									*/		
+				                   		$("#pjtable").append("<tr class='content' id='"+allrandom+"'>"+ strInfo+strEdit1+strEdit2+strDownload +strEdit3+strDel+"</tr>");
+					                        id++;
+				                        });
+								//		$("#pageNav").showPageNav(page2, pageCount, count, url);
+				                        //调用注册按钮的事件
+										register();
+										register2();
+									}, 
+									 dataTyep: "xml"   
+									});
+						
+				
+		//		$(this).showData(url,page);
+		$('#loglist').click(function(){
+						
+							
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);		
+						 location.href="/operationRecord.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						
+					});
+					$('#upload').click(function(){
+					
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);		
+						 location.href="/resultpaperSubmit.html?"+tmp1;						
+					});
+					$('#addproduct').click(function(){
+						
+					
+					//	var tmp1 = "commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&filepath="+filepath+"&commerceprojectapplier_id="+commerceprojectapplier_id+"&actorId="+actorId+"&commerceprojectstate="+commerceprojectstate;									
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&filepath="+filepath;
+	//					 location.href="/addProductForCommerceProject.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;	
+	                
+						JqueryDialog.Open('', 'addProductforCommerceProjectLittle.html?'+tmp1+"&page1="+prePage+"&laizi="+laizi+"&from=commerceProjectDetail", 600, 300);
+		        					
+					});
+					
+					$('#mperson').click(function(){
+						
+						
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href=encodeURI("/mpersonComfirm.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi);						
+					});	
+					$('#reMoney').click(function(){
+						
+						
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&money="+money;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href=encodeURI("/reMpersonComfirm.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi);						
+					});	
+					//location.href=encodeURI(\'commerceProjectDetail.html?+tmp1+"&page1="+page+"&laizi="+list+"\')
+					$('#managercom').click(function(){
+						
+						
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/managerComfirm.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						
+					});
+					$('#reEnd').click(function(){
+						
+						
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/reEnd.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						
+					});
+					$('#chooseactor').click(function(){
+						
+							
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/chooseactor.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						
+					});
+					$('#actorcom').click(function(){
+						
+						
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+		//				tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/actorComfirm.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						
+					});
+					$('#endprj').click(function(){
+						
+						
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+				//		tmp1=encodeURI(tmp1);	
+						 location.href="/commerceProjectEnd.html?"+tmp1+"&page1="+prePage+"&laizi="+laizi;						
+					});
+/*				$("#xiao").click(function(){ //2
+					
+		    var commerceproject_id  =tmp[0].split("=")[1];
+		    var commerceproject_name  =tmp[1].split("=")[1];
+		    var filepath  =tmp[2].split("=")[1];
+		    
+		    $("#commerceproject_id").val(commerceproject_id);				
+			$("#commerceproject_name").val(commerceproject_name);
+			$("#filepath").val(filepath);
+			var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&filepath="+filepath;
+			
+					JqueryDialog.Open('xiangmuliucheng', 'liucheng.html?'+tmp1, 450, 450);
+ 
+  });
+	*/				
+		/*	<input id="comfirm7" type="button"  value="再次授权" / >
+			
+			$('#comfirm7').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+				//		tmp1=encodeURI(tmp1);	
+						 location.href="/commerceProjectApplyAuthorAgain.html?"+tmp1;						
+					});
+					*/
+				    function init(){
+				    	$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$("#sidebar").showSideBar();
+						$(this).navi();
+				    }	
+				    	
+				    function register2(){
+			               //点击"删除"按钮，弹出是否删除的询问对话框
+			               $(".delete").each(function(index){
+								var $this = $(this);
+								var id = $this.parents('.content').attr('id');
+
+								$this.click(function(){
+									if(confirm("您确定删除吗？")){
+										$.post('/deleteCommerceProduct', {'allrandom':id}, delCallback, 'xml');
+				                	}
+				               });
+			               });
+				    }
+				   function register(){
+			               //点击"删除"按钮，弹出是否删除的询问对话框
+			               $(".edit").each(function(index){
+								var $this = $(this);
+								var id = $this.parents('.content').attr('id');
+
+								$this.click(function(){
+						JqueryDialog.Open('', 'commerceProductEditLittle.html?allrandom='+id+"&commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&page1="+prePage+"&laizi="+laizi, 600, 300);		
+				//			 location.href="\commerceProductEditLittle.html?allrandom="+id+"&page1="+page;						
+									
+							//			$.post('/deleteCommerceProduct', {'allrandom':id}, delCallback, 'xml');
+				                	
+				               });
+			               });
+				    }  
+		
+	
+				    //返回成功与否的判断与跳转
+				    function delCallback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+						var tmp = "commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&filepath="+filepath+"&commerceprojectapplier_id="+commerceprojectapplier_id+"&actorId="+actorId+"&commerceprojectstate="+commerceprojectstate;									
+							location.href="commerceProjectDetail.html?"+tmp+"&page1="+page;
+						}
+					}				       	
+		$("#back").click(
+					function(){
+							if(laizi == "list"){
+								location.href="commerceProjectList.html?page="+prePage;
+							}else{
+							    location.href="homePage.html?"+laizi+"&page="+prePage;
+							}
+					});
+		});		 
+
+		
+			
+	</script>
+		
+  </head>
+  
+  <body>
+   <div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：首页&gt;&nbsp;<strong>项目操作</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">										
+							<tr>		
+						    <td width="10">&nbsp;</td>
+						    <td><a href="#"  id="mperson">财务负责人确认</a></td>
+							<td width="10">&nbsp;</td>
+						    <td><a href="#"  id="chooseactor">选择工程师</a></td>
+							<td width="10">&nbsp;</td>
+						    <td><a href="#"  id="actorcom">工程师确认</a></td>
+							<td width="10">&nbsp;</td>
+						    <td><a href="#"  id="managercom">主管确认</a></td>
+					 		<td width="10">&nbsp;</td> 
+						    <td><a href="#"  id="endprj">结束项目</a></td>
+							<td width="10">&nbsp;</td>
+						    <td><a href="#"  id="upload">上传反馈文档</a></td>
+						    <td width="10">&nbsp;</td>	
+						    <td><a href="#"  id="reEnd">项目回访</a></td>
+							<td width="10">&nbsp;</td>
+						    <td><a href="#"  id="reMoney">财务负责人审批余款</a></td>
+						    <td width="10">&nbsp;</td>	
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="#" id ="back">返回</a></td>
+							</tr>
+						</table>
+						</div>
+				</td>
+ 					 </tr>
+ 					</table>
+					</div>				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>项目信息</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="sTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+				
+							<tr>
+								<td><div>项目名称</div></td>
+								<td class="width_15">
+								  <label id="commerceproject_name"></label>
+							    </td>
+							</tr>
+							<tr>
+								<td><div>合同编号</div></td>
+								<td class="width_15">
+								  <label id="compact_id"></label>
+							    </td>
+							</tr>
+				
+								
+                            <tr>
+								<td><div>项目申请人</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectapplier"></label>
+							    </td>
+							</tr>
+						
+
+                      	
+                            <tr>
+								<td><div>已付金额百分比</div></td>
+								<td class="width_15">
+								  <label id="money"></label>
+							    </td>
+							</tr>
+
+							
+                           
+
+							
+                            <tr>
+								<td><div>实施工程师</div></td>
+								<td class="width_15">
+								  <label id="member"></label>
+							    </td>
+							</tr>
+                            <tr>
+								<td><div>项目状态</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectstate"></label>
+							    </td>
+							</tr>
+							
+                            <tr>
+								<td><div>项目类型</div></td>
+								<td class="width_15">
+								  <label id="commerceprojecttype"></label>
+							    </td>
+							</tr>
+			
+					
+		
+							
+                            <tr>
+								<td><div>是否集成</div></td>
+								<td class="width_15">
+								  <label id="jcOrNot"></label>
+							    </td>
+							</tr>
+
+							
+                            <tr>
+								<td><div>项目申请时间</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectapplytime"></label>
+							    </td>
+							</tr>
+				
+							
+                            <tr>
+								<td><div>计划执行时间</div></td>
+								<td class="width_15">
+								  <label id="planActiontime"></label>
+							    </td>
+							</tr>
+			
+							
+                            <tr>
+								<td><div>已付金额百分比</div></td>
+								<td class="width_15">
+								  <label id="moneytime"></label>
+							    </td>
+							</tr>
+		
+                            <tr>
+								<td><div>实际执行时间</div></td>
+								<td class="width_15">
+								  <label id="commerceprojectactiontime"></label>
+							    </td>
+							</tr>
+			                <tr>
+								<td><div>项目结束时间</div></td>
+								<td class="width_15">
+								  <label id="endtime"></label>
+							    </td>
+							</tr>
+							
+                            <tr>
+								<td><div>  客户单位名称</div></td>
+								<td class="width_15">
+								  <label id="clientfactory"></label>
+							    </td>
+							</tr>
+
+					         	
+                            <tr>
+								<td><div>客户联系人</div></td>
+								<td class="width_15">
+								  <label id="clientperson"></label>
+							    </td>
+							</tr>
+				
+							
+                            <tr>
+								<td><div>客户联系方式</div></td>
+								<td class="width_15">
+								  <label id="clientTel"></label>
+							    </td>
+							</tr>
+				<tr>
+								<td><div>备注</div></td>
+								<td class="width_15">
+								  <label id="remark"></label>
+							    </td>
+							</tr>
+                        
+								
+					</table>
+					<br />
+					<table style="float:right" border="0" cellspacing="0" cellpadding="0">										
+						<tr>		
+						<td width="10">&nbsp;</td>
+					    <td><a style="color:black" href="#"  id="addproduct">添加产品</a></td>
+						<td width="10">&nbsp;</td>
+						</tr>
+					</table>
+						
+					<table id="pjtable" class="listTable" >
+						<caption>
+							产品信息
+							</caption>
+					
+						   
+							<tr>
+								<th>序号</th>
+				
+								<th>产品类型</th>
+								<th>软件版本</th>
+								<th>产品数量</th>
+								<th>授权点数</th>
+						        <th>产品编码</th>
+						
+								<th colspan="5">操作</th>
+							</tr>
+						</table>
+						</div>	
+						<div id="sq_di">
+						<div id="pageNav">
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer">
+			</div>
+		</div>
+	</body>
+</html>

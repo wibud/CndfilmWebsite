@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+        
+<script type="text/javascript">   
+    function preview() {    
+    window.clipboardData.setData("Text",document.all('sortTable').outerHTML);   
+    try  
+    {   
+    /*var ExApp = new ActiveXObject("Excel.Application")   
+    var ExWBk = ExApp.workbooks.add()   
+    var ExWSh = ExWBk.worksheets(1)   
+    ExApp.DisplayAlerts = false  
+    ExApp.visible = true  */
+    
+    var curTbl = document.getElementById('sortTable');
+    var oXL = new ActiveXObject("Excel.Application");
+    //创建AX对象excel
+    var oWB = oXL.Workbooks.Add();
+    //获取workbook对象
+    var oSheet = oWB.ActiveSheet;
+    //激活当前sheet
+    var Lenr = curTbl.rows.length;
+    //取得表格行数
+    for (i = 0; i < Lenr; i++)
+    {
+         var Lenc = curTbl.rows(i).cells.length-1;
+         //取得每行的列数
+         for (j = 0; j < Lenc; j++)
+         {
+             oSheet.Cells(i + 1, j + 1).value = curTbl.rows(i).cells(j).innerText;
+             //赋值
+         }
+     }
+     var ExWSh = oXL.worksheets(1);   
+    // ExWSh.ActiveSheet.Cells(row,col).HorizontalAlignment = 3;
+     oXL.DisplayAlerts = false;
+     oXL.Visible = true; 
+   }     
+    catch(e)   
+    {   
+    alert("要导入该表，您必须安装Excel电子表格软件.\n同时IE设置如下：打开IE浏览器的工具-〉Internet选项-〉安全-〉自定义级别中的“对没有标记为安全的ActiveX控件进行初始化和脚本运行”设置为“启用”即可！");   
+    return false  
+    }    
+   //  oXL.worksheets(1).Paste;    
+     }   
+    </script>
+        
+		<script type="text/javascript">
+			//初始化页面
+			
+				$(document).ready(function(){
+				init();
+
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp = (href.split("?"))[1].split("&");
+				var page = 1;
+				var pageCount = 0;
+				var count = 0;
+				
+				var url = "/overtimeSearch";
+				
+				var userId = tmp[0].split("=")[1];
+				var deptId = tmp[1].split("=")[1];
+				var applyTime = tmp[2].split("=")[1];
+				var applyStartTime = tmp[3].split("=")[1];
+				var applyEndTime = tmp[4].split("=")[1];
+				var bmJudgement = tmp[5].split("=")[1];
+				
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#content_r7 table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+							
+                      //      $("#pageNav").showPageNav(page2, pageCount, count, url);
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+	                             var applyId = $(this).find("applyId").text();
+								 var userName = $(this).find("userName").text();
+								 var userDept = $(this).find("deptName").text();
+								 var applyTime = $(this).find("applyTime").text();
+								 var applyReason = $(this).find("applyReason").text();
+								 var applyStartTime = $(this).find("applyStartTime").text();
+								 var applyEndTime = $(this).find("applyEndTime").text();
+								 var totalHour = $(this).find("totalHour").text();
+								 var bmJudgement = $(this).find("bmJudgement").text();
+							     var personInCharge= $(this).find("personInCharge").text();
+								 var secondManager= $(this).find("secondManager").text();
+								 
+   	                             var tmp="applyId="+applyId;
+								 var bookingInfo1="<tr class='content' id='"+applyId+"'><td>"+(i+1)+"</td><td>"+userName+"</td><td>"+userDept+"</td><td>"+applyTime+"</td><td>"+applyStartTime+"</td><td>"+applyEndTime+"</td><td>"+totalHour+"</td><td id='bmJudgement'>"+bmJudgement+"</td>";
+								 
+								 var bookingInfo2="<td><input  type='image' src='./images/oa_detail.png'  title='查看' onclick=\"javascript: location.href=encodeURI(\'overtimeApplyDetail.html?"+tmp+"&page1="+page+"\')\"></input></td><td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+							      if(bmJudgement=="部门主管审批不通过" || bmJudgement=="分管领导审批不通过" || bmJudgement=="人事部审批不通过"){
+								      var bookingInfo3="<td id='approval2'><input type='button' value='修改' title='修改' class='approval2'></input></td>"+"<td id='personInCharge' style='display:none'>"+personInCharge+"</td><td id='secondManager' style='display:none'>"+secondManager+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+								 }else{
+								      var bookingInfo3="<td id='approval2'><input type='button' value='审批' title='审批' class='approval2'></input></td>"+"<td id='personInCharge' style='display:none'>"+personInCharge+"</td><td id='secondManager' style='display:none'>"+secondManager+"</td><td id='userId' style='display:none'>"+userId+"</td></tr>";
+								 }   
+							
+							//	 var bookingInfo3="<td id='approval'><input type='button' value='审批' title='审批' class='approval'></input></td></tr>";
+								 $("#content_r7 table").append(bookingInfo1+bookingInfo2);	
+								 id++;
+							    
+							  });
+						//	  $("#pageNav").showPageNav(page2, pageCount, count, url);
+							  pageNav(page2,pageCount,count,url,"#pageNav");
+	                          //调用注册按钮的事件
+						     register();
+						     register1();
+						},
+						{"page":page2,"userId":userId,"deptId":deptId,"applyTime":applyTime,"applyStartTime":applyStartTime,"applyEndTime":applyEndTime,"bmJudgement":bmJudgement}
+						);
+				};
+				
+				
+			   $(this).showData(url,page);
+               
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+                //注册按钮
+				function register() {
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+                        
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/overtimeDelete', {'applyId':id}, delCallback, 'xml');
+		                	}
+		                });
+	               });
+	            }
+	            
+	            function register1(){
+				   var currentuserId="";
+				   var deptId="";
+				   $.post('/currentUserDetail',
+						     {},
+						     function(xml){
+				                currentuserId   = $(xml).find("userId").text();
+				                deptId= $(xml).find("userDeptId").text();
+			           //点击"删除"按钮，弹出是否删除的询问对话框
+		               $(".approval2").each(function(index){
+							var $this = $(this);
+							var id = $this.parents('.content').attr('id');
+							var row=$this.parent("td").parent("tr");
+							var content=$("#bmJudgement",row).text();
+							var userId=$("#userId",row).text();
+						    var state1="等待部门主管审批";
+						    var state2="等待分管领导审批";
+						    var state3="等待人事部审批";
+						    var state4="部门主管审批不通过";
+						    var state5="分管领导审批不通过";
+						    var state6="人事部审批通过";
+						    var state7="人事部审批不通过";
+						    var personInCharge=$("#personInCharge",row).text();
+						    var secondManager=$("#secondManager",row).text();
+						    $this.attr("disabled", true);
+						      
+						                 if(content==state1 && currentuserId==personInCharge){
+						                        $this.attr("disabled", false);
+						                        $this.click(function(){
+							                          tmp="applyId="+id;
+								                      if(confirm("部门经理是否审批？")){
+									                      location.href="/approvalOvertime.html?"+tmp;
+			                	                      }
+			                                    });
+						                  }
+						                  
+						                  if(content==state2 && secondManager==currentuserId){
+						                        $this.attr("disabled", false);
+						                        $this.click(function(){
+							                          tmp="applyId="+id;
+								                      if(confirm("分管经理是否审批？")){
+									                      location.href="/approvalOvertime.html?"+tmp;
+			                	                      } 
+			                                    });
+						           
+						                 }
+						
+						    if(content==state3 && deptId=="5"){
+						            $this.attr("disabled", false);
+						            $this.click(function(){
+							            tmp="applyId="+id;
+								        if(confirm("人事部是否审批？")){
+									          location.href="/approvalOvertime.html?"+tmp;
+			                	        }
+			                       });
+						    }
+						    
+						    if(userId==currentuserId && (content==state4 || content==state5 || content==state7)){
+						           $this.attr("disabled", false);
+						           $this.click(function(){
+							            tmp="applyId="+id;
+								        if(confirm("申请人是否修改？")){
+									          location.href="/editOvertime.html?"+tmp;
+			                	        }
+			                       });
+						    }
+						    
+						     });
+						     
+						     },
+						  'xml');
+						    
+		               
+			     }
+	            
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="overtimeSearchList.html?userId=&deptId=&applyTime=&applyStartTime=&applyEndTime=&bmJudgement=";
+					}
+				}
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+				<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：加班管理 &gt;&nbsp;
+										<strong>查询结果</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+										   <tr>
+										     <td><img src="images/bg_shang.png" width="15" height="15" /></td>
+						                     <td width="10">&nbsp;</td>
+						                     <td><a href="#" onclick="preview()" id="toExcel">导出excel表格</a></td>
+							                 <td width="10">&nbsp;</td>
+						                     <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+							                 <td width="10">&nbsp;</td>
+							                 <td><a href="javascript:history.back()">返回</a></td>
+						                   </tr>
+									   </table>
+								   </div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>加班申请信息查询结果</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+				  <div id="content_r7">
+					<table id="sortTable" class="listTable" style="overflow:auto;" border="0" cellpadding="0" cellspacing="0">
+					  <tr>
+					  <th width="40">序号</th>
+					  <th width="80">姓名</th>
+					  <th width="100">部门</th>
+					  <th width="100">申请时间</th>
+					  <th width="140">加班开始时间</th>
+					  <th width="140">加班结束时间</th>
+					  <th width="80">总计时长</th>
+					  <th width="140">审批状态</th>
+					  <th colspan="2"><input type="button" value="继续查询" onclick="javascript:location.href='overtimeApplySearch.html'"></input></th>	
+					  </tr>
+                      </table>
+					</div>
+					<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+					 <div id="sq_di">
+                      <div id="pageNav"></div>
+                     </div>
+				</div>
+				<div id="bg_di"></div>
+            </div>
+            <div id="bg_yejiao">
+           <div id="footer"></div>
+           </div>
+         </div>
+	</body>
+</html>
+
+				

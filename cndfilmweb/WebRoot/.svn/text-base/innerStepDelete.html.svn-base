@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>删除进度</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/myTime.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+<script type="text/javascript">
+<!--
+//注：每个嵌入页必须定义该方法，供父窗口调用，并且返回true或false来告之父窗口是否关闭
+function Ok(){
+	//相关逻辑代码
+	var href1 = location.href;
+	href1 = decodeURI(href1);
+	herf2 = (href1.split("?"))[1];
+	var tmp  = (href1.split("?"))[1].split("&");
+	var project_id = tmp[0].split("=")[1];
+	var dijitiao = tmp[1].split("=")[1];
+	
+	$.post('/pjProgressList',{'projectId':project_id},decallback,'xml');
+	function decallback(databack){
+		var projectStep			="";
+		var currentStep			="";
+		var deStartTime			="";
+		var deEndTime			="";
+		var curStepEndTime		="";
+		var newpercent			="";
+		var project_id			= $(databack).find("project_id").text();
+		var pjName			= $(databack).find("pjName").text();
+		var pjDept			= $(databack).find("pjDept").text();
+		var pjManagerName			= $(databack).find("pjManager").text();
+		var pjCreatTime			= $(databack).find("pjCreatTime").text();
+		var pjCreator			= $(databack).find("pjCreator").text();
+		var stepCount			=Number($(databack).find("stepCount").text());
+		var reStartCount		=Number($(databack).find("reStartCount").text());
+		var reEndCount			=Number($(databack).find("reEndCount").text());
+		var pjStep				=$(databack).find("projectStep").text().split("$");
+		var miaoshu				=$(databack).find("currentStep").text().split("$");
+		var deStart				=$(databack).find("deStartTime").text().split(",");
+		var deEnd				=$(databack).find("deEndTime").text().split(",");
+		var mubiao				=$(databack).find("curStepEndTime").text().split("$");
+		var reStartTime			=$(databack).find("reStartTime").text();
+		var reEndTime			=$(databack).find("reEndTime").text();
+		var jindu				=$(databack).find("updateEveryProgress").text();
+//		if(isNaN(reStartCount))reStartCount=0;
+//		if(isNaN(reEndCount))reEndCount=0;
+		if(isNaN(stepCount))stepCount=0;
+//		stepCount+=step;
+	
+		herf3="project_id="+project_id+"&pjName="+pjName+"&pjDept="+pjDept+"&pjManager="+pjManagerName+"&pjCreatTime="+pjCreatTime+"&pjCreator="+pjCreator+"&percent="+jindu+"&page1=1";
+		var uurrll = "pjModifyPlan.html?" + herf3;
+	
+	var pjStep2='';
+	for(var i=0;i<dijitiao;i++){
+		pjStep2+=pjStep[i]+"$";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		pjStep2+=pjStep[i]+"$";
+	}
+	
+	var miaoshu2='';
+	for(var i=0;i<dijitiao;i++){
+		miaoshu2+=miaoshu[i]+"$";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		miaoshu2+=miaoshu[i]+"$";
+	}
+	
+	var deStart2='';
+	for(var i=0;i<dijitiao;i++){
+		deStart2+=deStart[i]+",";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		deStart2+=deStart[i]+",";
+	}
+
+	var deEnd2='';
+	for(var i=0;i<dijitiao;i++){
+		deEnd2+=deEnd[i]+",";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		deEnd2+=deEnd[i]+",";
+	}
+	
+	var mubiao2='';
+	for(var i=0;i<dijitiao;i++){
+		mubiao2+=mubiao[i]+"$";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		mubiao2+=mubiao[i]+"$";
+	}
+	
+	var jindu2='';
+	for(var i=0;i<dijitiao;i++){
+		jindu2+=jindu.split(",")[i]+",";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		jindu2+=jindu.split(",")[i]+",";
+	}
+	
+	var reStartTime2='';
+	for(var i=0;i<dijitiao;i++){
+		reStartTime2+=reStartTime.split(",")[i]+",";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		reStartTime2+=reStartTime.split(",")[i]+",";
+	}
+	
+	var reEndTime2='';
+	for(var i=0;i<dijitiao;i++){
+		reEndTime2+=reEndTime.split(",")[i]+",";
+	}
+	i+=1;
+	for(;i<stepCount;i++){
+		reEndTime2+=reEndTime.split(",")[i]+",";
+	}
+	
+	var newstepCount = stepCount - 1;
+	
+	$.post('/creatProjectPlan',{'projectId':project_id,'stepCount':newstepCount,'projectStep':pjStep2,'currentStep':miaoshu2,
+							'deStartTime':deStart2,'deEndTime':deEnd2,'curStepEndTime':mubiao2,'newpercent':jindu2,'reStartTime':reStartTime2,'reEndTime':reEndTime2},callback,'xml');
+	function callback(databack){
+	window.parent.JqueryDialog.SubmitCompleted("", true, true , uurrll);
+//	return true;//返回true模态窗口关闭；返回false模态窗口不关闭；
+	};
+	}
+
+	return false;
+}
+//-->
+</script>
+</head>
+
+<body style="margin:0px;padding:0px;">
+<table width="256" height="80" border="0" cellpadding="0" cellspacing="0" bgcolor="#f2ffe2">
+  <tr>
+    <td width="170" height="80" align="center" valign="middle" >
+    	&nbsp;&nbsp;确定删除此阶段吗？
+	</td>
+ </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,70 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="applyLogID")
+@Entity
+@Table(name="tb_cassetApplyLog")
+public class CAssetApplyLog {
+	@Id
+	private String applyLogID;
+	private String applyKind;
+	private String applyExtens;//在固定资产归还时，保存了资产的ID，用来判断用户是不是重复了资产归还申请
+	private String applyPerson;
+	private String deptManager;
+	private String mgrState;//0：部门负责人未签字 1：部门负责人已签字 2：部门负责人拒签 3：人事部同意 4：人事部不同意5：员工确认
+
+	public String getApplyLogID() {
+		return applyLogID;
+	}
+
+	public void setApplyLogID(String applyLogID) {
+		this.applyLogID = applyLogID;
+	}
+
+	public String getDeptManager() {
+		return deptManager;
+	}
+
+	public void setDeptManager(String deptManager) {
+		this.deptManager = deptManager;
+	}
+
+	public String getMgrState() {
+		return mgrState;
+	}
+
+	public void setMgrState(String mgrState) {
+		this.mgrState = mgrState;
+	}
+
+	public String getApplyPerson() {
+		return applyPerson;
+	}
+
+	public void setApplyPerson(String applyPerson) {
+		this.applyPerson = applyPerson;
+	}
+
+	public String getApplyKind() {
+		return applyKind;
+	}
+
+	public void setApplyKind(String applyKind) {
+		this.applyKind = applyKind;
+	}
+
+	public String getApplyExtens() {
+		return applyExtens;
+	}
+
+	public void setApplyExtens(String applyExtens) {
+		this.applyExtens = applyExtens;
+	}
+	
+	
+}

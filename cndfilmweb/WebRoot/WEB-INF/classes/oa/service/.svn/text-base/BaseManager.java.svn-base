@@ -1,0 +1,729 @@
+package oa.service;
+
+import org.springframework.beans.factory.annotation.Required;
+
+import oa.dao.table.AfterSaleRecordDao;
+import oa.dao.table.AfterSaleTrackDao;
+
+import oa.dao.table.AssetKindDao;
+import oa.dao.table.AssetSubKindDao;
+
+import oa.dao.table.BusinessTripDao;
+
+import oa.dao.table.CommerceProjectLogsDao;
+import oa.dao.table.CAssetApplyLogDao;
+import oa.dao.table.AssetDao;
+import oa.dao.table.AssetOpeLogDao;
+import oa.dao.table.CertificationDao;
+import oa.dao.table.CommerceProductDao;
+import oa.dao.table.CommerceProjectActingDao;
+import oa.dao.table.CommerceProjectAuthApplyDao;
+import oa.dao.table.CommerceProjectDao;
+import oa.dao.table.DepartmentDao;
+import oa.dao.table.OSDao;
+import oa.dao.table.OperationRecordDao;
+import oa.dao.table.OutBoundDao;
+import oa.dao.table.OvertimeApplyDao;
+import oa.dao.table.PermissionDao;
+import oa.dao.table.PositionDao;
+import oa.dao.table.PositionTemplateDao;
+import oa.dao.table.ProductTypeDao;
+import oa.dao.table.SysLoginfDao;
+import oa.dao.table.SystemConfigDao;
+import oa.dao.table.UserDao;
+import oa.dao.table.ProjectDao;
+import oa.dao.table.VacancyApplyDao;
+import oa.dao.table.VersionDao;
+import oa.dao.table.VersionLogDao;
+import oa.dao.table.WeekPlanDao;
+import oa.dao.table.WorkAttendanceDao;
+import oa.dao.table.TicketApplyDAO;
+import oa.dao.table.WorkRecordDao;
+import oa.dao.table.TemplateDao;
+import oa.dao.table.PerformanceResultDao;
+
+import oa.service.user.CertificationManager;
+import oa.service.project.ProjectInfoManager;
+import oa.service.system.SystemManager;
+import oa.service.user.UserManager;
+import oa.service.version.VersionManager;
+import oa.service.workAttendance.AttenceManager;
+import oa.service.workPlan.WeekPlanManager;
+import oa.service.workPlan.WorkRecordManager;
+import oa.util.CyberExecutor;
+import oa.util.CyberScheduler;
+import oa.util.FileDownloadServlet;
+import oa.service.aftersalerecord.AfterSaleRecordManager;
+import oa.service.aftersalerecord.Email;
+
+import oa.service.commerceproject.CommerceProductManager;
+import oa.service.commerceproject.CommerceProjectActingManager;
+import oa.service.commerceproject.CommerceProjectAuthapplyManager;
+import oa.service.commerceproject.CommerceProjectLogsManager;
+import oa.service.commerceproject.CommerceProjectManager;
+
+import oa.service.asset.AssetManager;
+import oa.service.formapply.ClaimApplyManager;
+import oa.service.formapply.BusinessTripManager;
+import oa.service.formapply.OutBoundManager;
+import oa.service.formapply.OvertimeApplyManager;
+import oa.service.formapply.VacancyApplyManager;
+
+import oa.service.ticketapply.TicketApplyManager;
+
+import oa.dao.table.ClaimApplyDao;
+
+import oa.service.performance.PerformanceManager;
+
+public class BaseManager {
+
+	// 业务逻辑组件
+	protected UserManager userManager;
+	protected SystemManager systemManager;
+	protected VersionManager versionManager;
+	protected ProjectInfoManager projectInfoManager;
+	protected AfterSaleRecordManager afterSaleRecordManager;
+	protected CertificationManager certificationManager;
+	protected Email email;
+	protected TicketApplyManager ticketApplyManager;
+
+	protected CommerceProjectManager commerceProjectManager;
+	protected CommerceProjectActingManager commerceProjectActingManager;
+	protected CommerceProjectAuthapplyManager commerceProjectAuthapplyManager;
+	protected CommerceProductManager commerceProductManager;
+	protected CommerceProjectLogsManager commerceProjectLogsManager;
+
+	protected AssetManager assetManager;
+	protected OvertimeApplyManager overtimeApplyManager;
+	protected AttenceManager attenceManager;
+	protected WeekPlanManager weekPlanManager;
+	protected WorkRecordManager workRecordManager;
+	protected VacancyApplyManager vacancyApplyManager;
+	protected OutBoundManager outBoundManager;
+	protected ClaimApplyManager claimApplyManager;
+	protected BusinessTripManager businessTripManager;
+	protected PerformanceManager performanceManager;
+	private FileDownloadServlet FileDownloadServlet;
+
+	// 声明所有的DAO组件，这样就不用每个业务逻辑组件都重新声明了
+	protected DepartmentDao deptDao;
+	protected PositionDao postDao;
+	protected SysLoginfDao sysLoginfDao;
+	protected SystemConfigDao systemConfigDao;
+	protected UserDao userDao;
+
+	protected CertificationDao certificationDao;
+	protected ProjectDao projectDao;
+	protected VersionDao versionDao;
+	protected VersionLogDao versionLogDao;
+	protected AfterSaleRecordDao afterSaleRecordDao;
+	protected AfterSaleTrackDao afterSaleTrackDao;
+	protected PermissionDao permissionDao;
+	protected OperationRecordDao operationrecordDao;
+	protected TicketApplyDAO ticketApplyDAO;
+
+	protected AssetKindDao assetKindDao;
+	protected AssetSubKindDao assetSubKindDao;
+	protected CommerceProjectActingDao commerceProjectActingDao;
+	protected CommerceProjectAuthApplyDao commerceProjectAuthApplyDao;
+	protected CommerceProjectDao commerceProjectDao;
+	protected CommerceProductDao commerceProductDao;
+	protected CommerceProjectLogsDao commerceProjectLogsDao;
+	protected CAssetApplyLogDao cassetApplyLogDao;
+
+	protected AssetDao assetDao;
+	protected AssetOpeLogDao assetOpeLogDao;
+	protected OSDao osDao;
+	protected ProductTypeDao productTypeDao;
+	protected WorkAttendanceDao workAttendanceDao;
+	protected WeekPlanDao weekPlanDao;
+	protected OvertimeApplyDao overtimeApplyDao;
+	protected WorkRecordDao workRecordDao;
+	protected VacancyApplyDao vacancyApplyDao;
+	protected OutBoundDao outBoundDao;
+
+	protected ClaimApplyDao claimApplyDao;
+	protected BusinessTripDao businessTripDao;
+
+	protected TemplateDao templateDao;
+	protected PerformanceResultDao performanceResultDao;
+	protected PositionTemplateDao positionTemplateDao;
+
+	// 声明所有Executor
+	protected CyberExecutor cyberExecutor;
+	protected CyberScheduler cyberScheduler;
+
+	public AssetSubKindDao getAssetSubKindDao() {
+		return assetSubKindDao;
+	}
+
+	@Required
+	public void setAssetSubKindDao(AssetSubKindDao assetSubKindDao) {
+		this.assetSubKindDao = assetSubKindDao;
+	}
+
+	public CommerceProjectLogsManager getCommerceProjectLogsManager() {
+		return commerceProjectLogsManager;
+	}
+
+	public void setCommerceProjectLogsManager(
+			CommerceProjectLogsManager commerceProjectLogsManager) {
+		this.commerceProjectLogsManager = commerceProjectLogsManager;
+	}
+
+	public UserManager getUserManager() {
+		return userManager;
+	}
+
+	@Required
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
+
+	public SystemManager getSystemManager() {
+		return systemManager;
+	}
+
+	@Required
+	public void setSystemManager(SystemManager systemManager) {
+		this.systemManager = systemManager;
+	}
+
+	public VersionManager getVersionManager() {
+		return versionManager;
+	}
+
+	@Required
+	public void setVersionManager(VersionManager versionManager) {
+		this.versionManager = versionManager;
+	}
+
+	public ProjectInfoManager getProjectInfoManager() {
+		return projectInfoManager;
+	}
+
+	@Required
+	public void setProjectInfoManager(ProjectInfoManager projectInfoManager) {
+		this.projectInfoManager = projectInfoManager;
+	}
+
+	public AfterSaleRecordManager getAfterSaleRecordManager() {
+		return afterSaleRecordManager;
+	}
+
+	@Required
+	public void setAfterSaleRecordManager(
+			AfterSaleRecordManager afterSaleRecordManager) {
+		this.afterSaleRecordManager = afterSaleRecordManager;
+	}
+
+	public CertificationManager getCertificationManager() {
+		return certificationManager;
+	}
+
+	@Required
+	public void setCertificationManager(
+			CertificationManager certificationManager) {
+		this.certificationManager = certificationManager;
+	}
+
+	public Email getEmail() {
+		return email;
+	}
+
+	@Required
+	public void setEmail(Email email) {
+		this.email = email;
+	}
+
+	public TicketApplyManager getTicketApplyManager() {
+		return ticketApplyManager;
+	}
+
+	@Required
+	public void setTicketApplyManager(TicketApplyManager ticketApplyManager) {
+		this.ticketApplyManager = ticketApplyManager;
+	}
+
+	public CommerceProjectManager getCommerceProjectManager() {
+		return commerceProjectManager;
+	}
+
+	@Required
+	public void setCommerceProjectManager(
+			CommerceProjectManager commerceProjectManager) {
+		this.commerceProjectManager = commerceProjectManager;
+	}
+
+	public CommerceProjectActingManager getCommerceProjectActingManager() {
+		return commerceProjectActingManager;
+	}
+
+	@Required
+	public void setCommerceProjectActingManager(
+			CommerceProjectActingManager commerceProjectActingManager) {
+		this.commerceProjectActingManager = commerceProjectActingManager;
+	}
+
+	public CommerceProjectAuthapplyManager getCommerceProjectAuthapplyManager() {
+		return commerceProjectAuthapplyManager;
+	}
+
+	@Required
+	public void setCommerceProjectAuthapplyManager(
+			CommerceProjectAuthapplyManager commerceProjectAuthapplyManager) {
+		this.commerceProjectAuthapplyManager = commerceProjectAuthapplyManager;
+	}
+
+	public CommerceProductManager getCommerceProductManager() {
+		return commerceProductManager;
+	}
+
+	@Required
+	public void setCommerceProductManager(
+			CommerceProductManager commerceProductManager) {
+		this.commerceProductManager = commerceProductManager;
+	}
+
+	public AssetManager getAssetManager() {
+		return assetManager;
+	}
+
+	@Required
+	public void setAssetManager(AssetManager assetManager) {
+		this.assetManager = assetManager;
+	}
+
+	public OvertimeApplyManager getOvertimeApplyManager() {
+		return overtimeApplyManager;
+	}
+
+	@Required
+	public void setOvertimeApplyManager(
+			OvertimeApplyManager overtimeApplyManager) {
+		this.overtimeApplyManager = overtimeApplyManager;
+	}
+
+	public AttenceManager getAttenceManager() {
+		return attenceManager;
+	}
+
+	@Required
+	public void setAttenceManager(AttenceManager attenceManager) {
+		this.attenceManager = attenceManager;
+	}
+
+	public WeekPlanManager getWeekPlanManager() {
+		return weekPlanManager;
+	}
+
+	@Required
+	public void setWeekPlanManager(WeekPlanManager weekPlanManager) {
+		this.weekPlanManager = weekPlanManager;
+	}
+
+	public WorkRecordManager getWorkRecordManager() {
+		return workRecordManager;
+	}
+
+	@Required
+	public void setWorkRecordManager(WorkRecordManager workRecordManager) {
+		this.workRecordManager = workRecordManager;
+	}
+
+	public VacancyApplyManager getVacancyApplyManager() {
+		return vacancyApplyManager;
+	}
+
+	@Required
+	public void setVacancyApplyManager(VacancyApplyManager vacancyApplyManager) {
+		this.vacancyApplyManager = vacancyApplyManager;
+	}
+
+	public ClaimApplyManager getClaimApplyManager() {
+		return claimApplyManager;
+	}
+
+	@Required
+	public void setClaimApplyManager(ClaimApplyManager claimApplyManager) {
+		this.claimApplyManager = claimApplyManager;
+	}
+
+	public FileDownloadServlet getFileDownloadServlet() {
+		return FileDownloadServlet;
+	}
+
+	@Required
+	public void setFileDownloadServlet(FileDownloadServlet fileDownloadServlet) {
+		FileDownloadServlet = fileDownloadServlet;
+	}
+
+	public BusinessTripManager getBusinessTripManager() {
+		return businessTripManager;
+	}
+
+	@Required
+	public void setBusinessTripManager(BusinessTripManager businessTripManager) {
+		this.businessTripManager = businessTripManager;
+	}
+
+	public DepartmentDao getDeptDao() {
+		return deptDao;
+	}
+
+	@Required
+	public void setDeptDao(DepartmentDao deptDao) {
+		this.deptDao = deptDao;
+	}
+
+	public PositionDao getPostDao() {
+		return postDao;
+	}
+
+	@Required
+	public void setPostDao(PositionDao postDao) {
+		this.postDao = postDao;
+	}
+
+	public SysLoginfDao getSysLoginfDao() {
+		return sysLoginfDao;
+	}
+
+	@Required
+	public void setSysLoginfDao(SysLoginfDao sysLoginfDao) {
+		this.sysLoginfDao = sysLoginfDao;
+	}
+
+	public SystemConfigDao getSystemConfigDao() {
+		return systemConfigDao;
+	}
+
+	@Required
+	public void setSystemConfigDao(SystemConfigDao systemConfigDao) {
+		this.systemConfigDao = systemConfigDao;
+	}
+
+	public UserDao getUserDao() {
+		return userDao;
+	}
+
+	@Required
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
+	public CertificationDao getCertificationDao() {
+		return certificationDao;
+	}
+
+	@Required
+	public void setCertificationDao(CertificationDao certificationDao) {
+		this.certificationDao = certificationDao;
+	}
+
+	public ProjectDao getProjectDao() {
+		return projectDao;
+	}
+
+	@Required
+	public void setProjectDao(ProjectDao projectDao) {
+		this.projectDao = projectDao;
+	}
+
+	public VersionDao getVersionDao() {
+		return versionDao;
+	}
+
+	@Required
+	public void setVersionDao(VersionDao versionDao) {
+		this.versionDao = versionDao;
+	}
+
+	public VersionLogDao getVersionLogDao() {
+		return versionLogDao;
+	}
+
+	@Required
+	public void setVersionLogDao(VersionLogDao versionLogDao) {
+		this.versionLogDao = versionLogDao;
+	}
+
+	public AfterSaleRecordDao getAfterSaleRecordDao() {
+		return afterSaleRecordDao;
+	}
+
+	@Required
+	public void setAfterSaleRecordDao(AfterSaleRecordDao afterSaleRecordDao) {
+		this.afterSaleRecordDao = afterSaleRecordDao;
+	}
+
+	public AfterSaleTrackDao getAfterSaleTrackDao() {
+		return afterSaleTrackDao;
+	}
+
+	@Required
+	public void setAfterSaleTrackDao(AfterSaleTrackDao afterSaleTrackDao) {
+		this.afterSaleTrackDao = afterSaleTrackDao;
+	}
+
+	public PermissionDao getPermissionDao() {
+		return permissionDao;
+	}
+
+	@Required
+	public void setPermissionDao(PermissionDao permissionDao) {
+		this.permissionDao = permissionDao;
+	}
+
+	public OperationRecordDao getOperationrecordDao() {
+		return operationrecordDao;
+	}
+
+	@Required
+	public void setOperationrecordDao(OperationRecordDao operationrecordDao) {
+		this.operationrecordDao = operationrecordDao;
+	}
+
+	public TicketApplyDAO getTicketApplyDAO() {
+		return ticketApplyDAO;
+	}
+
+	@Required
+	public void setTicketApplyDAO(TicketApplyDAO ticketApplyDAO) {
+		this.ticketApplyDAO = ticketApplyDAO;
+	}
+
+	public AssetKindDao getAssetKindDao() {
+		return assetKindDao;
+	}
+
+	@Required
+	public void setAssetKindDao(AssetKindDao assetKindDao) {
+		this.assetKindDao = assetKindDao;
+	}
+
+
+	public CommerceProjectActingDao getCommerceProjectActingDao() {
+		return commerceProjectActingDao;
+	}
+
+	@Required
+	public void setCommerceProjectActingDao(
+			CommerceProjectActingDao commerceProjectActingDao) {
+		this.commerceProjectActingDao = commerceProjectActingDao;
+	}
+
+	public CommerceProjectAuthApplyDao getCommerceProjectAuthApplyDao() {
+		return commerceProjectAuthApplyDao;
+	}
+
+	@Required
+	public void setCommerceProjectAuthApplyDao(
+			CommerceProjectAuthApplyDao commerceProjectAuthApplyDao) {
+		this.commerceProjectAuthApplyDao = commerceProjectAuthApplyDao;
+	}
+
+	public CommerceProjectDao getCommerceProjectDao() {
+		return commerceProjectDao;
+	}
+
+	@Required
+	public void setCommerceProjectDao(CommerceProjectDao commerceProjectDao) {
+		this.commerceProjectDao = commerceProjectDao;
+	}
+
+	public CommerceProductDao getCommerceProductDao() {
+		return commerceProductDao;
+	}
+
+	@Required
+	public void setCommerceProductDao(CommerceProductDao commerceProductDao) {
+		this.commerceProductDao = commerceProductDao;
+	}
+
+	public CommerceProjectLogsDao getCommerceProjectLogsDao() {
+		return commerceProjectLogsDao;
+	}
+
+	@Required
+	public void setCommerceProjectLogsDao(
+			CommerceProjectLogsDao commerceProjectLogsDao) {
+		this.commerceProjectLogsDao = commerceProjectLogsDao;
+	}
+
+	public CAssetApplyLogDao getCassetApplyLogDao() {
+		return cassetApplyLogDao;
+	}
+
+	@Required
+	public void setCassetApplyLogDao(CAssetApplyLogDao cassetApplyLogDao) {
+		this.cassetApplyLogDao = cassetApplyLogDao;
+	}
+
+
+	public AssetDao getAssetDao() {
+		return assetDao;
+	}
+
+	@Required
+	public void setAssetDao(AssetDao assetDao) {
+		this.assetDao = assetDao;
+	}
+
+	public AssetOpeLogDao getAssetOpeLogDao() {
+		return assetOpeLogDao;
+	}
+
+	@Required
+	public void setAssetOpeLogDao(AssetOpeLogDao assetOpeLogDao) {
+		this.assetOpeLogDao = assetOpeLogDao;
+	}
+
+
+	public OSDao getOsDao() {
+		return osDao;
+	}
+
+	@Required
+	public void setOsDao(OSDao osDao) {
+		this.osDao = osDao;
+	}
+
+	public ProductTypeDao getProductTypeDao() {
+		return productTypeDao;
+	}
+
+	@Required
+	public void setProductTypeDao(ProductTypeDao productTypeDao) {
+		this.productTypeDao = productTypeDao;
+	}
+
+
+	public WorkAttendanceDao getWorkAttendanceDao() {
+		return workAttendanceDao;
+	}
+
+	@Required
+	public void setWorkAttendanceDao(WorkAttendanceDao workAttendanceDao) {
+		this.workAttendanceDao = workAttendanceDao;
+	}
+
+	public WeekPlanDao getWeekPlanDao() {
+		return weekPlanDao;
+	}
+
+	@Required
+	public void setWeekPlanDao(WeekPlanDao weekPlanDao) {
+		this.weekPlanDao = weekPlanDao;
+	}
+
+	public OvertimeApplyDao getOvertimeApplyDao() {
+		return overtimeApplyDao;
+	}
+
+	@Required
+	public void setOvertimeApplyDao(OvertimeApplyDao overtimeApplyDao) {
+		this.overtimeApplyDao = overtimeApplyDao;
+	}
+
+	public WorkRecordDao getWorkRecordDao() {
+		return workRecordDao;
+	}
+
+	@Required
+	public void setWorkRecordDao(WorkRecordDao workRecordDao) {
+		this.workRecordDao = workRecordDao;
+	}
+
+	public VacancyApplyDao getVacancyApplyDao() {
+		return vacancyApplyDao;
+	}
+
+	@Required
+	public void setVacancyApplyDao(VacancyApplyDao vacancyApplyDao) {
+		this.vacancyApplyDao = vacancyApplyDao;
+	}
+
+	public ClaimApplyDao getClaimApplyDao() {
+		return claimApplyDao;
+	}
+
+	@Required
+	public void setClaimApplyDao(ClaimApplyDao claimApplyDao) {
+		this.claimApplyDao = claimApplyDao;
+	}
+
+	public BusinessTripDao getBusinessTripDao() {
+		return businessTripDao;
+	}
+
+	@Required
+	public void setBusinessTripDao(BusinessTripDao businessTripDao) {
+		this.businessTripDao = businessTripDao;
+	}
+
+	public CyberExecutor getCyberExecutor() {
+		return cyberExecutor;
+	}
+
+	@Required
+	public void setCyberExecutor(CyberExecutor cyberExecutor) {
+		this.cyberExecutor = cyberExecutor;
+	}
+
+	public CyberScheduler getCyberScheduler() {
+		return cyberScheduler;
+	}
+
+	@Required
+	public void setCyberScheduler(CyberScheduler cyberScheduler) {
+		this.cyberScheduler = cyberScheduler;
+	}
+
+	@Required
+	public PerformanceManager getPerformanceManager() {
+		return performanceManager;
+	}
+
+	@Required
+	public void setPerformanceManager(PerformanceManager performanceManager) {
+		this.performanceManager = performanceManager;
+	}
+
+	@Required
+	public TemplateDao getTemplateDao() {
+		return templateDao;
+	}
+
+	@Required
+	public void setTemplateDao(TemplateDao templateDao) {
+		this.templateDao = templateDao;
+	}
+
+	public PositionTemplateDao getPositionTemplateDao() {
+		return positionTemplateDao;
+	}
+
+	@Required
+	public void setPositionTemplateDao(PositionTemplateDao positionTemplateDao) {
+		this.positionTemplateDao = positionTemplateDao;
+	}
+	
+	public PerformanceResultDao getPerformanceResultDao() {
+		return performanceResultDao;
+	}
+	
+	@Required
+	public void setPerformanceResultDao(PerformanceResultDao performanceResultDao) {
+		this.performanceResultDao = performanceResultDao;
+	}
+
+	public OutBoundDao getOutBoundDao() {
+		return outBoundDao;
+	}
+
+	@Required
+	public void setOutBoundDao(OutBoundDao outBoundDao) {
+		this.outBoundDao = outBoundDao;
+	}
+}

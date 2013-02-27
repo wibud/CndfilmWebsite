@@ -1,0 +1,401 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+		
+		   $(document).ready(function(){
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var applyId = href.split("applyId=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+				
+				$("#judgement1").hide();
+				$("#judgement2").hide();
+				$.post('/vacancyApplyDetail',
+				       {'applyId':applyId},
+					   function(xml) {
+							 var userName = $(xml).find("userName").text();
+							 var userDept = $(xml).find("deptName").text();
+							 var applyTime = $(xml).find("applyTime").text();
+							 var applyType = $(xml).find("applyType").text();
+							 var applyReason = $(xml).find("applyReason").text();
+							 var applyStartTime = $(xml).find("applyStartTime").text();
+							 var applyEndTime = $(xml).find("applyEndTime").text();
+							 var totalDay = $(xml).find("totalDay").text();
+							 var remark =  $(xml).find("remark").text();
+							 var bmJudgement = $(xml).find("bmJudgement").text();
+							 var approval1Name =$(xml).find("approval1Name").text();
+							 var approval2Name =$(xml).find("approval2Name").text();
+							 var approval3Name =$(xml).find("approval3Name").text();
+							 var approval4Name =$(xml).find("approval4Name").text();
+							 var approval1Date =$(xml).find("approval1Date").text();
+							 var approval2Date =$(xml).find("approval2Date").text();
+							 var approval3Date =$(xml).find("approval3Date").text();
+							 var approval4Date =$(xml).find("approval4Date").text();
+                             var temp1="";
+                             var temp2="";
+                             var temp3="";
+                             var temp4="";
+								 
+							if(bmJudgement=="等待部门主管审批"){
+							      temp1="等待审批";
+							      temp2="等待审批";
+							      temp3="等待审批";
+							      temp4="等待审批";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=6){
+							            $("#managerJudgement").text(temp2);
+							         }else if(day>=7){
+							            $("#managerJudgement").text(temp2);
+							            $("#gmJudgement").text(temp3);  
+							         }
+							 }	
+							 
+							 if(bmJudgement=="等待分管领导审批" ){
+							      temp1="审批通过";
+							      temp2="等待审批";
+							      temp3="等待审批";
+							      temp4="等待审批";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=6){
+							            $("#managerJudgement").text(temp2);
+							      }else if(day>=7){
+							            $("#managerJudgement").text(temp2);
+							            $("#gmJudgement").text(temp3);  
+							      }
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+							 }
+							 
+							 if(bmJudgement=="等待总经理审批"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="等待审批";
+							      temp4="等待审批";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=6){
+							            $("#managerJudgement").text(temp2);
+							      }else if(day>=7){
+							            $("#managerJudgement").text(temp2);
+							            $("#gmJudgement").text(temp3);  
+							      }
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+				                  $("#approval2Name").text(approval2Name);
+				                  $("#approval2Date").text(approval2Date);
+							 }
+							 
+							 if(bmJudgement=="等待人事部审批"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="审批通过";
+							      temp4="等待审批";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=6){
+							            $("#managerJudgement").text(temp2);
+							      }else if(day>=7){
+							            $("#managerJudgement").text(temp2);
+							            $("#gmJudgement").text(temp3);  
+							      }
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+				                  $("#approval2Name").text(approval2Name);
+				                  $("#approval2Date").text(approval2Date);
+				                  $("#approval3Name").text(approval3Name);
+				                  $("#approval3Date").text(approval3Date); 
+							 }
+							 
+							 if(bmJudgement=="人事部审批通过"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="审批通过";
+							      temp4="审批通过";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=6){
+							            $("#managerJudgement").text(temp2);
+							      }else if(day>=7){
+							            $("#managerJudgement").text(temp2);
+							            $("#gmJudgement").text(temp3);  
+							      }
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+				                  $("#approval2Name").text(approval2Name);
+				                  $("#approval2Date").text(approval2Date);
+				                  $("#approval3Name").text(approval3Name);
+				                  $("#approval3Date").text(approval3Date); 
+				                  $("#approval4Name").text(approval4Name);
+				                  $("#approval4Date").text(approval4Date);
+							 }
+							 
+							 if(bmJudgement=="部门主管审批不通过"){
+							      temp1="审批不通过";
+							      temp2="";
+							      temp3="";
+							      temp4="";
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+							 }
+							 
+							 if(bmJudgement=="分管领导审批不通过"){
+							      temp1="审批通过";
+							      temp2="审批不通过";
+							      temp3=""; 
+							      temp4="";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=7){
+							            $("#managerJudgement").text(temp2);
+							      }
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+				                  $("#approval2Name").text(approval2Name);
+				                  $("#approval2Date").text(approval2Date);
+							 }
+							 
+							 if(bmJudgement=="总经理审批不通过"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="审批不通过";
+							      temp4="";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=6){
+							            $("#managerJudgement").text(temp2);
+							      }else if(day>=7){
+							            $("#managerJudgement").text(temp2);
+							            $("#gmJudgement").text(temp3);  
+							      }
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+				                  $("#approval2Name").text(approval2Name);
+				                  $("#approval2Date").text(approval2Date);
+				                  $("#approval3Name").text(approval3Name);
+				                  $("#approval3Date").text(approval3Date); 
+							 }
+							 
+							 if(bmJudgement=="人事部审批不通过"){
+							      temp1="审批通过";
+							      temp2="审批通过";
+							      temp3="审批通过";
+							      temp4="审批不通过";
+							      var day=Number(totalDay);
+							      if(day>=3&&day<=6){
+							            $("#managerJudgement").text(temp2);
+							      }else if(day>=7){
+							            $("#managerJudgement").text(temp2);
+							            $("#gmJudgement").text(temp3);  
+							      } 
+							      $("#approval1Name").text(approval1Name);
+				                  $("#approval1Date").text(approval1Date);
+				                  $("#approval2Name").text(approval2Name);
+				                  $("#approval2Date").text(approval2Date);
+				                  $("#approval3Name").text(approval2Name);
+				                  $("#approval3Date").text(approval2Date);
+				                  $("#approval4Name").text(approval4Name);
+				                  $("#approval4Date").text(approval4Date);
+							 }
+							 
+							if(Number(totalDay>=3 && Number(totalDay)<=6)){
+							      $("#judgement1").show();
+							}else if(Number(totalDay)>=7){
+							      $("#judgement1").show();
+							      $("#judgement2").show();
+							} 	 
+							 
+				            $("#userName").text(userName);
+				            $("#userDept").text(userDept);
+				            $("#applyTime").text(applyTime);
+				            $("#applyStartTime").text(applyStartTime);
+				            $("#applyEndTime").text(applyEndTime);
+				            $("#applyReason").text(applyReason);
+				            $("#totalDay").text(totalDay);
+				            $("#remark").text(remark);
+				            $("#bmJudgement").text(temp1);
+				            $("#pdJudgement").text(temp4);
+				 
+			});
+                function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   }
+		   });
+		</script>
+</head>
+<body>
+      <div id="container2">
+	  <div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		 <div id="content">
+	          <div id="main">
+	          <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：请假管理 &gt;&nbsp;
+										<strong>查看详情</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>请假申请详情</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r7">
+					<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+					   <tr>
+					   <td width="30%">申请人姓名：</td>
+					   <td width="70%"><label id="userName"></label></td>
+					   </tr>
+					   <tr>
+					   <td>申请人部门：</td>
+					   <td><label id="userDept"></label></td>
+					  </tr>
+					  <tr>
+					  <td>申请时间：</td>
+					  <td><label id="applyTime"></label></td>
+                      </tr>
+                      <tr>
+                      <td>假期开始时间：</td>
+                      <td><label id="applyStartTime"/></td>
+                      </tr>
+                      <tr>
+                      <td>假期结束时间：</td>
+                      <td><label id="applyEndTime"/></td>
+                      </tr>
+                      <tr>
+					  <td>请假原因：</td>
+					  <td><label id="applyReason"/></td>
+					  </tr>
+					  <tr>
+					  <td>总计天数：</td>
+					  <td><label id="totalDay"/></td>				
+                      </tr>
+                      <tr>
+                      <td>备注：</td>
+                      <td><label id="remark" /></td>
+                      </tr>
+                      <tr>
+                      <td>部门主管审批：</td>
+                      <td>审批意见：<label id="bmJudgement"></label><p/>
+                                                                     审批人：<label id="approval1Name"></label><p/>
+                                                                     审批时间：<label id="approval1Date"></label> 
+                      </td>
+                      </tr>
+                      <tr id="judgement1">
+                      <td>分管领导审批</td>
+                      <td>审批意见：<label id="managerJudgement"></label><p/>
+                                                                     审批人：<label id="approval2Name"></label><p/>
+                                                                     审批时间：<label id="approval2Date"></label>
+                      </td>
+                      </tr>
+                      <tr id="judgement2">
+                      <td>总经理审批：</td>
+                      <td>审批意见：<label id="gmJudgement"></label><p/>
+                                                                     审批人：<label id="approval3Name"></label><p/>
+                                                                     审批时间：<label id="approval3Date"></label>
+                      </td>
+                      </tr>
+                      <tr>
+                      <td>人事部审批：</td>
+                      <td>审批意见：<label id="pdJudgement"></label><p/>
+                                                                     审批人：<label id="approval4Name"></label><p/>
+                                                                     审批时间：<label id="approval4Date"></label>
+                      </td>
+                      </tr>
+					  </table>
+				      <br/>
+				      <input class="bt" type="button" value="返回" onclick="javascript:history.back()"/>
+			    </div>
+			  </div>
+			  <div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+</body>
+</html>

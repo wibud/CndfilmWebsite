@@ -1,0 +1,41 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="post_id")
+@Entity
+@Table(name="tb_position")
+public class Position {
+	@Id
+	private String post_id;       //职位标识ְ
+	private String post_name;     //ְ职位名称
+	private String post_mark; 	  //职位标识，标识职位属于哪个部门
+	
+	public String getPost_id() {
+		return post_id;
+	}
+	public void setPost_id(String postId) {
+		post_id = postId;
+	}
+	public String getPost_name() {
+		return post_name;
+	}
+	public void setPost_name(String postName) {
+		post_name = postName;
+	}
+	public String getPost_mark() {
+		return post_mark;
+	}
+	public void setPost_mark(String postMark) {
+		post_mark = postMark;
+	}
+	
+	
+	
+
+}

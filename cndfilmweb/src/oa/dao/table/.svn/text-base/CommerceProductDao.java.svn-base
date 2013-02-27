@@ -1,0 +1,170 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.CommerceProduct;
+import oa.model.table.CommerceProject;
+import oa.util.ResultList;
+
+public class CommerceProductDao extends BaseDao {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(CommerceProductDao.class);
+	public final String ALLRANDOM = "allrandom";
+	public final String COMMERCEPROJECT_ID = "commerceproject_id";
+	public final String PRODUCT_TYPE = "product_type";
+	public final String SOFTWAREVESSION = "softwareVession";
+	public final String PRODUCT_ID = "product_id";
+	public final String AUTHSTATE = "authstate";
+	public final String COMMERCEPROJECT_NAME = "commerceproject_name";
+	public final String AUTHTEXT = "authtext";
+	public final String COMMERCEPROJECTAUTHNUMBER = "commerceprojectAuthnumber";
+    public final String PEODUCT_NUMBER="product_number";
+	// public final String COMMERCE_ID="commerce_id";
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(CommerceProduct instance) {
+		log.debug("saving CommerceProduct instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(CommerceProduct instance) {
+		log.debug("deleting CommerceProduct instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+
+	}
+
+	public CommerceProduct findCommerceProduct(String commerceproject_id) {
+		// TODO Auto-generated method stub
+		CommerceProduct key = new CommerceProduct();
+		return (key);
+	}
+
+	public void update(CommerceProduct instance) {
+		log.debug("update CommerceProject instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	@SuppressWarnings("unchecked")
+	public CommerceProduct findByPropertyReturnOnly(String propertyName,
+			String value) {
+		log.debug("finding CommerceProduct instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			ResultList<CommerceProduct> user = super.find(null,
+					"oa.model.table.CommerceProduct", propertyName, value);
+			CommerceProduct u = user.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+
+	}
+
+	public  CommerceProduct findById(String allrandom) {
+		log.debug("getting CommerceProject instance with id: " + allrandom);
+		try {
+			CommerceProduct keymsg = (CommerceProduct)super.get("oa.model.table.CommerceProduct", allrandom);
+			return keymsg;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProduct> findByExample(Integer pageNo,
+			CommerceProduct commerceproduct) {
+		log.debug("find CommerceProject instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProduct",
+					commerceproduct);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProduct> findAll(Integer pageNo) {
+		log.debug("finding all CommerceProduct instances");
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProduct");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProduct> findByCondition(Integer pageNo,
+			String conditions) {
+		log.debug("finding CommerceProduct instance with conditions: "
+				+ conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProduct",
+					conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property conditions failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProduct> findByProperty(Integer pageNo,
+			String propertyName, String value) {
+		log.debug("finding CommerceProduct instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProduct",
+					propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	// 以一个字段或另一个字段为条件模糊查询
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProduct> findByProperty(Integer pageNo,
+			String propertyName1, String propertyName2, String value) {
+		log.debug("finding CommerceProduct instance with property: "
+				+ propertyName1 + ", value: " + value + " or " + propertyName2
+				+ ", value; " + value);
+		try {
+			return super.likefind(pageNo, "oa.model.table.CommerceProduct",
+					propertyName1, propertyName2, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+
+	}
+
+}

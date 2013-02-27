@@ -1,0 +1,113 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id = "template_id")
+@Entity
+@Table(name = "tb_template")
+public class Template {
+	@Id
+	private String template_id; // 绩效考核模板标识
+	private String templatename; // 绩效考核模板名字
+	private String creator_id; // 绩效考核模板创建人标识
+	private String creatorname; // 绩效考核模板创建人姓名
+	private String createtime; // 绩效考核模板创建时间
+	private String performanceindex; // 绩效考核模板考核指标及权重
+	private String managerweight; // 绩效考核模板主管评分权重
+	private String selfweight; // 绩效考核模板自评分权重
+	private String otherweight; // 绩效考核模板互评分权重
+	private String description; // 绩效考核模板描述
+	private String status; // 预留字段
+
+	public String getTemplate_id() {
+		return template_id;
+	}
+
+	public void setTemplate_id(String templateId) {
+		template_id = templateId;
+	}
+
+	public String getTemplatename() {
+		return templatename;
+	}
+
+	public void setTemplatename(String templatename) {
+		this.templatename = templatename;
+	}
+
+	public String getCreator_id() {
+		return creator_id;
+	}
+
+	public void setCreator_id(String creatorId) {
+		creator_id = creatorId;
+	}
+
+	public String getCreatorname() {
+		return creatorname;
+	}
+
+	public void setCreatorname(String creatorname) {
+		this.creatorname = creatorname;
+	}
+
+	public String getCreatetime() {
+		return createtime;
+	}
+
+	public void setCreatetime(String createtime) {
+		this.createtime = createtime;
+	}
+
+	public String getPerformanceindex() {
+		return performanceindex;
+	}
+
+	public void setPerformanceindex(String performanceindex) {
+		this.performanceindex = performanceindex;
+	}
+
+	public String getManagerweight() {
+		return managerweight;
+	}
+
+	public void setManagerweight(String managerweight) {
+		this.managerweight = managerweight;
+	}
+
+	public String getSelfweight() {
+		return selfweight;
+	}
+
+	public void setSelfweight(String selfweight) {
+		this.selfweight = selfweight;
+	}
+
+	public String getOtherweight() {
+		return otherweight;
+	}
+
+	public void setOtherweight(String otherweight) {
+		this.otherweight = otherweight;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+}

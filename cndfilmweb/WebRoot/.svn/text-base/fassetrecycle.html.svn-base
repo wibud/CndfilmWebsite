@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--资产回收</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript">
+		
+			var assetCategory="固定资产";
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+			var deptID;
+			showDeptAndPeo("#dept32","#person32");	
+			showFAssetKindList("#sel_fassetKind");
+			changeNoAndName("#sel_fassetKind","#sel_fassetNo","#text_fassetName","#text_fassetModel","#text_fassetDept","#text_fassetOwner");	
+			function init(){
+				$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+			}
+			
+			function showFAssetKindList(kindSel){
+				//获取固定资产类别列表
+				$.post('/assetKindShowList',{'assetCategory':assetCategory},
+					CB_kindList,
+					'xml');
+				function CB_kindList(xml){
+					$(kindSel).append("<option value=\"\">"+"—类别—"+"</option>");
+					$(xml).find("item").each(function(){
+						$(kindSel).append("<option value=\""+$(this).find("assetKindID").text()+"\">"+$(this).find("assetKind").text()+"</option>");									
+					});	
+				}
+			}
+			
+			function changeNoAndName(kindSel,noSel,nameText,modelText,deptText,perText)
+			{
+				$(kindSel).change(
+					function ()
+					{	
+						
+							var perext=noSel+" option";
+							$(perext).remove();
+							var kindval = $(kindSel).val();
+							$(noSel).append("<option value=\"\">"+"—编号—"+"</option>");
+							$(nameText).val("");
+							$(modelText).val("");
+							$(deptText).val("");
+							$(perText).val("");
+							if(kindval=="")
+							{
+								return;
+							}
+							$.post('/assetFixedListAlloted',
+								{'page':null,'assetKindID':kindval},
+								function(xml){
+								$(xml).find("item").each(function(){
+								$(noSel).append("<option value=\""+$(this).find("assetNo").text()+"\">"+$(this).find("assetNo").text()+"</option>");
+								
+								});
+								$(noSel).change(
+									function()
+									{
+										var assetNo=$(noSel).val();
+										if(assetNo=="")
+										{
+											$(nameText).val("");
+											$(deptText).val("");
+											$(perText).val("");
+											return;
+										}
+										$(xml).find("item").each(function(){
+										if($(this).find("assetNo").text()==assetNo)
+										{
+											$(nameText).val($(this).find("assetName").text());
+											$(modelText).val($(this).find("assetModel").text());
+											$(perText).val($(this).find("assetOwner").text());
+											$(deptText).val($(this).find("assetDept").text());
+											deptID=$(this).find("assetDeptID").text();
+										}
+										
+										});
+									}
+								);
+								
+								},
+								'xml');
+						
+					}		
+				);
+			}
+			
+			function showDeptAndPeo(dept,person){
+				//获取部门以及该部门的成员
+				$.post('/systemDeptList',{},
+					function(xml){
+						$(dept).append("<option value=\"\">"+"—部门—"+"</option>");
+						$(xml).find("item").each(function(){
+							$(dept).append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");									
+						});
+																	
+						$(person).append("<option value=\"\">"+"—人员—"+"</option>");
+						
+						},
+					'xml');
+																	
+				 //人员随着部门改变而改变
+			 	$(dept).change(function(){
+			 		var perext=person+" option";
+					$(perext).remove();
+					var deptval = $(dept).val();
+					if(deptval=="")
+					{
+						$(person).append("<option value=\"\">"+"—人员—"+"</option>");
+						return;
+					}
+					$.post('/gotUserbyDept',
+							{'dept':deptval},
+							function(xml){
+							$(person).append("<option value=\"\">"+"—人员—"+"</option>");
+							$(xml).find("item").each(function(){
+							$(person).append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+							});
+					},
+				'xml');
+			
+				});
+			}
+			
+			$("#comfirm").click
+			(
+				function()
+				{
+					var assetKindID=$("#sel_fassetKind").val();
+					var assetNo		=$("#sel_fassetNo").val();
+					var assetName	=$("#text_fassetName").val();
+					var assetModel	=$("#text_fassetModel").val();
+					var assetRecyTime	=$("#fassetRecyTime").val();
+					var assetOwner=$("#text_fassetOwner").val();
+					var assetOper=$("#person32").val();
+					var assetOperDeptID=$("#dept32").val();
+					var assetRecyReason=$("#recyclereason").val();
+					var array=[assetKindID,assetNo,assetName,assetModel,assetRecyTime,assetOwner,assetOper,assetOperDeptID,deptID];
+					for(i=0;i<9;i++){
+						if(array[i]==""){
+							alert("请填入完整信息！");return;
+						}
+					}
+					$.post('/fassetRecycle',{'assetCategory':assetCategory,'assetKindID':assetKindID,'assetNo':assetNo,'assetName':assetName,'assetModel':assetModel,'assetOpeTime':assetRecyTime,'assetOwner':assetOwner,'assetDept':deptID,'assetOper':assetOper,'assetOperDeptID':assetOperDeptID,'recycleReason':assetRecyReason},CB_fassetRecy,'xml');
+						function CB_fassetRecy(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode != 0){
+								alert($(databack).find("errormsg").text());
+							}else {
+									alert("回收成功！");
+									location.href="fassetrecycle.html";
+							}
+						}
+				}
+				
+			);
+			
+			}); 
+		</script>
+		 
+	</head>
+	
+	<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<div id="content">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="300">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：资产管理  &gt;&nbsp;
+										<strong>资产回收</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>资产回收</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="width_5">资产类别</td>
+								<td class="widht_15">
+									<select id="sel_fassetKind" class="wideSelText">
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="width_5">资产编号</td>
+								<td class="width_15">
+								    <select id="sel_fassetNo" class="wideSelText">
+								    	<option selected="selected">—编号—</option>
+								    </select>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">资产名称/型号</td>
+								<td class="width_15">
+								    名称：<input type="text" id="text_fassetName" class="person" readonly="readonly"/>
+								    型号：<input type="text" id="text_fassetModel" class="person" readonly="readonly"/>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">回收时间</td>
+								<td class="width_15">
+								    <input type="text" id="fassetRecyTime" class="wideSelText" readonly="readonly" onclick="setday(this)"/>
+							    </td>
+							</tr>
+						    <tr>
+								<td class="width_5">资产所有人</td>
+								<td class="width_15">
+									<input type="text" class="dept" id="text_fassetDept" readonly="readonly"/>
+					        		<input type="text" class="dept" id="text_fassetOwner" readonly="readonly"/>
+					    		</td>	
+							</tr>
+							
+			
+							<tr>
+								<td class="width_5">经办人</td>
+								<td class="width_15">
+									<select name="dept" id="dept32" class="dept" >
+					        		</select>
+					        		<select name="person" id="person32" class="dept" >
+					        		</select>
+					    		</td>	
+							</tr>
+							<tr>
+								<td>回收原因</td>
+								<td><textarea  id="recyclereason" class="wideSelText"></textarea></td>
+							</tr>
+							<tr><td colspan="2"><input class="bt" type="button" id="comfirm" value="确定"  ></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+
+		</div>
+	</body>
+</html>

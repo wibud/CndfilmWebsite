@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CyberOA" default="war">
+	<description>CyberOA Web Project</description>
+	
+	<!-- 属性设置 -->
+	<property name="war.name" value="ROOT.war"/>
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build"/>
+	<property name="config.common.dir" value="cfg"/>
+	<property name="config.deploy.dir" value="deploy_cfg"/>
+	<property name="build.lib.dir" value="${build.dir}/lib"/>
+	<property name="webroot.dir" value="WebRoot"/>
+	<property name="webinf.dir" value="${webroot.dir}/WEB-INF"/>
+	<property name="class.dir" value="${webinf.dir}/classes"/>
+	<property name="lib.dir" value="${webinf.dir}/lib"/>
+	
+	<available file="${war.name}" property="war.exist" type="file"></available>
+	
+	
+	<!-- 资源定义 -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<fileset id="config.common" dir="${config.common.dir}">
+		<exclude name="oa.properties"/>
+	</fileset>
+	
+	<fileset id="webroot" dir="${webroot.dir}">
+		<exclude name="WEB-INF/lib/**/*"/>
+	</fileset>
+	
+	
+	
+	
+	<!-- 以下为target配置 -->
+	<target name="clean" description="clean for the building">
+		<delete dir="${build.dir}"></delete>
+	</target>
+	
+	<target name="init" depends="clean" description="do some initilization, depends on 'clean'">
+		<echo message="${ant.version}"></echo>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.lib.dir}"/>
+	</target>
+	
+	<target name="compile" description="compile the project">
+		<javac srcdir="${src.dir}" destdir="${class.dir}" encoding="UTF-8" includeantruntime="false">
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+	
+	<target name="war" depends="init,compile" description="pack the project, depends on 'init, compile'">
+		<copy todir="${class.dir}">
+			<fileset refid="config.common"/>
+		</copy>
+		<copy todir="${class.dir}" overwrite="true">
+			<fileset dir="${config.deploy.dir}" includes="oa.properties"/>
+		</copy>
+		<copy todir="${build.lib.dir}" flatten="true">
+			<fileset dir="${lib.dir}" includes="**/*.jar"></fileset>
+		</copy>
+		<war destfile="${war.name}" webxml="${webinf.dir}/web.xml" encoding="UTF-8">
+			<fileset refid="webroot"/>
+			<lib dir="${build.lib.dir}"/>
+		</war>
+		<copy todir="${class.dir}" overwrite="true">
+			<fileset dir="${config.common.dir}" includes="oa.properties"/>
+		</copy>
+		<antcall target="clean"></antcall>
+	</target>
+	
+	<target name="deploy" depends="war" description="deploy the project, depends on 'war'">
+		<loadproperties srcfile="${config.deploy.dir}/deploy.properties"/>
+		<scp file="${war.name}" remoteTodir="${ssh.user}:${ssh.pass}@${ssh.server}:${deploy.path}" ></scp>
+		<sshexec host="${ssh.server}" username="${ssh.user}" password="${ssh.pass}" command="${deploy.cmd}"/>
+	</target>
+	
+	<target name="deploy_only" if="war.exist" description="deploy only if ROOT.war exists, otherwise do nothing">
+		<loadproperties srcfile="${config.deploy.dir}/deploy.properties"/>
+		<scp file="${war.name}" remoteTodir="${ssh.user}:${ssh.pass}@${ssh.server}:${deploy.path}" ></scp>
+		<sshexec host="${ssh.server}" username="${ssh.user}" password="${ssh.pass}" command="${deploy.cmd}"/>
+	</target>
+
+</project>

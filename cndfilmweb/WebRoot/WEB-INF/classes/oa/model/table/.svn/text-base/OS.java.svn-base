@@ -1,0 +1,35 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="os_id")
+@Entity
+@Table(name="tb_os")
+public class OS {
+	@Id
+	private String os_id;		   	//操作系统标识
+	private String os_name;		  	//操作系统名称
+	private String des;	 	  		//备注
+	public String getOs_id() {
+		return os_id;
+	}
+	public void setOs_id(String os_id) {
+		this.os_id = os_id;
+	}
+	public String getOs_name() {
+		return os_name;
+	}
+	public void setOs_name(String os_name) {
+		this.os_name = os_name;
+	}
+	public String getDes() {
+		return des;
+	}
+	public void setDes(String des) {
+		this.des = des;
+	}
+	
+}

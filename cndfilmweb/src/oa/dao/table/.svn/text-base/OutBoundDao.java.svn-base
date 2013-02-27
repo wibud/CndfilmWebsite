@@ -1,0 +1,140 @@
+package oa.dao.table;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.OutBound;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class OutBoundDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(VersionDao.class);
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(OutBound instance) {
+		log.debug("saving OutBound instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void saveList(List versionList) {
+		log.debug("saving OutBound List instance");
+		try {
+			super.saveList(versionList);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(OutBound instance) {
+		log.debug("deleting OutBound instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(OutBound instance) {
+		log.debug("update OutBound instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public OutBound findById(String id) {
+		log.debug("getting OutBound instance with id: " + id);
+		try {
+			OutBound instance = (OutBound) super.get("oa.model.table.OutBound", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<OutBound> findByExample(Integer pageNo, OutBound OutBound) {
+		log.debug("find OutBound instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.OutBound", OutBound);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<OutBound> findAll(Integer pageNo) {
+		log.debug("finding all OutBound instances");
+		try {
+			return super.find(pageNo, "oa.model.table.OutBound");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<OutBound> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding OutBound instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.OutBound", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<OutBound> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding OutBound instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.OutBound", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public List<OutBound> findByHQL(Integer pageNo, String hql){
+		log.debug("finding OutBound instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding Project instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+
+
+}

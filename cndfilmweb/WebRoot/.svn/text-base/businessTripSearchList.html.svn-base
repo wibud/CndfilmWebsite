@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>OA系统--出差查询列表</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+	<script type="text/javascript">
+	    showIncludeFile();
+	    showIncludeThickBoxAjaxingFile();
+	</script>
+	<script type="text/javascript">
+	    $(document).ready(function(){
+		    init();
+			//翻页
+			var href = location.href;
+			href = decodeURI(href);
+			var tmp = (href.split("?"))[1].split("&");
+			var page = 1;
+			var pageCount = 0;
+			var count = 0;
+			var url = "/searchBusinessTrip";
+			var userId           	= tmp[0].split("=")[1];
+			var deptId            	= tmp[1].split("=")[1];
+		    var createTime     		= tmp[2].split("=")[1];
+			var leaveTime       	= tmp[3].split("=")[1];
+			var destination 		= tmp[4].split("=")[1].split("#")[0];
+			
+			
+			$.fn.showData = function(url,page2){
+			   page = page2;
+			   urlT = url;
+			   $(this).handlerData(
+			            urlT,
+						function(xml){
+							$("#tripTable tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+								}
+							$(xml).find("item").each(function(i){
+							     var bizTripId 			= $(this).find("bizTripId").text();
+							     var userId 			= $(this).find("userId").text();
+								 var userName 			= $(this).find("userName").text();
+								 var deptId 			= $(this).find("deptId").text();
+								 var deptName			= $(this).find("deptName").text();
+								 var createTime			= $(this).find("createTime").text();
+								 var leaveTime 			= $(this).find("leaveTime").text();
+								 var backTime 			= $(this).find("backTime").text();
+								 var destination 		= $(this).find("destination").text();
+								 var bizTripReason 		= $(this).find("bizTripReason").text();
+								 var followPerson 		= $(this).find("followPerson").text();
+								 var vehicle 			= $(this).find("vehicle").text();
+								 var managerJudgement 	= $(this).find("managerJudgement").text(); 
+								 var bmJudgement 		= $(this).find("bmJudgement").text();
+								 var remark 			= $(this).find("remark").text();
+								 var bmIdea 			= $(this).find("bmIdea").text();
+								 var managerIdea 		= $(this).find("managerIdea").text();
+								 var status = "";
+								 var strEdit = "<td><img src='./images/oa_edit_g.gif'/></td>";
+								 var strDelete = "<td><img src='./images/oa_delete_g.png'/></td>";
+								 var strCheck = "<td><img src='./images/bg_xg_gray.png'/></td>";
+								 var flag = "";
+								 var currentUserId = "";
+								 $.ajax({
+									  type: 'POST',
+									  async: false,
+									  url: "/checkCurrentUser",
+									  data: {'deptId':deptId},
+									  success: function(xml){
+											flag = $(xml).find("result").text();
+										},
+									  dataType: 'xml'
+								});
+								$.ajax({
+									  type: 'POST',
+									  async: false,
+									  url: "/currentUserDetail",
+									  data: {},
+									  success: function(xml){
+											currentUserId = $(xml).find("userId").text();
+										},
+									  dataType: 'xml'
+								});
+								 var tmp="bizTripId="+bizTripId;
+								 if(managerJudgement == "-1" || bmJudgement == "-1"){
+								 	status = "审批未通过，请修改";
+								 	if(userId.replace(/\s+/g,"") == currentUserId.replace(/\s+/g,"")){
+									 	strEdit = "<td><input class='edit' type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'businessTripEdit.html?"+tmp+"&page1="+page+"&flag=2\')\"></input></td>";
+									 	strDelete = "<td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+									}
+								 }else if(managerJudgement == "1" && bmJudgement == "1"){
+								 	status = "审批通过";
+								 }else if(managerJudgement == "0"){
+								 	status = "等待部门主管审批";
+								 	if(flag.match(/[1]\d/)){
+								 		strCheck = "<td><input class='detail' type='image' src='./images/bg_xg.png' title='审批' onclick=\"javascript: location.href=encodeURI(\'businessTripCheck.html?"+tmp+"&page1="+page+"&flag=2\')\"></input></td>";
+								 	}
+								 	if(userId.replace(/\s+/g,"") == currentUserId.replace(/\s+/g,"")){
+									 	strEdit = "<td><input class='edit' type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'businessTripEdit.html?"+tmp+"&page1="+page+"&flag=2\')\"></input></td>";
+									 	strDelete = "<td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+									}
+								 }else{
+								 	status = "部门主管审批通过，等待总经理/副总经理审批";
+								 	if(flag.match(/\d[1]/)){
+								 		strCheck = "<td><input class='detail' type='image' src='./images/bg_xg.png' title='审批' onclick=\"javascript: location.href=encodeURI(\'businessTripCheck2.html?"+tmp+"&page1="+page+"&flag=2\')\"></input></td>";
+								 	}
+								 }
+								 var strInfo = "<td>"+(i+1)+"</td><td>"+userName+"</td><td>"+deptName+"</td><td>"+createTime+"</td><td>"+leaveTime+"</td><td>"+backTime+"</td><td>"+destination+"</td><td>"+status+"</td>";
+								 var strDetail = "<td><input class='detail' type='image' src='./images/oa_detail.png' title='查看详情' onclick=\"javascript: location.href=encodeURI(\'businessTripDetail.html?"+tmp+"&page1="+page+"&flag=2\')\"></input></td>";
+								 $("#tripTable").append("<tr class='content' id='"+bizTripId+"'>"+strInfo+strDetail+strEdit+strDelete+strCheck+"</tr>");	
+								 id++;	
+							});
+						//	$("#pageNav").showPageNav(page2, pageCount, count, url);
+							pageNav(page2,pageCount,count,url,"#pageNav");
+							register();
+					},
+					{"page":page2,"userId":userId,"deptId":deptId,"createTime":createTime,"leaveTime":leaveTime,"destination":destination}
+			   );
+			};
+			$(this).showData(url,page);
+			function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+			//注册按钮
+		    function register(){
+               //点击"删除"按钮，弹出是否删除的询问对话框
+               $(".delete").each(function(index){
+					var $this = $(this);
+					var id = $this.parents('.content').attr('id');
+
+					$this.click(function(){
+						if(confirm("您确定删除吗？")){
+							$.post('/businessTripDelete', {'bizTripId':id}, delCallback, 'xml');
+	                	}
+	               });
+               });
+			}
+
+			//返回成功与否的判断与跳转
+		    function delCallback(databack){
+				var recode = $(databack).find("recode").text();
+				if(recode != 0){
+					alert($(databack).find("errormsg").text());
+				}else {
+					location.href="businessTripList.html?page="+page;
+				}
+			}
+			
+		});  
+	</script>
+
+</head>
+
+<body>
+		<div id="container2">
+		  <div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		    <div id="content">
+			  <div id="main">
+			    <div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left" style="width:310px">当前位置：日常管理&gt;&nbsp;<a href="businessTripList.html" style="color: black;">出差管理</a>&gt;&nbsp;<strong>出差查询列表</strong></div></td>
+						    <td >&nbsp;</td>
+						   <td align="right">
+						     <div class="biao2">
+						      <table border="0" cellspacing="0" cellpadding="0">
+						       <tr>
+						        <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+							    <td width="10">&nbsp;</td>
+							    <td><a href="javascript:history.back()">返回</a></td>
+						       </tr>
+						     </table>
+						    </div>
+						  </td>
+ 					 </tr>
+ 					</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>出差查询列表</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+			    <div id="content_r">
+		           <table id="tripTable" class="listTable" style="overflow:auto;" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+					  <th>序号</th>
+					  <th>姓名</th>
+					  <th>部门</th>
+					  <th>申请时间</th>
+					  <th>出差时间</th>
+					  <th>预计返回时间</th>
+					  <th>出差目的地</th>
+					  <th>审批状态</th>
+					  <th colspan="4">操作</th>
+					</tr>
+                  </table>
+                  <br/>
+			    </div>
+			    <div id="sq_di">
+				  <div id="pageNav"></div>
+				  </div>
+			   </div>
+			   <div id="bg_di"></div>	
+			</div>
+			<div id="bg_yejiao">
+			<div id="footer"></div>
+			</div>
+		</div>
+</body>
+</html>
+

@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--耗材资产管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		 <script type="text/javascript">
+		 $(document).ready(function(){
+				init();
+				$('#tabs').tabs();
+				
+				 
+				//翻页
+				var href = location.href;
+			   var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+			    var pageCount = 0;
+				var count = 0;
+				
+				function init(){
+					
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+				
+			});
+			</script>
+	</head>
+
+<body>
+	<div id="container">
+		<div id="header"></div>
+			<div id="content">
+				<div id="main">
+					<div id="content_r">			
+						<div>
+					 	<table border="1" class="listTable">
+					 		<caption>耗材资产</caption>
+					 	</table>
+						</div>
+					  	<div id="tabs">
+				            <ul>
+				                <li><a href="#tabs-1">入库登记</a></li>
+				                <li><a href="#tabs-2">出库登记</a></li>
+				                <li><a href="#tabs-3">耗材资产转移</a></li>
+				                <li><a href="#tabs-4">耗材资产回收</a></li>
+				                <li><a href="#tabs-5">查看耗材资产</a></li>
+				            </ul>
+				            <div id="tabs-1">
+				              	<table id="afterSaleTable" border="1" class="listTable">
+										<tr>
+											<th>资产编号</th><td><input type="text" id="assetNo1"></input></td>								
+										</tr>
+										<tr>
+											<th>资产名称</th><td><input type="text" id="assetName1"></input></td>								
+										</tr>
+										<tr>
+											<th>资产归属</th>
+											<td class="width_15">
+											<select name="dept1" id="dept1" class="width_6" >
+							        		</select>
+							       			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        		<select name="person1" id="person1" class="width_6" >
+							        		</select>
+							    		    </td>								
+										</tr>
+										<tr>
+											<th>资产入库时间</th><td><input type="text" id="assetInTime1" readonly="readonly" onclick="setday(this)"></input></td>								
+										</tr>
+										<tr>
+											<th>资产来源</th><td><input type="text" id="assetInFrom1"></input></td>								
+										</tr>
+										<tr>
+											<td colspan="2"><input type="button" id="submit1" value="提交"></input></td>								
+										</tr>
+								</table>
+								<div align="right" id="pageNav1"></div>
+				           </div>
+				           <div id="tabs-2">
+				              <table id="versionTable" border="1" class="listTable">
+									<tr>
+										<th>资产编号</th><td><input type="text" id="assetNo2"></input></td>
+									</tr>
+									<tr>
+										<th>资产出库时间</th><td><input type="text" id="assetOutTime2" readonly="readonly" onclick="setday(this)"/></td>
+									</tr>
+									<tr>
+										<th>资产去向</th><td><input type="text" id="assetOutTo2"></input></td>
+									</tr>
+									<tr>
+										<td colspan="2"><input type="button" id="submit2" value="提交"></input></td>								
+									</tr>
+								</table>
+								<div align="right" id="pageNav3"></div>
+				           </div>
+				            <div id="tabs-3">
+				            	<table id="moveTable" border="1" class="listTable">
+										<tr>
+											<th>资产编号</th><td><input type="text" id="assetNo3"></input></td>								
+										</tr>
+										<tr>
+											<th>资产名称</th><td><input type="text" id="assetName3" disabled="disabled"></input></td>								
+										</tr>
+										<tr>
+											<th>资产移交人</th><td><input id="assetFromDept3" disabled="disabled"></input> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="assetFrom3" disabled="disabled"></input></td>																	
+										</tr>
+										<tr>
+											<th>资产接收人</th>
+											<td class="width_15">
+											<select name="dept3" id="dept3" class="width_6" >
+							        		</select>
+							       			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        		<select name="person3" id="person3" class="width_6" >
+							        		</select>
+							    		    </td>	
+										</tr>
+										<tr>
+											<th>资产转移时间</th><td><input type="text" id="assetTranTime3" readonly="readonly" onclick="setday(this)"></input></td>								
+										</tr>
+										<tr>
+											<th>转移经办人</th><td><input type="text" id="transactor3"></input></td>								
+										</tr>
+										<tr>
+											<td colspan="2"><input type="button" id="submit3" value="提交"></input></td>								
+										</tr>
+								</table>			              
+				           </div>
+				           <div id="tabs-4">			              
+				           </div>
+				            <div id="tabs-5">	
+				            	<table border="1" id="search" class="listTable">
+				            		<caption>任意条件查询</caption>
+										<tr>
+											<th>资产编号</th><td><input type="text" id="assetNo5"></input></td>								
+										</tr>
+										<tr>
+											<th>资产名称</th><td><input type="text" id="assetName5"></input></td>								
+										</tr>
+										<tr>
+											<th>资产归属</th>
+											<td class="width_15">
+											<select name="dept5" id="dept5" class="width_6" >
+							        		</select>
+							       			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        		<select name="person5" id="person5" class="width_6" >
+							        		</select>
+							    		    </td>								
+										</tr>
+										<tr>
+											<th>资产入库时间</th><td><input type="text" id="assetInTime5" readonly="readonly" onclick="setday(this)"></input></td>								
+										</tr>
+										<tr>
+											<th>资产来源</th><td><input type="text" id="assetInFrom5"></input></td>								
+										</tr>
+									
+										<tr>
+											<th>资产出库时间</th><td><input type="text" id="assetOutTime5" readonly="readonly" onclick="setday(this)"></input></td>								
+										</tr>
+										<tr>
+											<th>资产去向</th><td><input type="text" id="assetOutTo5"></input></td>								
+										</tr>						
+										<tr>
+											<th>资产出入库情况</th>
+											<td>
+											<select id="mark5">
+												<option></option>
+												<option>在库中</option>
+												<option>已出库</option>
+											</select>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2"><input type="button" id="submit5" value="提交"></input></td>								
+										</tr>
+								</table>			              
+				           </div>
+				            
+				        </div>
+						</div>
+					</div>
+				</div>
+
+         </div>
+	</body>
+</html>

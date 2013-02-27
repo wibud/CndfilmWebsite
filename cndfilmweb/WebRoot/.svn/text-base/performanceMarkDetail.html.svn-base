@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>删除进度</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+<script type="text/javascript">
+<!--
+//注：每个嵌入页必须定义该方法，供父窗口调用，并且返回true或false来告之父窗口是否关闭
+	$(document).ready(function(){
+		var href1 = location.href;
+//		href1 = decodeURI(href1);
+//		var templateResultId1 = ((href1.split("?"))[1]).split("&")[0];
+//		var templateResultId = (templateResultId1.split("="))[1];
+		var templateResultId = href1.split("=")[1];
+		$.post('/listIdResult',{'templateResultId':templateResultId},decallback,'xml');
+		function decallback(databack){
+//			var templateResultId     	  = $(this).find("templateResultId").text();
+	        var templateId     	  	= $(databack).find("templateId").text();
+	        var managerMark    	 	  = $(databack).find("managerMark").text();
+	        var selfMark    	 	  = $(databack).find("selfMark").text();
+	        var otherMark    	 	  = $(databack).find("otherMark").text();
+	        var totalMark    	 	  = $(databack).find("totalMark").text();
+
+	        if($.browser.msie){
+	            xmlmanagerMark = new ActiveXObject("Microsoft.XMLDOM");
+				xmlmanagerMark.async = false;
+				xmlmanagerMark.loadXML("<xml>"+managerMark+"</xml>");
+			}else{
+					xmlmanagerMark = new DOMParser().parseFromString("<xml>"+managerMark+"</xml>", "text/xml");
+			}
+//			managerMark = $(xmlmanagerMark).find("totalmark").text();
+			
+			if(selfMark != "-1"){
+	            if($.browser.msie){
+	                xmlselfMark = new ActiveXObject("Microsoft.XMLDOM");
+					xmlselfMark.async = false;
+					xmlselfMark.loadXML("<xml>"+selfMark+"</xml>");
+				}else{
+					xmlselfMark = new DOMParser().parseFromString("<xml>"+selfMark+"</xml>", "text/xml");
+				}
+//				selfMark = $(xmlselfMark).find("totalmark").text();
+	        }
+			
+			if(otherMark != "-1"){
+				if($.browser.msie){
+	            	xmlotherMark = new ActiveXObject("Microsoft.XMLDOM");
+					xmlotherMark.async = false;
+					xmlotherMark.loadXML("<xml>"+otherMark+"</xml>");
+				}else{
+					xmlotherMark = new DOMParser().parseFromString("<xml>"+otherMark+"</xml>", "text/xml");
+				}
+			}
+			
+			if($.browser.msie){
+	            xmltotalMark = new ActiveXObject("Microsoft.XMLDOM");
+				xmltotalMark.async = false;
+				xmltotalMark.loadXML("<xml>"+totalMark+"</xml>");
+			}else{
+				xmltotalMark = new DOMParser().parseFromString("<xml>"+totalMark+"</xml>", "text/xml");
+			}
+			
+			
+			var strmain = "";
+			var managertotalmark = "";
+			var selftotalmark = "";
+			var othertotalmark = "";
+			var alltotalmark = "";
+			if($(xmlmanagerMark).find("totalmark").text() == 0) {
+				managertotalmark = "未评价";
+			} else {
+				managertotalmark = $(xmlmanagerMark).find("totalmark").text();
+			}
+			
+			if(selfMark != "-1" && otherMark != "-1") {
+				if($(xmlselfMark).find("totalmark").text() == 0) {
+					selftotalmark = "未评价";
+				} else {
+					selftotalmark = $(xmlselfMark).find("totalmark").text();
+				}
+				if($(xmlotherMark).find("averothermark").find("assessedcount").text() != $(xmlotherMark).find("averothermark").find("totalcount").text()) {
+					othertotalmark = "未评价完";
+				} else {
+					othertotalmark = $(xmlotherMark).find("averothermark").find("totalmark").text();
+				}
+				if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+					alltotalmark = "暂无";
+				} else {
+					alltotalmark = $(xmltotalMark).find("totalmark").text();
+				}
+				
+				
+				
+				$(xmlmanagerMark).find("index").each(function(i){
+					eachindexname = $(this).find("name").text();
+					eachmanagermark = $(this).find("mark").text();
+					if(eachmanagermark=="0") eachmanagermark = "未评价";
+					strmain += "<tr class='content' valign='top' align='center'><td align='center'>"+eachindexname+"</td><td>"+eachmanagermark+"</td>";
+					$(xmlselfMark).find("mark").each(function(j){
+						eachselfmark = $(this).text();
+						if(eachselfmark=="0") eachselfmark = "未评价";
+						if(i==j){
+							strmain += "<td>"+eachselfmark+"</td>";
+						}
+					});
+					
+					
+					if($(xmlotherMark).find("averothermark").find("assessedcount").text() != $(xmlotherMark).find("averothermark").find("totalcount").text()) {
+						eachothermark = "未评价完";
+						strmain += "<td>"+eachothermark+"</td>";
+					}else {
+						$(xmlotherMark).find("averothermark").find("mark").each(function(k){
+							eachothermark = $(this).text();
+							if(eachothermark=="0") eachothermark = "未评价";
+							if(i==k){
+								strmain += "<td>"+eachothermark+"</td>";
+							}
+						});
+					}
+					
+					
+					if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+						eachtotalmark = "暂无";
+						strmain += "<td>"+eachtotalmark+"</td>";
+					}else {
+						$(xmltotalMark).find("mark").each(function(t){
+							eachtotalmark = $(this).text();
+							if(eachtotalmark=="0") eachtotalmark = "暂无";
+							if(i==t){
+								strmain += "<td>"+eachtotalmark+"</td>";
+							}
+						});
+					}
+					
+					
+					
+				});
+			}
+			
+			
+			
+			if(selfMark != "-1" && otherMark == "-1") {
+				if($(xmlselfMark).find("totalmark").text() == 0) {
+					selftotalmark = "未评价";
+				} else {
+					selftotalmark = $(xmlselfMark).find("totalmark").text();
+				}
+				othertotalmark = "/";
+				if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+					alltotalmark = "暂无";
+				} else {
+					alltotalmark = $(xmltotalMark).find("totalmark").text();
+				}
+				
+				
+				
+				
+				
+				
+				
+				$(xmlmanagerMark).find("index").each(function(i){
+					eachindexname = $(this).find("name").text();
+					eachmanagermark = $(this).find("mark").text();
+					if(eachmanagermark=="0") eachmanagermark = "未评价";
+					strmain += "<tr class='content' valign='top' align='center'><td align='center'>"+eachindexname+"</td><td>"+eachmanagermark+"</td>";
+					$(xmlselfMark).find("mark").each(function(j){
+						eachselfmark = $(this).text();
+						if(eachselfmark=="0") eachselfmark = "未评价";
+						if(i==j){
+							strmain += "<td>"+eachselfmark+"</td>";
+						}
+					});
+					
+					strmain += "<td>/</td>";
+					
+					
+					if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+						eachtotalmark = "暂无";
+						strmain += "<td>"+eachtotalmark+"</td>";
+					}else {
+						$(xmltotalMark).find("mark").each(function(t){
+							eachtotalmark = $(this).text();
+							if(eachtotalmark=="0") eachtotalmark = "暂无";
+							if(i==t){
+								strmain += "<td>"+eachtotalmark+"</td>";
+							}
+						});
+					}
+					
+					
+					
+				});
+			}
+			
+			
+			
+			if(selfMark == "-1" && otherMark != "-1") {
+				selftotalmark = "/";
+				if($(xmlotherMark).find("averothermark").find("assessedcount").text() != $(xmlotherMark).find("averothermark").find("totalcount").text()) {
+					othertotalmark = "未评价完";
+				} else {
+					othertotalmark = $(xmlotherMark).find("averothermark").find("totalmark").text();
+				}
+				if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+					alltotalmark = "暂无";
+				} else {
+					alltotalmark = $(xmltotalMark).find("totalmark").text();
+				}
+				
+				
+				
+				
+				
+				
+				
+				$(xmlmanagerMark).find("index").each(function(i){
+					eachindexname = $(this).find("name").text();
+					eachmanagermark = $(this).find("mark").text();
+					if(eachmanagermark=="0") eachmanagermark = "未评价";
+					strmain += "<tr class='content' valign='top' align='center'><td align='center'>"+eachindexname+"</td><td>"+eachmanagermark+"</td>";
+					strmain += "<td>/</td>";
+					
+					
+					if($(xmlotherMark).find("averothermark").find("assessedcount").text() != $(xmlotherMark).find("averothermark").find("totalcount").text()) {
+						eachothermark = "未评价完";
+						strmain += "<td>"+eachothermark+"</td>";
+					}else {
+						$(xmlotherMark).find("averothermark").find("mark").each(function(k){
+							eachothermark = $(this).text();
+							if(eachothermark=="0") eachothermark = "未评价";
+							if(i==k){
+								strmain += "<td>"+eachothermark+"</td>";
+							}
+						});
+					}
+					
+					
+					if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+						eachtotalmark = "暂无";
+						strmain += "<td>"+eachtotalmark+"</td>";
+					}else {
+						$(xmltotalMark).find("mark").each(function(t){
+							eachtotalmark = $(this).text();
+							if(eachtotalmark=="0") eachtotalmark = "暂无";
+							if(i==t){
+								strmain += "<td>"+eachtotalmark+"</td>";
+							}
+						});
+					}
+					
+					
+					
+				});
+			}
+			
+			
+			
+			if(selfMark == "-1" && otherMark == "-1") {
+				selftotalmark = "/";
+				othertotalmark = "/";
+				if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+					alltotalmark = "暂无";
+				} else {
+					alltotalmark = $(xmltotalMark).find("totalmark").text();
+				}
+			
+				
+				
+				
+				
+				$(xmlmanagerMark).find("index").each(function(i){
+					eachindexname = $(this).find("name").text();
+					eachmanagermark = $(this).find("mark").text();
+					if(eachmanagermark=="0") eachmanagermark = "未评价";
+					strmain += "<tr class='content' valign='top' align='center'><td align='center'>"+eachindexname+"</td><td>"+eachmanagermark+"</td>";
+					strmain += "<td>/</td><td>/</td>";
+					
+					
+					if($(xmltotalMark).find("assessedcount").text() != $(xmltotalMark).find("allassesscount").text()) {
+						eachtotalmark = "暂无";
+						strmain += "<td>"+eachtotalmark+"</td>";
+					}else {
+						$(xmltotalMark).find("mark").each(function(t){
+							eachtotalmark = $(this).text();
+							if(eachtotalmark=="0") eachtotalmark = "暂无";
+							if(i==t){
+								strmain += "<td>"+eachtotalmark+"</td>";
+							}
+						});
+					}
+					
+					
+					
+				});
+			}
+			
+			
+			$("#indexscore").append(strmain+"</tr>");
+			
+			var totalmark = "<tr class='content' valign='top' align='center'><td  align='center'>总分</td><td>"+managertotalmark+"</td><td>"+selftotalmark+"</td><td>"+othertotalmark+"</td><td>"+alltotalmark+"</td></tr>";
+			$("#indexscore").append(totalmark);
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		}
+	});
+	
+
+
+
+
+
+function Ok(){
+	
+	window.parent.JqueryDialog.SubmitCompleted("", true, false , "");
+
+	return false;
+}
+//-->
+</script>
+</head>
+
+<body style="margin:0px;padding:0px;">
+<div id="content" class="c-1000">
+<div id="main">
+<div id="content_r7">
+<table width="600" height="300" border="0" cellpadding="0" cellspacing="0" bgcolor="#f2ffe2" id="indexscore" class="sTable" style="margin:0 auto; border:1px solid #cde2b0; border-width:1px 0 0 1px; ">
+	<tr valign="top">
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">指标</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333;  border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">主管评</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">自评</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">同事评</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">平均分</th>
+	</tr>
+
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>

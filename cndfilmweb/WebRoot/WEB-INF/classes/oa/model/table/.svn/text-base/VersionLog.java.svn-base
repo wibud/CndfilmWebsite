@@ -1,0 +1,104 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id = "log_id")
+@Entity
+@Table(name = "tb_versiondllog")
+public class VersionLog {
+	@Id
+	private String log_id;
+	private String version_id;
+	private String versionName;
+	private String number;
+	private String user_id;
+	private String user_name;
+	private String src_ip;
+	private String download_on;
+	private String opType;
+	private String des;
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public void setVersionName(String versionName) {
+		this.versionName = versionName;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getLog_id() {
+		return log_id;
+	}
+
+	public void setLog_id(String log_id) {
+		this.log_id = log_id;
+	}
+
+	public String getVersion_id() {
+		return version_id;
+	}
+
+	public void setVersion_id(String version_id) {
+		this.version_id = version_id;
+	}
+
+	public String getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+
+	public String getUser_name() {
+		return user_name;
+	}
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+
+	public String getSrc_ip() {
+		return src_ip;
+	}
+
+	public void setSrc_ip(String src_ip) {
+		this.src_ip = src_ip;
+	}
+
+	public String getDownload_on() {
+		return download_on;
+	}
+
+	public void setDownload_on(String download_on) {
+		this.download_on = download_on;
+	}
+
+	public String getOpType() {
+		return opType;
+	}
+
+	public void setOpType(String opType) {
+		this.opType = opType;
+	}
+
+	public String getDes() {
+		return des;
+	}
+
+	public void setDes(String des) {
+		this.des = des;
+	}
+
+}

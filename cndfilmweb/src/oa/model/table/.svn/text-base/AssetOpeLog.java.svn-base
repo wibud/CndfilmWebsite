@@ -1,0 +1,150 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="logID")
+@Entity
+@Table(name="tb_assetOpeLog")
+public class AssetOpeLog {
+	@Id
+	private String logID;
+	private String assetCategory;
+	private String logKind;
+	private String assetKindID;	
+	private String assetSubKindID;
+	private String assetNo;
+	private String assetName;
+	private String assetModel;
+	private String assetOpePrice;
+	private String assetOper;
+	private String assetOperDeptID;
+	private String assetOpeTime;
+	private String applyerDeptID;
+	private String applyerID;
+	private String applyTime;
+	private String signState;
+	private String authState;
+	private String checkState;
+	private String remarks;
+	public String getLogID() {
+		return logID;
+	}
+	public void setLogID(String logID) {
+		this.logID = logID;
+	}
+	public String getLogKind() {
+		return logKind;
+	}
+	public void setLogKind(String logKind) {
+		this.logKind = logKind;
+	}
+	
+	public String getAssetCategory() {
+		return assetCategory;
+	}
+	public void setAssetCategory(String assetCategory) {
+		this.assetCategory = assetCategory;
+	}
+	public String getAssetKindID() {
+		return assetKindID;
+	}
+	public void setAssetKindID(String assetKindID) {
+		this.assetKindID = assetKindID;
+	}
+	
+	public String getAssetSubKindID() {
+		return assetSubKindID;
+	}
+	public void setAssetSubKindID(String assetSubKindID) {
+		this.assetSubKindID = assetSubKindID;
+	}
+	public String getAssetNo() {
+		return assetNo;
+	}
+	public void setAssetNo(String assetNo) {
+		this.assetNo = assetNo;
+	}
+	public String getAssetName() {
+		return assetName;
+	}
+	public void setAssetName(String assetName) {
+		this.assetName = assetName;
+	}
+	public String getAssetOper() {
+		return assetOper;
+	}
+	public void setAssetOper(String assetOper) {
+		this.assetOper = assetOper;
+	}
+	public String getAssetOperDeptID() {
+		return assetOperDeptID;
+	}
+	public void setAssetOperDeptID(String assetOperDeptID) {
+		this.assetOperDeptID = assetOperDeptID;
+	}
+	public String getAssetOpeTime() {
+		return assetOpeTime;
+	}
+	public void setAssetOpeTime(String assetOpeTime) {
+		this.assetOpeTime = assetOpeTime;
+	}
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+	public String getAssetModel() {
+		return assetModel;
+	}
+	public void setAssetModel(String assetModel) {
+		this.assetModel = assetModel;
+	}
+	public String getAssetOpePrice() {
+		return assetOpePrice;
+	}
+	public void setAssetOpePrice(String assetOpePrice) {
+		this.assetOpePrice = assetOpePrice;
+	}
+	public String getApplyerDeptID() {
+		return applyerDeptID;
+	}
+	public void setApplyerDeptID(String applyerDeptID) {
+		this.applyerDeptID = applyerDeptID;
+	}
+	public String getApplyerID() {
+		return applyerID;
+	}
+	public void setApplyerID(String applyerID) {
+		this.applyerID = applyerID;
+	}
+	public String getApplyTime() {
+		return applyTime;
+	}
+	public void setApplyTime(String applyTime) {
+		this.applyTime = applyTime;
+	}
+	public String getSignState() {
+		return signState;
+	}
+	public void setSignState(String signState) {
+		this.signState = signState;
+	}
+	public String getAuthState() {
+		return authState;
+	}
+	public void setAuthState(String authState) {
+		this.authState = authState;
+	}
+	public String getCheckState() {
+		return checkState;
+	}
+	public void setCheckState(String checkState) {
+		this.checkState = checkState;
+	}
+	
+	
+}

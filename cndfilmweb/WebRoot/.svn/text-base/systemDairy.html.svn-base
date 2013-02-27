@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--操作日志</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+
+				var url = "/systemDairy";
+
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#content_r table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+							    var userName        = $(this).find("userName").text();
+							    var deptId          = $(this).find("deptId").text();
+							    var deptName        = $(this).find("deptName").text();
+							    var operationTime   = $(this).find("operationTime").text();
+							    var operationDetail = $(this).find("operationDetail").text();
+							    var detailInfo      = $(this).find("detailInfo").text();
+							    var dairyDesc        = $(this).find("dairyDesc").text();
+
+							    
+
+							    var col = Number(id)+Number(startWith);
+
+							    var tmp = "userName="+userName+"&deptId="+deptId+"&deptName="+deptName+"&operationTime="+operationTime+"&operationDetail="+operationDetail+"&detailInfo="+detailInfo+"&dairyDesc="+dairyDesc;
+
+							    
+								$("#content_r table").append("<tr> class='content' id='"+userName+"'><td>"+(i+1)+"</td><td>"+deptId+"</td><td>"+deptName+"</td><td>"+operationTime+"</td><td>"+operationDetail+"</td><td>"+detailInfo+"</td><td>"+dairyDesc+"</td></tr>");
+								
+
+	                        });
+							$("#pageNav").showPageNav(page2, pageCount, count, url);
+	                        //调用注册按钮的事件
+							register();
+						}
+					);
+				};
+				$(this).showData(url,page);
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+				//注册按钮
+			    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/systemDairyDelete', {'userId':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+	               $(".deleteNot").click(function(){
+						alert("不能删除！");
+		           });
+				}
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="systemDairy.html?page="+page;
+					}
+				}
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header"></div>
+			<div id="content">
+				<div id="main">
+					<div id="content_r">
+						<table border="1" class="listTable">
+							<caption>查看日志</caption>
+							<tr>
+								<td>操作人</td>
+								<td class="width_15"><input type="text" id="userName" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">部门ID</td>
+								<td class="width_15">
+								    <select name="userDeptId" id="userDeptId" class="width_15">
+							        </select>
+							    </td>
+							</tr>
+							<tr>
+								<td>部门</td>
+								<td class="width_15"><input type="text" id="userDeptStatus" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td>操作时间</td>
+								<td class="width_15"><input type="text" id="userName" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td>操作内容</td>
+								<td class="width_15"><input type="text" id="userName" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td>详细信息</td>
+								<td class="width_15"><input type="text" id="userName" class="width_15"></input></td>
+							</tr>
+							<tr>
+								<td>备注</td>
+								<td><input type="text" id="userDesc" class="width_15"></input></td>
+							</tr>
+							<tr><td colspan="2"><input type="button" id="comfirm" value="确定"></input>
+							                    <input type="button" value="返回" onclick="javascript:location.href='loginList.html'"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+			</div>
+
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>	

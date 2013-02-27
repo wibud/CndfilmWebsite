@@ -1,0 +1,160 @@
+package oa.dao.table;
+
+import oa.dao.BaseDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.model.table.PositionTemplate;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class PositionTemplateDao extends BaseDao {
+	private static final Logger log = LoggerFactory
+			.getLogger(PositionTemplateDao.class);
+	// property constants
+	public static final String DEPT_ID = "deptId"; // 部门标识
+	public static final String DEPT_NAME = "dept_name";
+	public static final String PERSON_IN_CHARGE = "person_in_charge";
+	public static final String UP_DEPT_ID = "up_dept_id";
+	public static final String TELEPHONE = "telephone";
+	public static final String DEPT_DESC = "dept_desc";
+	public static final String SECOND_MANAGER = "second_manager";
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public PositionTemplate findByPropertyReturnOnly(String propertyName,
+			String value) {
+		log.debug("finding PositionTemplate instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			ResultList<PositionTemplate> user = super.find(null,
+					"oa.model.table.PositionTemplate", propertyName, value);
+			if (user.isEmpty()) {
+				return null;
+			} else {
+				return user.get(0);
+			}
+
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public void save(PositionTemplate transientInstance) {
+		log.debug("saving PositionTemplate instance");
+		try {
+			super.save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(PositionTemplate persistentInstance) {
+		log.debug("deleting PositionTemplate instance");
+		try {
+			super.delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(PositionTemplate instance) {
+		log.debug("update PositionTemplate instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public PositionTemplate findById(String id) {
+		log.debug("getting PositionTemplate instance with id: " + id);
+		try {
+			PositionTemplate instance = (PositionTemplate) super.get(
+					"oa.model.table.PositionTemplate", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PositionTemplate> findByExample(Integer pageNo,
+			PositionTemplate instance) {
+		log.debug("find PositionTemplate instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.PositionTemplate",
+					instance);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PositionTemplate> findByProperty(Integer pageNo,
+			String propertyName, String value) {
+		log.debug("finding PositionTemplate instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.PositionTemplate",
+					propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PositionTemplate> findByCondition(Integer pageNo,
+			String conditions) {
+		log.debug("finding PositionTemplate instance with conditions: "
+				+ conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.PositionTemplate",
+					conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<PositionTemplate> findAll(Integer pageNo) {
+		log.debug("finding all PositionTemplate instances");
+		try {
+			return super.find(pageNo, "oa.model.table.PositionTemplate");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	/**
+	 * 查找某个部门下的所有子孙部门
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public ResultList<PositionTemplate> findAllDescendant(String id) {
+		ResultList<PositionTemplate> children = this.findByProperty(null,
+				UP_DEPT_ID, id);
+		ResultList<PositionTemplate> result = new ResultList<PositionTemplate>(
+				children);
+
+		for (PositionTemplate dept : children) {
+			result.addAll(findAllDescendant(dept.getDeptId()));
+		}
+
+		return result;
+	}
+
+}

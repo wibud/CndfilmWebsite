@@ -1,0 +1,46 @@
+package oa.filter;
+
+import java.io.IOException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.struts2.ServletActionContext;
+import oa.util.OaConfig;
+
+public class EncodingFilter implements Filter {
+
+	public void init(FilterConfig filterConfig) throws ServletException {
+
+	}
+
+	public void destroy() {
+
+	}
+
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse res = ServletActionContext.getResponse();
+
+		String request_uri = req.getRequestURI();
+		String ctxPath = req.getContextPath();
+		String uri = request_uri.toLowerCase().substring(ctxPath.length() + 1);
+
+		// 设置response的编码
+		res.setCharacterEncoding("utf-8");
+
+		// 设置页面不缓存
+		if (OaConfig.devMode && (uri.equals("filedownloadservlet.do") == false || uri.equals("filedownloadservlet2.do") == false)) {
+			res.addHeader("Prama", "no-cache");
+			res.addHeader("Cache-control", "no-cache");
+			res.setDateHeader("Expires", 0);
+		}
+
+		chain.doFilter(request, response);
+	}
+}

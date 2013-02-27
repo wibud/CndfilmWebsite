@@ -1,0 +1,571 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--资产流动记录</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript">
+		
+		
+			$(document).ready(function(){
+			//此函数在载入页面数据完毕以后执行
+				init();
+				 $('#tabs').tabs();
+				function init(){
+							
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				//排序用
+				var orderByInLog = "assetOpeTime";
+				var orderByOutLog = "assetOpeTime";
+				var orderByFALog = "applyTime";
+				var orderByCAApplyLog = "applyTime";
+				
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+				urlInLog="/assetShowInLogList";
+				urlOutLog="/assetShowOutLogList";
+				urlLYApplyLog="/showFassetLYApplyLogList";
+				urlGHApplyLog="/showFassetGHApplyLogList";
+				urlCAApplyLog="/showCassetApplyLogList";
+				
+				$.fn.showData=function(urls,page2)
+				{
+					switch(urls)
+					{
+						case urlInLog: $(this).showInLogData(urls,page2);break;
+						case urlOutLog: $(this).showOutLogData(urls,page2);break;
+						case urlLYApplyLog: $(this).showFAssetApplyData(urls,page2,"#t_fassetLYlog","#pageNavLY");break;
+						case urlGHApplyLog: $(this).showFAssetApplyData(urls,page2,"#t_fassetGHlog","#pageNavGH");break;
+						case urlCAApplyLog: $(this).showCAssetApplyData(urls,page2);break;
+						default:alert("url错误！");
+					}
+				};
+				
+				//固定资产入库记录列表显示
+				$.fn.showInLogData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						function(xml){
+							$("#t_fassetInlog tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							$('#versions').append('('+count+')');
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							if(count==0)
+							{
+								$("#t_fassetInlog").append("<tr class='content'><td colspan='12' style='font-size:13px'>没有找到相关记录</td></tr>");
+							}
+							$(xml).find("item").each(function(i){
+								var assetCategory=$(this).find("assetCategory").text();
+								var assetKind			= $(this).find("assetKind").text();
+								var assetSubKind = $(this).find("assetSubKind").text();
+								if(assetCategory=="耗材资产")
+								{
+									var assetNo= "无";
+									var assetName = $(this).find("assetName").text();
+								}
+								else
+								{
+									var assetNo= $(this).find("assetNo").text();
+									var assetName = "";
+								}
+							    var assetModel=$(this).find("assetModel").text();
+							    var assetInPrice=$(this).find("assetOpePrice").text();
+							    var asseInTime = $(this).find("assetOpeTime").text();
+							    var assetOper= $(this).find("assetOper").text();
+							    var assetOperDept=  $(this).find("assetOperDept").text();
+							    var remarks = $(this).find("remarks").text().split("@#%");
+							    var assetInFrom = remarks[0];
+							    var assetPosition = remarks[2];
+							    var assetOpeNum = remarks[1];
+								var strInfo ="<td>"+ (i+1)+"</td><td>"+assetKind+"</td><td>"+assetSubKind+
+   	                                 "</td><td>"+assetNo+"</td><td>"+assetName+"</td><td>"+assetModel+"</td><td>"+assetInPrice+"</td><td>"+assetOpeNum+"</td><td>"+asseInTime+"</td><td>"+assetInFrom+
+   	                                 "</td><td>"+assetPosition+"</td><td>"+assetOperDept+"："+assetOper+"</td>";
+                          		$("#t_fassetInlog").append("<tr class='content' id='"+(i+1)+"'>"+ strInfo +"</tr>");
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav");
+						},
+						{'orderBy':orderByInLog}
+					);
+				};
+				
+				$.fn.showOutLogData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						function(xml){
+							$("#t_fassetOutlog tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							$('#versions').append('('+count+')');
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							if(count==0)
+							{
+								$("#t_fassetOutlog").append("<tr class='content'><td colspan='11' style='font-size:13px'>没有找到相关记录</td></tr>");
+							}
+							$(xml).find("item").each(function(i){
+								var assetCategory=$(this).find("assetCategory").text();
+								var assetKind			= $(this).find("assetKind").text();
+								var assetSubKind = $(this).find("assetSubKind").text();
+								var remarks = $(this).find("remarks").text().split("@#%");
+							    var assetOutTo = remarks[0];
+							    var assetOpeNum="1";
+								if(assetCategory=="耗材资产")
+								{
+									var assetNo= "无";
+									var assetName = $(this).find("assetName").text();
+									assetOpeNum = remarks[1];
+								}
+								else
+								{
+									var assetNo= $(this).find("assetNo").text();
+									var assetName = "";
+								}
+							    var assetModel=$(this).find("assetModel").text();
+							    var assetOutPrice=$(this).find("assetOpePrice").text();
+							    var asseOutTime = $(this).find("assetOpeTime").text();
+							    var assetOper= $(this).find("assetOper").text();
+							    var assetOperDept=  $(this).find("assetOperDept").text();
+							    
+								var strInfo ="<td>"+ (i+1)+"</td><td>"+assetKind+"</td><td>"+assetSubKind+
+   	                                 "</td><td>"+assetNo+"</td><td>"+assetName+"</td><td>"+assetModel+"</td><td>"+assetOutPrice+"</td><td>"+assetOpeNum+"</td><td>"+asseOutTime+"</td><td>"+assetOutTo+
+   	                                 "</td><td>"+assetOperDept+"："+assetOper+"</td>";
+                          		$("#t_fassetOutlog").append("<tr class='content' id='"+(i+1)+"'>"+ strInfo +"</tr>");
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav1");
+							//register3();
+						},
+						{'orderBy':orderByOutLog}
+					);
+				};
+				
+				$.fn.showFAssetApplyData = function(url,page2,tableID,pageNavID){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						function(xml){
+							var strTr = tableID+" tr:gt(0)";
+							$(strTr).remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							$('#versions').append('('+count+')');
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							if(count==0)
+							{
+								$(tableID).append("<tr class='content'><td colspan='8' style='font-size:13px'>没有找到相关记录</td></tr>");
+							}
+							$(xml).find("item").each(function(i){
+								var fassetKind	= $(this).find("assetKind").text();
+								var fassetSubKind = $(this).find("assetSubKind").text();
+	                            var fassetNo = $(this).find("assetNo").text();
+							    var fassetModel	=$(this).find("assetModel").text();
+							    var applyer = $(this).find("applyerName").text();
+							    var applyerDept = $(this).find("applyerDept").text();
+							    var signState = $(this).find("signState").text();
+							    var authState = $(this).find("authState").text();
+							    var checkState = $(this).find("checkState").text();
+							    var applyTime = $(this).find("applyTime").text();
+							    var oper = $(this).find("assetOper").text();
+							    var operDpet = $(this).find("assetOperDept").text();
+							    var opeTime = $(this).find("assetOpeTime").text();
+							    
+							    var remarks = $(this).find("remarks").text().split("@#%");
+							    var addition="无";
+							    var state="";
+							    if(signState=="0")
+						    	 	state="部门负责人未签字";
+						     	else if(signState=="1"&&authState=="0")
+						    	 	state="未批准";
+						    	else if(signState=="1"&&authState=="1")
+						    	{
+						    		 state="已批准";
+						    		 addition = "操作人："+operDpet+"-"+oper+"</br>"+"操作时间："+opeTime;
+						    	}
+						    		
+								else if(signState=="1"&&authState=="2")
+						    	{
+						    		 state="不批准";
+						    		 addition = "操作人："+operDpet+"-"+oper+"</br>"+"操作时间："+opeTime+"</br>"+"原因："+remarks[2];
+						    	}
+						    	else if(signState=="2")
+						    	{
+						    		state="部门负责人拒签";
+						    		addition = "原因："+remarks[2];
+						    	}
+						    		 
+								
+								var strInfo ="<td>"+ (i+1)+"</td><td>"+fassetKind+"</td><td>"+fassetSubKind+
+   	                                 "</td><td>"+fassetNo+"</td><td>"+fassetModel+"</td><td>"+applyerDept+"："+applyer+"</td><td>"+applyTime+"</td><td>"+state+
+   	                                 "</td><td>"+addition+"</td>";
+                          		$(tableID).append("<tr class='content' id='"+(i+1)+"'>"+ strInfo +"</tr>");
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,pageNavID);
+							//register3();
+						},
+						{'orderBy':orderByFALog}
+					);
+				};
+				$.fn.showCAssetApplyData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						function(xml){
+							$("#t_cassetApplylog tr:gt(0)").remove();
+							var id = 1;
+							count = $(xml).find("result").attr("count");
+							$('#versions').append('('+count+')');
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							if(count==0)
+							{
+								$("#t_cassetApplylog").append("<tr class='content'><td colspan='11' style='font-size:13px'>没有找到相关记录</td></tr>");
+							}
+							$(xml).find("item").each(function(i){
+								var cassetKind	= $(this).find("assetKind").text();
+								var cassetSubKind = $(this).find("assetSubKind").text();
+	                            var cassetName = $(this).find("assetName").text();
+							    var cassetModel	=$(this).find("assetModel").text();
+							    var applyer = $(this).find("applyerName").text();
+							    var applyerDept = $(this).find("applyerDept").text();
+							    var applyTime = $(this).find("applyTime").text();
+							    var signState = $(this).find("signState").text();
+							    var authState = $(this).find("authState").text();
+							    var checkState = $(this).find("checkState").text();
+							    
+							    var oper = $(this).find("assetOper").text();
+							    var operDpet = $(this).find("assetOperDept").text();
+							    var opeTime = $(this).find("assetOpeTime").text();
+							    
+							    var remarks = $(this).find("remarks").text().split("@#%");
+							    var applyNum = remarks[0];
+							    var assetprice = $(this).find("assetOpePrice").text();
+							    var TotalPrice = (parseInt(applyNum)*parseInt(assetprice)).toString();
+							    
+							    var addition="无";
+							    var state="";
+							    if(signState=="0")
+						    	 	state="部门负责人未签字";
+						     	else if(signState=="1"&&authState=="0")
+						    	 	state="未批准";
+						    	else if(signState=="1"&&authState=="1")
+						    	{
+						    		 state="已批准";
+						    		 addition = "操作人："+operDpet+"-"+oper+"</br>"+"操作时间："+opeTime;
+						    	}
+						    		
+								else if(signState=="1"&&authState=="2")
+						    	{
+						    		 state="不批准";
+						    		 addition = "操作人："+operDpet+"-"+oper+"</br>"+"操作时间："+opeTime+"</br>"+"原因："+remarks[2];
+						    	}
+						    	else if(signState=="2")
+						    	{
+						    		state="部门负责人拒签";
+						    		addition = "原因："+remarks[2];
+						    	}
+								
+								var strInfo ="<td>"+ (i+1)+"</td><td>"+cassetKind+"</td><td>"+cassetSubKind+
+   	                                 "</td><td>"+cassetName+"</td><td>"+cassetModel+"</td><td>"+applyNum+"</td><td>"+TotalPrice+
+   	                                 "</td><td>"+applyerDept+"："+applyer+"</td><td>"+applyTime+"</td><td>"+state+"</td><td>"+addition+"</td>";
+                          		$("#t_cassetApplylog").append("<tr class='content' id='"+(i+1)+"'>"+ strInfo +"</tr>");
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNavCA");
+							//register3();
+						},
+						{'orderBy':orderByCAApplyLog}
+					);
+				};
+				
+				$(this).showInLogData(urlInLog,page);
+				$(this).showOutLogData(urlOutLog,page);
+				$(this).showFAssetApplyData(urlLYApplyLog,page,"#t_fassetLYlog","#pageNavLY");
+				$(this).showFAssetApplyData(urlGHApplyLog,page,"#t_fassetGHlog","#pageNavGH");
+				$(this).showCAssetApplyData(urlCAApplyLog,page);
+				
+				//排序
+				$(".orderInLog").each(function(){					
+					$(this).click(function(){
+						orderByInLog = $(this).attr("id");
+						$(this).showInLogData(urlInLog,page);
+					});
+					$(this).css("cursor","hand");
+				});
+				$(".orderOutLog").each(function(){					
+					$(this).click(function(){
+						orderByOutLog = $(this).attr("id");
+						$(this).showOutLogData(urlOutLog,page);
+					});
+					$(this).css("cursor","hand");
+				});
+				$(".orderFALYLog").each(function(){					
+					$(this).click(function(){
+						orderByFALog = $(this).attr("id");
+						$(this).showFAssetApplyData(urlLYApplyLog,page,"#t_fassetLYlog","#pageNavLY");
+					});
+					$(this).css("cursor","hand");
+				});
+				$(".orderFAGHLog").each(function(){					
+					$(this).click(function(){
+						orderByFALog = $(this).attr("id");
+						$(this).showFAssetApplyData(urlGHApplyLog,page,"#t_fassetGHlog","#pageNavGH");
+					});
+					$(this).css("cursor","hand");
+				});
+				$(".orderCAALog").each(function(){					
+					$(this).click(function(){
+						orderByCAApplyLog = $(this).attr("id");
+						$(this).showCAssetApplyData(urlCAApplyLog,page);
+					});
+					$(this).css("cursor","hand");
+				});
+			});
+			
+			
+		</script>
+		</head>
+		
+	<body>
+	<div id="container2">
+		<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<div id="content">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="300">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：资产管理  &gt;&nbsp;
+										<strong>资产流动记录</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td><img src="images/oa_search.png" /></td>
+											    <td width="10">&nbsp;</td>
+											    <td><a href="fassetlogsearch.html" >资产流动记录查询</a></td>
+											    <td width="10">&nbsp;</td>
+											    
+											    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+											    <td width="10">&nbsp;</td>
+											    <td><a href="assetManage.html" >返回</a></td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					
+					<div id="content_r8">
+					
+						
+						<div id="tabs" style="z-index:0">
+							
+				            <ul style="z-index:0">
+				                <li><a href="#tabs-1">入库记录</a></li>
+				                <li><a href="#tabs-2">出库记录</a></li>
+				                <li><a href="#tabs-3">领用记录</a></li>
+				                <li><a href="#tabs-4">归还记录</a></li>
+				                <li><a href="#tabs-5">耗材申请记录</a></li>
+				            </ul>
+							
+						<div class="tablediv" id="tabs-1">
+						<table id="t_fassetInlog" border="0" class="listTable" style="width:100%">
+							<caption>资产入库记录</caption>
+							
+							<tr>
+								<th>序号</th>
+								<th>资产大类</th>
+								<th>资产小别</th>
+								<th  class="orderInLog" id="assetNo">资产编号</th>
+								<th  class="orderInLog" id="assetName">资产品牌</th>
+								<th  class="orderInLog" id="assetModel">规格/型号</th>
+								<th  class="orderInLog" id="assetOpePrice">入库单价</th>
+								<th>入库数量</th>
+								<th  class="orderInLog" id="assetOpeTime">入库时间</th>
+								<th>入库方式</th>
+								<th>存放地点</th>
+								<th>经办人</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav"></div>
+						</div>
+						
+						<div class="tablediv" id="tabs-2">
+						<table  id="t_fassetOutlog" border="0" class="listTable" style="width:100%">
+							<caption >资产出库记录</caption>
+							<tr>
+								<th>序号</th>
+								<th>资产大类</th>
+								<th>资产小类</th>
+								<th  class="orderOutLog" id="assetNo">资产编号</th>
+								<th class="orderOutLog" id="assetName">资产品牌</th>
+								<th class="orderOutLog" id="assetModel">规格/型号</th>
+								<th class="orderOutLog" id="assetOpePrice">出库单价</th>
+								<th>出库数量</th>
+								<th class="orderOutLog" id="assetOpeTime">出库时间</th>
+								<th>出库方式</th>
+								<th>经办人</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNav1"></div>
+						</div>
+						
+						<div class="tablediv" id="tabs-3">
+						<table  id="t_fassetLYlog" border="0" class="listTable" style="width:100%">
+							<caption >固定资产领用记录</caption>
+							<div align="right">按部门显示：
+								<select id="sel_LYLogDept" class="doubleSelText">
+										<option selected="selected" value="">—部门—</option>
+								</select>
+							</div>
+							<tr>
+								<th>序号</th>
+								<th>资产大类</th>
+								<th>资产小类</th>
+								<th class="orderFALYLog" id="assetNo">资产编号</th>
+								<th class="orderFALYLog" id="assetModel">规格/型号</th>
+								<th class="orderFALYLog" id="assetOperDeptID">申请人</th>
+								<th class="orderFALYLog" id="applyTime">申请时间</th>
+								<th>当前状态</th>
+								<th>备注</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNavLY"></div>
+						</div>
+						
+						<div class="tablediv" id="tabs-4">
+						<table  id="t_fassetGHlog" border="0" class="listTable" style="width:100%">
+						
+							<caption >固定资产归还记录</caption>
+							<div align="right">按部门显示：
+								<select id="sel_GHLogDept" class="doubleSelText">
+										<option selected="selected" value="">—部门—</option>
+								</select>
+							</div>
+							<tr>
+								<th>序号</th>
+								<th>资产大类</th>
+								<th>资产小类</th>
+								<th class="orderFAGHLog" id="assetNo">资产编号</th>
+								<th class="orderFAGHLog" id="assetName">规格/型号</th>
+								<th class="orderFAGHLog" id="assetOperDeptID">申请人</th>
+								<th class="orderFAGHLog" id="applyTime">申请时间</th>
+								<th>当前状态</th>
+								<th>备注</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNavGH"></div>
+						</div>
+						
+						<div class="tablediv" id="tabs-5">
+						<table  id="t_cassetApplylog" border="0" class="listTable" style="width:100%">
+							<caption >耗材申请记录</caption>
+							<div align="right">按部门显示：
+								<select id="sel_CAALogDept" class="doubleSelText">
+										<option selected="selected" value="">—部门—</option>
+								</select>
+							</div>
+							<tr>
+								<th>序号</th>
+								<th class="orderCAALog" id="assetKindID">资产大类</th>
+								<th class="orderCAALog" id="assetSubKindID">资产小类</th>
+								<th class="orderCAALog" id="assetName">资产品牌</th>
+								<th class="orderCAALog" id="assetModel">规格/型号</th>
+								<th>申请数量</th>
+								<th>总额</th>
+								<th class="orderCAALog" id="assetOperDeptID">申请人</th>
+								<th class="orderCAALog" id="applyTime">申请时间</th>
+								<th>当前状态</th>
+								<th>备注</th>
+							</tr>
+						</table>
+						<div align="right" id="pageNavCA"></div>
+						</div>	
+					</div>
+				</div>
+            </div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+         </div>
+	</body>
+</html>

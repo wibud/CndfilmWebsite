@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--周计划查询列表</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp = (href.split("?"))[1].split("&");
+				var page = 1;
+				var pageCount = 0;
+				var count = 0;
+				
+				var url = "/searchWeekPlan";
+				
+				var userId           	= tmp[0].split("=")[1];
+				var deptId            	= tmp[1].split("=")[1];
+			    var startSearchTime     = tmp[2].split("=")[1];
+				var endSearchTime       = tmp[3].split("=")[1];
+				var remark 		        = tmp[4].split("=")[1].split("#")[0];
+				
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#content_r table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+	                            var userId            = $(this).find("userId").text();
+							    var userName          = $(this).find("userName").text();
+							    var planId            = $(this).find("planId").text();
+							    var deptId     		  = $(this).find("deptId").text();
+							    var deptName          = $(this).find("deptName").text();
+							    var createTime        = $(this).find("createTime").text();
+							    var editTime          = $(this).find("editTime").text();
+							    var planStartTime     = $(this).find("planStartTime").text();
+							    var planEndTime       = $(this).find("planEndTime").text();
+							    var weekPlan          = $(this).find("weekPlan").text();
+							    var planProgress      = $(this).find("planProgress").text();
+							    var judgement         = $(this).find("judgement").text();
+							    var remark      	  = $(this).find("remark").text();
+							    var planCount         = $(this).find("planCount").text();
+							    var testStartTime	  = $(this).find("testStartTime").text();
+							    var testEndTime		  = $(this).find("testEndTime").text();
+							    var planName		  = $(this).find("planName").text();
+							    var planDetail		  = $(this).find("planDetail").text();
+							    var testFinishDetail  = $(this).find("testFinishDetail").text();	
+							    
+							    var startTime	=new Date();
+							    var endTime		=new Date();
+							    var startYear	=planStartTime.split("-")[0];
+								var startMonth	=planStartTime.split("-")[1]-1;
+								var startDate	=planStartTime.split("-")[2];
+								var endYear		=planEndTime.split("-")[0];
+								var endMonth	=planEndTime.split("-")[1]-1;
+								var endDate		=planEndTime.split("-")[2];
+								startTime.setFullYear(startYear,startMonth,startDate);
+								endTime.setFullYear(endYear,endMonth,endDate);
+							    var currentTime=new Date();
+								var status;
+								if(judgement=="0"){
+									status="未审核";
+								}
+								if(judgement=="-1"){
+									status="未审核通过";
+								}
+								if(judgement=="1"){
+									if(currentTime <= endTime && currentTime >= startTime){
+										status="进行中";
+									}else if(currentTime > endTime){
+										status="已过期";
+									}else{
+										status="未开始";
+									}
+								}
+							    var col = Number(id)+Number(startWith);
+							    
+							    var tmp = "planId="+planId+"&planStartTime="+planStartTime+"&planEndTime="+planEndTime+"&weekPlan="+weekPlan+"&planProgress="+planProgress+"&planCount="+planCount+"&testStartTime="+testStartTime+"&testEndTime="+testEndTime+"&planName="+planName+"&planDetail="+planDetail+"&testFinishDetail="+testFinishDetail;
+							    
+								var strInfo ="<td>"+(i+1)+"</td><td style='white-space:nowrap'>"+userName+"</td><td style='white-space:nowrap'>"+deptName+"</td><td style='white-space:nowrap'>"+createTime+"</td><td style='white-space:nowrap'>"+editTime+
+   	                                 "</td><td style='white-space:nowrap'>"+planStartTime+"</td><td style='white-space:nowrap'>"+planEndTime+"</td><td><input type='image' src='./images/oa_detail.png' title='查看' onclick=\"javascript: location.href=encodeURI(\'WeekPlanDetail.html?"+tmp+"&page1="+page+"&flag=2\')\"></input></td><td style='white-space:nowrap'>"+status+"</td><td>"+remark+"</td>";
+   	                                 
+								$("#weekPlanSearchList").append("<tr class='content' id='"+userId+"'>"+strInfo+"</tr>");
+							 
+		                        id++;
+	                        });
+							pageNav(page2,pageCount,count,url,"#pageNav");
+						},
+						{"page":page2,"userId":userId,"deptId":deptId,"startSearchTime":startSearchTime,"endSearchTime":endSearchTime,"remark":remark}
+					);
+				};
+				
+				$(this).showData(url,page);
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					//$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+
+				
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background: url(../../images/bg_banner5.jpg)"
+				class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" style="width: 310px" align="left">
+										当前位置：日常管理&gt;周计划管理&gt;&nbsp;
+										<strong>周计划查询列表</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<img src="images/bg_fh.gif" width="18" height="18" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a href="javascript:history.back()">返回</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>周计划查询列表</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r6">
+						<table id="weekPlanSearchList" class="listTable"
+							style="overflow: auto;" border="0" cellpadding="0"
+							cellspacing="0">
+							<tr>
+								<th>
+									序号
+								</th>
+								<th>
+									姓名
+								</th>
+								<th>
+									部门
+								</th>
+								<th>
+									创建时间
+								</th>
+								<th>
+									修改时间
+								</th>
+								<th>
+									周计划开始时间
+								</th>
+								<th>
+									周计划结束时间
+								</th>
+								<th>
+									查看周计划
+								</th>
+								<th>
+									状态
+								</th>
+								<th>
+									备注
+								</th>
+							</tr>
+						</table>
+					</div>
+					<div id="sq_di">
+						<div id="pageNav">
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer">
+			</div>
+		</div>
+
+	</body>
+</html>
+

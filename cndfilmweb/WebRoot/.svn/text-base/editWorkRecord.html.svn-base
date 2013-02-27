@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改个人工作日志</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var workRecordId    = tmp[0].split("=")[1];
+				var createTime      = tmp[1].split("=")[1];
+				var finishTask      = tmp[2].split("=")[1];
+				var idea            = tmp[3].split("=")[1];
+				var remark 			= tmp[4].split("=")[1];
+				var existMatter		= tmp[5].split("=")[1];  
+			
+				finishTask=finishTask.replaceAll("<br/>","\n");
+				idea=idea.replaceAll("<br/>","\n");
+				remark=remark.replaceAll("<br/>","\n");
+				existMatter=existMatter.replaceAll("<br/>","\n");
+				
+				$("#createTime").val(createTime);
+				$("#finishTask").val(finishTask);
+				$("#idea").val(idea);
+				$("#remark").val(remark);
+				$("#existMatter").val(existMatter);
+				
+			   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+		        $("#comfirm").click(function(){
+					var finishTask       	= $('#finishTask').val();
+					var idea        		= $('#idea').val();
+					var remark             	= $('#remark').val();
+					var existMatter			= $('#existMatter').val();
+					if($('#finishTask').val() == ""){
+						alert("工作汇报不能为空");
+						return;
+	                }
+	                finishTask=finishTask.replaceAll("\n|\r\n","<br/>");
+                    idea=idea.replaceAll("\n|\r\n","<br/>");
+                    remark=remark.replaceAll("\n|\r\n","<br/>");
+                    existMatter=existMatter.replaceAll("\n|\r\n","<br/>");
+                    $.post('/editWorkRecord', {'workRecordId':workRecordId,'finishTask':finishTask,'idea':idea,'remark':remark,'existMatter':existMatter}, callback, 'xml');
+
+                    function callback(xml){
+						var $xml = $(xml);
+
+						//这个函数从后台得到xml里面的数据
+						var recode = $xml.find("recode").text();
+						if(recode){
+							alert($xml.find("errormsg").text());
+							return ;
+						}
+				        alert("修改成功！");
+						location.href="workRecordList.html?page="+prePage;
+					}
+
+					function callback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode!=0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							 alert("修改成功！");
+							 if(confirm("您需要更新周计划吗？")){
+								location.href='updateWeekPlan.html';
+		                	}else{
+		                		location.href="workRecordList.html";
+		                	}
+						}
+					}
+				});
+				$("#back").click(
+						function(){location.href="workRecordList.html?page="+prePage;}
+					);
+				function init(){
+
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+			
+
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：日常管理 &gt;工作日志管理&gt;&nbsp;
+										<strong>修改工作日志</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改工作日志</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>创建时间</td>
+								<td class="width_15"><input type="text" id="createTime" style="width:150px" disabled="disabled"></input></td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>工作汇报</td>
+								<td class="width_15">
+								   <textarea id="finishTask" style="width:150px"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td>存在问题</td>
+								<td class="width_15">
+								   <textarea id=existMatter style="width:150px"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td>工作心得</td>
+								<td class="width_15">
+								   <textarea id="idea" style="width:150px"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td>备注（意见）</td>
+								<td class="width_15">
+								   <textarea id="remark" style="width:150px"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td colspan="2">
+							                    <input class="bt" type="button" value="确定" id="comfirm"></input>
+							                    <input class="bt" type="button" value="返回" id="back"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+			</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

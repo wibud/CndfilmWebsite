@@ -1,0 +1,184 @@
+package oa.model.table;
+
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="id")
+@Entity
+@Table(name="tb_applyovertime")
+public class OvertimeApply {
+	 @Id
+	 private String id;//加班申请标识
+	 private String user_id;//用户标识
+	 private String dept_id;//部门标识
+	 private String apply_time;//申请时间
+	 private String apply_reason;//加班原因
+	 private String apply_start_time;//加班开始时间
+	 private String apply_end_time;//加班结束时间
+	 private String total_hour;//总计加班时间
+	 private String bm_judgement;//部门经理意见
+	 private String manager_judgement;//分管领导意见
+	 private String hr_handle;//人事部处理
+	 private String remark;//备注
+	 private String personInCharge;// 部门经理标识
+	 private String secondManager; // 分管领导标识
+	 private String approval1Name;//部门审批人
+	 private Date approval1Date;//部门主管审批日期
+	 private String approval2Name;//分管领导审批人
+	 private Date approval2Date;//分管领导审批日期
+	 private String approval3Name;
+	 private Date approval3Date;
+	 
+	 
+	@Id 
+	public String getId() {
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+	public String getDept_id() {
+		return dept_id;
+	}
+	public void setDept_id(String dept_id) {
+		this.dept_id = dept_id;
+	}
+	public String getApply_time() {
+		return apply_time;
+	}
+	public void setApply_time(String apply_time) {
+		this.apply_time = apply_time;
+	}
+	public String getApply_reason() {
+		return apply_reason;
+	}
+	public void setApply_reason(String apply_reason) {
+		this.apply_reason = apply_reason;
+	}
+	
+	public String getApply_start_time() {
+		return apply_start_time;
+	}
+	public void setApply_start_time(String apply_start_time) {
+		this.apply_start_time = apply_start_time;
+	}
+	public String getApply_end_time() {
+		return apply_end_time;
+	}
+	public void setApply_end_time(String apply_end_time) {
+		this.apply_end_time = apply_end_time;
+	}
+	public String getTotal_hour() {
+		return total_hour;
+	}
+	public void setTotal_hour(String total_hour) {
+		this.total_hour = total_hour;
+	}
+	public String getBm_judgement() {
+		return bm_judgement;
+	}
+	public void setBm_judgement(String bm_judgement) {
+		this.bm_judgement = bm_judgement;
+	}
+	
+	public String getManager_judgement() {
+		return manager_judgement;
+	}
+	public void setManager_judgement(String manager_judgement) {
+		this.manager_judgement = manager_judgement;
+	}
+	public String getHr_handle() {
+		return hr_handle;
+	}
+	public void setHr_handle(String hr_handle) {
+		this.hr_handle = hr_handle;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getPersonInCharge() {
+		return personInCharge;
+	}
+	public void setPersonInCharge(String personInCharge) {
+		this.personInCharge = personInCharge;
+	}
+	public String getSecondManager() {
+		return secondManager;
+	}
+	public void setSecondManager(String secondManager) {
+		this.secondManager = secondManager;
+	}
+	
+	public String getApproval1Name() {
+		return approval1Name;
+	}
+	public void setApproval1Name(String approval1Name) {
+		this.approval1Name = approval1Name;
+	}
+	@Temporal(TemporalType.DATE)
+	public Date getApproval1Date() {
+		return approval1Date;
+	}
+	public void setApproval1Date(Date approval1Date) {
+		this.approval1Date = approval1Date;
+	}
+	public String getApproval2Name() {
+		return approval2Name;
+	}
+	public void setApproval2Name(String approval2Name) {
+		this.approval2Name = approval2Name;
+	}
+	@Temporal(TemporalType.DATE)
+	public Date getApproval2Date() {
+		return approval2Date;
+	}
+	public void setApproval2Date(Date approval2Date) {
+		this.approval2Date = approval2Date;
+	}
+	public String getApproval3Name() {
+		return approval3Name;
+	}
+	public void setApproval3Name(String approval3Name) {
+		this.approval3Name = approval3Name;
+	}
+	@Temporal(TemporalType.DATE)
+	public Date getApproval3Date() {
+		return approval3Date;
+	}
+	public void setApproval3Date(Date approval3Date) {
+		this.approval3Date = approval3Date;
+	}
+	
+	@Override
+	public String toString() {
+		return "OvertimeApply [id=" + id + ", user_id=" + user_id
+				+ ", dept_id=" + dept_id + ", apply_time=" + apply_time
+				+ ", apply_reason=" + apply_reason + ", apply_start_time="
+				+ apply_start_time + ", apply_end_time=" + apply_end_time
+				+ ", total_hour=" + total_hour + ", bm_judgement="
+				+ bm_judgement + ", manager_judgement=" + manager_judgement
+				+ ", hr_handle=" + hr_handle + ", remark=" + remark
+				+ ", personInCharge=" + personInCharge + ", secondManager="
+				+ secondManager + "]";
+	}
+	
+	
+	 
+}

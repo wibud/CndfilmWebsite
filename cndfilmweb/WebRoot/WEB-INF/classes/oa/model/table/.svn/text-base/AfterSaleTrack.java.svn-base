@@ -1,0 +1,97 @@
+package oa.model.table;
+
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="track_id")
+@Entity
+@Table(name="tb_aftersaletrack")
+public class AfterSaleTrack {
+	@Id
+	private String track_id;		//详细跟踪纪录编号
+	private String record_id;		//该条跟踪记录属于的售后纪录的编号
+	private String editperson;		//修改者姓名
+	private String edittime;			//修改时间
+	private String liuyan;			//修改留言
+	private String customername;			//修改联系人
+	private String customertel;			//客户联系方式
+	private String customerunit;			//客户联系方式
+	private String currentdealer;			//修改处理人
+	private String result;			//修改状态
+	private String solution;			//解决方法
+	public String getTrack_id() {
+		return track_id;
+	}
+	public void setTrack_id(String trackId) {
+		track_id = trackId;
+	}
+	public String getRecord_id() {
+		return record_id;
+	}
+	public void setRecord_id(String recordId) {
+		record_id = recordId;
+	}
+	public String getEditperson() {
+		return editperson;
+	}
+	public void setEditperson(String editperson) {
+		this.editperson = editperson;
+	}
+	public String getEdittime() {
+		return edittime;
+	}
+	public void setEdittime(String edittime) {
+		this.edittime = edittime;
+	}
+	public String getLiuyan() {
+		return liuyan;
+	}
+	public void setLiuyan(String liuyan) {
+		this.liuyan = liuyan;
+	}
+	public String getCustomername() {
+		return customername;
+	}
+	public void setCustomername(String customername) {
+		this.customername = customername;
+	}
+	public String getCustomertel() {
+		return customertel;
+	}
+	public void setCustomertel(String customertel) {
+		this.customertel = customertel;
+	}
+	public String getCurrentdealer() {
+		return currentdealer;
+	}
+	public void setCurrentdealer(String currentdealer) {
+		this.currentdealer = currentdealer;
+	}
+	public String getResult() {
+		return result;
+	}
+	public void setResult(String result) {
+		this.result = result;
+	}
+	public String getCustomerunit() {
+		return customerunit;
+	}
+	public void setCustomerunit(String customerunit) {
+		this.customerunit = customerunit;
+	}
+	public void setSolution(String solution) {
+		this.solution = solution;
+	}
+	public String getSolution() {
+		return solution;
+	}
+	
+	
+
+	
+	
+}

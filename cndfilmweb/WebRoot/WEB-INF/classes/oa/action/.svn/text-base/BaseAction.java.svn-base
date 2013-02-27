@@ -1,0 +1,331 @@
+package oa.action;
+
+import oa.bean.common.ResultBean;
+import oa.service.aftersalerecord.AfterSaleRecordManager;
+import oa.service.aftersalerecord.Email;
+
+import oa.service.commerceproject.CommerceProductManager;
+import oa.service.commerceproject.CommerceProjectActingManager;
+import oa.service.commerceproject.CommerceProjectAuthapplyManager;
+import oa.service.commerceproject.CommerceProjectLogsManager;
+import oa.service.commerceproject.CommerceProjectManager;
+
+import oa.service.asset.AssetManager;
+import oa.service.formapply.ClaimApplyManager;
+import oa.service.formapply.BusinessTripManager;
+import oa.service.formapply.OutBoundManager;
+import oa.service.formapply.OvertimeApplyManager;
+
+import oa.service.formapply.VacancyApplyManager;
+
+import oa.service.performance.PerformanceManager;
+import oa.service.project.ProjectInfoManager;
+import oa.service.system.SystemManager;
+import oa.service.ticketapply.TicketApplyManager;
+import oa.service.user.CertificationManager;
+import oa.service.user.OperationRecordManager;
+import oa.service.user.UserManager;
+import oa.service.version.VersionManager;
+import oa.service.workAttendance.AttenceManager;
+import oa.service.workPlan.WeekPlanManager;
+import oa.service.workPlan.WorkRecordManager;
+
+public class BaseAction {
+
+	// 共用的常量
+	protected static final String SUCCESS = "success";
+	protected static final String ERROR = "error";
+	protected String page;
+	protected String count;
+	protected String pageCount;
+	protected String startWith;
+
+	// 执行失败 或者 需要返回操作是否成功时使用
+	protected ResultBean result;
+
+	// 业务逻辑组件
+	protected UserManager userManager;
+	protected SystemManager systemManager;
+	protected VersionManager versionManager;
+
+	// private CertificationManager certificationManager;
+	protected CertificationManager certificationManager;
+	protected ProjectInfoManager projectInfoManager;
+	protected AfterSaleRecordManager afterSaleRecordManager;
+	protected Email email;
+	protected OperationRecordManager operationrecordManager;
+	protected TicketApplyManager ticketApplyManager;
+	protected OutBoundManager outBoundManager;
+	protected CommerceProductManager commerceProductManager;
+
+	protected CommerceProjectManager commerceProjectManager;
+	protected CommerceProjectActingManager commerceProjectActingManager;
+	protected CommerceProjectAuthapplyManager commerceProjectAuthapplyManager;
+	protected CommerceProjectLogsManager commerceProjectLogsManager;
+
+	protected AssetManager assetManager;
+	protected OvertimeApplyManager overtimeApplyManager;
+	protected AttenceManager attenceManager;
+	protected WeekPlanManager weekPlanManager;
+	protected WorkRecordManager workRecordManager;
+	protected VacancyApplyManager vacancyApplyManager;
+	protected ClaimApplyManager claimApplyManager;
+	protected BusinessTripManager businessTripManager;
+	/*
+	 * 绩效管理
+	 */
+	protected PerformanceManager performanceManager;
+
+	// getter and setter
+
+	public UserManager getUserManager() {
+		return userManager;
+	}
+
+	public CommerceProjectLogsManager getCommerceProjectLogsManager() {
+		return commerceProjectLogsManager;
+	}
+
+	public void setCommerceProjectLogsManager(
+			CommerceProjectLogsManager commerceProjectLogsManager) {
+		this.commerceProjectLogsManager = commerceProjectLogsManager;
+	}
+
+	public ProjectInfoManager getProjectInfoManager() {
+		return projectInfoManager;
+	}
+
+	public void setProjectInfoManager(ProjectInfoManager projectInfoManager) {
+		this.projectInfoManager = projectInfoManager;
+	}
+
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
+
+	public ResultBean getResult() {
+		return result;
+	}
+
+	public void setResult(ResultBean result) {
+		this.result = result;
+	}
+
+	public SystemManager getSystemManager() {
+		return systemManager;
+	}
+
+	public void setSystemManager(SystemManager systemManager) {
+		this.systemManager = systemManager;
+	}
+
+	public String getPage() {
+		return page;
+	}
+
+	public void setPage(String page) {
+		this.page = page;
+	}
+
+	public String getCount() {
+		return count;
+	}
+
+	public void setCount(String count) {
+		this.count = count;
+	}
+
+	public String getPageCount() {
+		return pageCount;
+	}
+
+	public void setPageCount(String pageCount) {
+		this.pageCount = pageCount;
+	}
+
+	public String getStartWith() {
+		return startWith;
+	}
+
+	public void setStartWith(String startWith) {
+		this.startWith = startWith;
+	}
+
+	public VersionManager getVersionManager() {
+		return versionManager;
+	}
+
+	public void setVersionManager(VersionManager versionManager) {
+		this.versionManager = versionManager;
+	}
+
+	public CertificationManager getCertificationManager() {
+		return certificationManager;
+	}
+
+	public void setCertificationManager(
+			CertificationManager certificationManager) {
+		this.certificationManager = certificationManager;
+	}
+
+	public AfterSaleRecordManager getAfterSaleRecordManager() {
+		return afterSaleRecordManager;
+	}
+
+	public void setAfterSaleRecordManager(
+			AfterSaleRecordManager afterSaleRecordManager) {
+		this.afterSaleRecordManager = afterSaleRecordManager;
+	}
+
+	public Email getEmail() {
+		return email;
+	}
+
+	public void setEmail(Email email) {
+		this.email = email;
+	}
+
+	public OperationRecordManager getOperationRecordManager() {
+		return operationrecordManager;
+	}
+
+	public void setOperationRecordManager(
+			OperationRecordManager operationRecordManager) {
+		this.operationrecordManager = operationRecordManager;
+	}
+
+	public TicketApplyManager getTicketApplyManager() {
+		return ticketApplyManager;
+	}
+
+	public void setTicketApplyManager(TicketApplyManager ticketApplyManager) {
+		this.ticketApplyManager = ticketApplyManager;
+	}
+
+	public AssetManager getAssetManager() {
+		return assetManager;
+	}
+
+	public OperationRecordManager getOperationrecordManager() {
+		return operationrecordManager;
+	}
+
+	public void setOperationrecordManager(
+			OperationRecordManager operationrecordManager) {
+		this.operationrecordManager = operationrecordManager;
+	}
+
+	public AttenceManager getAttenceManager() {
+		return attenceManager;
+	}
+
+	public void setAttenceManager(AttenceManager attenceManager) {
+		this.attenceManager = attenceManager;
+	}
+
+	public WeekPlanManager getWeekPlanManager() {
+		return weekPlanManager;
+	}
+
+	public void setWeekPlanManager(WeekPlanManager weekPlanManager) {
+		this.weekPlanManager = weekPlanManager;
+	}
+
+	public CommerceProjectManager getCommerceProjectManager() {
+		return commerceProjectManager;
+	}
+
+	public void setCommerceProjectManager(
+			CommerceProjectManager commerceProjectManager) {
+		this.commerceProjectManager = commerceProjectManager;
+	}
+
+	public CommerceProjectActingManager getCommerceProjectActingManager() {
+		return commerceProjectActingManager;
+	}
+
+	public void setCommerceProjectActingManager(
+			CommerceProjectActingManager commerceProjectActingManager) {
+		this.commerceProjectActingManager = commerceProjectActingManager;
+	}
+
+	public CommerceProjectAuthapplyManager getCommerceProjectAuthapplyManager() {
+		return commerceProjectAuthapplyManager;
+	}
+
+	public void setCommerceProjectAuthapplyManager(
+			CommerceProjectAuthapplyManager commerceProjectAuthapplyManager) {
+		this.commerceProjectAuthapplyManager = commerceProjectAuthapplyManager;
+	}
+
+	public void setAssetManager(AssetManager assetManager) {
+		this.assetManager = assetManager;
+	}
+
+	public OvertimeApplyManager getOvertimeApplyManager() {
+		return overtimeApplyManager;
+	}
+
+	public void setOvertimeApplyManager(
+			OvertimeApplyManager overtimeApplyManager) {
+		this.overtimeApplyManager = overtimeApplyManager;
+	}
+
+	public WorkRecordManager getWorkRecordManager() {
+		return workRecordManager;
+	}
+
+	public void setWorkRecordManager(WorkRecordManager workRecordManager) {
+		this.workRecordManager = workRecordManager;
+	}
+
+	public VacancyApplyManager getVacancyApplyManager() {
+		return vacancyApplyManager;
+	}
+
+	public void setVacancyApplyManager(VacancyApplyManager vacancyApplyManager) {
+		this.vacancyApplyManager = vacancyApplyManager;
+	}
+
+	public CommerceProductManager getCommerceProductManager() {
+		return commerceProductManager;
+	}
+
+	public void setCommerceProductManager(
+			CommerceProductManager commerceProductManager) {
+		this.commerceProductManager = commerceProductManager;
+	}
+
+	public ClaimApplyManager getClaimApplyManager() {
+		return claimApplyManager;
+	}
+
+	public void setClaimApplyManager(ClaimApplyManager claimApplyManager) {
+		this.claimApplyManager = claimApplyManager;
+	}
+
+	public BusinessTripManager getBusinessTripManager() {
+		return businessTripManager;
+	}
+
+	public void setBusinessTripManager(BusinessTripManager businessTripManager) {
+		this.businessTripManager = businessTripManager;
+	}
+
+	public PerformanceManager getPerformanceManager() {
+		return performanceManager;
+	}
+
+	public void setPerformanceManager(PerformanceManager performanceManager) {
+		this.performanceManager = performanceManager;
+	}
+
+	public OutBoundManager getOutBoundManager() {
+		return outBoundManager;
+	}
+
+	public void setOutBoundManager(OutBoundManager outBoundManager) {
+		this.outBoundManager = outBoundManager;
+	}
+
+}

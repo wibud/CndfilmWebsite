@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--审批订票</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+		
+		   $(document).ready(function(){
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var ticketId = href.split("ticketId=")[1].split("&")[0].split("#")[0];
+		/*		var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}*/
+				var id="5";
+				var personnelDeptEmail="";
+				var userEmail="";
+				var approval1Name="";
+				var approvalAttitude1="";
+
+				$.post('/systemDeptSearch',
+	                    {'deptId':id},
+	                    function(xml){
+	                        $(xml).find("item").each(function(){
+	                               var personInCharge=$(this).find("personInCharge").text();
+	                               $.post('/systemUserSearch',
+	                                      {'userId':personInCharge}, 
+	                                      function(xml){
+	                                          $(xml).find("item").each(function(){
+	                                                 personnelDeptEmail=$(this).find("userEmail").text();
+	                                          }); 
+	                                      },
+	                                'xml'); 
+	                        }); 
+							/*var personInCharge=$(xml).find("personInCharge").text();
+							$.post('/systemUserSearch',
+	                               {'userId':personInCharge}, 
+	                               function(xml){
+	                                      $(xml).find("item").each(function(){
+	                                             personnelDeptEmail=$(this).find("userEmail").text();
+	                                       }); 
+	                               },
+	                         'xml');*/ 				
+	   	                 },
+	                'xml');
+	                
+	            $.post('/currentUserDetail',
+					{},
+					function(xml){
+				       approval1Name=$(xml).find("userName").text();
+				    },
+				    'xml');    
+	            
+	                
+				$.post('/listByTicketId',
+				       {'ticketId':ticketId},
+					   function(xml) {
+						     var userId	= $(xml).find("userId").text();
+							 var userName = $(xml).find("username").text();
+							 var userDept = $(xml).find("deptName").text();
+							 var depature = $(xml).find("depature").text();
+							 var destination = $(xml).find("destination").text();
+							 var depatureTime = $(xml).find("depatureTime").text();
+							 var trafficWay = $(xml).find("trafficWay").text();
+							 var way="";
+							 var trafficType =  $(xml).find("trafficType").text();
+							 var ticketInfo = $(xml).find("ticketInfo").text();
+							 var bookReason = $(xml).find("bookReason").text();
+							 var telephone = $(xml).find("telephone").text();
+							 var headerAttitude= $(xml).find("headerAttitude").text();//领导意见（主管）
+							 var clientName=$(xml).find("clientName").text();
+							 var clientInfo=$(xml).find("clientInfo").text();
+							 var applyId=$(xml).find("applyId").text();
+								
+							switch(trafficWay){
+								    case '11':way="飞机-单程";break;
+								    case '12':way="飞机-双程";break;
+								    case '21':way="普通火车-单程";break;
+								    case '22':way="普通火车-双程";break;
+								    case '31':way="高铁-单程";break;
+								    case '32':way="高铁-双程";break;
+								    case '41':way="动车-单程";break;
+								    case '42':way="动车-双程";break;
+								    case '51':way="长途汽车-单程";break;
+								    case '52':way="长途汽车-双程";break;
+								    default:way="";break; 
+						    }	
+								 
+				            $("#userName").text(userName);
+				            $("#userDept").text(userDept);
+				            $("#Depature").text(depature);
+				            $("#Destination").text(destination);
+				            $("#DepatureTime").text(depatureTime);
+				            $("#trafficWay").text(way);
+				            $("#trafficType").text(trafficType);
+				            $("#bookReason").text(bookReason);
+				            $("#telephone").text(telephone);
+				            $("#ticketInfo").text(ticketInfo);
+				            $("#clientName").text(clientName);
+				            $("#clientInfo").text(clientInfo);
+				            
+				            if(clientName=="null"||clientName==""){
+							    $("#client1").hide();
+							 }else{
+							    $("#client1").show();
+							 }
+							 
+							 if(clientInfo=="null"||clientInfo==""){
+							    $("#client2").hide();
+							 }else{
+							    $("#client2").show();
+							 }
+							 
+							 $.post('/systemUserSearch',
+	                                 {'userId':applyId}, 
+	                                 function(xml){
+	                                     $(xml).find("item").each(function(){
+	                                         userEmail=$(this).find("userEmail").text();
+	                                     }); 
+	                                 },
+	                                'xml');
+				
+				//点击确定按钮，对编辑后的数据进行提交
+			    $("#confirm").click(function(){
+				    var isEmail="false";
+				    var state=$("#headerAttitude").val();
+				    approvalAttitude1=$("#approvalAttitude1").val();
+				    
+				         if($("#headerAttitude").val()=="1"){
+				             if($('#isEmail').attr("checked") == "checked"){
+		                         isEmail="true";
+		                         alert("发送邮件通知人事部主管");
+		                     }
+				         }else if($("#headerAttitude").val()=="-1"){
+				             if($('#isEmail').attr("checked") == "checked"){
+		                         isEmail="true";
+		                         alert("发送邮件通知申请人");
+		                     }
+				         }
+				         
+				    $.post('/approvalTicket',{'ticketId':ticketId,'userName':userName,'depature':depature,'destination':destination,'depatureTime':depatureTime,'trafficWay':way,'trafficType':trafficType,'ticketInfo':ticketInfo,'bookReason':bookReason,'telephone':telephone,'headerAttitude':state,'userEmail':userEmail,'personnelDeptEmail':personnelDeptEmail,'isEmail':isEmail,'approvalAttitude1':approvalAttitude1,'approval1Name':approval1Name},callback, 'xml');
+				       function callback(xml){
+							var $xml = $(xml);
+							//这个函数从后台得到xml里面的数据
+							var recode = Number($xml.find("recode").text());
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}												
+							alert("提交成功！");
+							location.href="homePage.html";
+
+						}
+					    function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+							    alert("提交成功！");
+								location.href="ticketInfoList.html";
+							}
+						 }
+					 
+				 });
+				 
+			});
+                function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   }
+		   });
+		</script>
+</head>
+<body>
+      <div id="container2">
+	    <div id="header" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+		 </div>
+		 <div id="content" class="c-1000">
+	       <div id="main">
+	          <div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页&gt;&nbsp;
+										<strong>审批订票</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>审批订票申请</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+	            <div id="content_r7">
+					<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+					   <tr>
+					   <td width="30%"><label class="required">*</label>订票人姓名：</td>
+					   <td width="70%"><label id="userName"/></td>
+					   </tr>
+					   <tr>
+					   <td><label class="required">*</label>订票人部门：</td>
+					   <td><label id="userDept"/></td>
+					  </tr>
+					  <tr id="client1">
+                      <td><label class="required">*</label>客户姓名：</td>
+                      <td><label id="clientName"/></td>
+                      </tr>
+                      <tr id="client2">
+                      <td><label class="required">*</label>客户详细信息：</td>
+                      <td><label id="clientInfo"/></td> 
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>出发地：</td>
+                      <td><label id="Depature"/></td>
+                      </tr>
+                      <tr>
+					  <td><label class="required">*</label>目的地：</td>
+					  <td><label id="Destination"/></td>
+					  </tr>
+					  <tr>
+					  <td><label class="required">*</label>出行日期：</td>
+					  <td><label id="DepatureTime"/></td>				
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>出行方式：</td>
+                      <td><label id="trafficWay"/></td>
+                      </tr>
+                      <tr>
+                      <td>票务类型：</td>
+                      <td><label id="trafficType"/></td>
+                      </tr>
+                      <tr>
+                      <td>联系电话：</td>
+                      <td><label id="telephone"/></td>
+                      </tr>
+                      <tr>
+                      <td>候选方案：</td>
+                      <td><label id="ticketInfo"/></td>
+                      </tr>
+                      <tr>
+                      <td>订票理由：</td>
+                      <td><label id="bookReason"/></td>
+                      </tr>
+                      <tr>
+                      <td><label class="required">*</label>审批意见：</td>
+                      <td><select id="headerAttitude" style="width: 180px;">
+                          <option value="1" selected="selected">审批通过</option>
+                          <option value="-1">审批不通过</option>
+                      </select>
+					  </td>
+                      </tr>
+                      <tr>
+                      <td>审批结论</td>
+                      <td><textarea id="approvalAttitude1" cols="25" rows="4" class="width_15"></textarea></td>
+                      </tr>
+                      <tr>
+                      <td colspan="2">                    
+				      <input type="checkbox" id="isEmail" value="true"/>邮件通知</td>
+					  </tr>
+				      </table>
+				      <br/>
+				      <input class="bt" type="button" id="confirm" value="提交"/>
+					  <input class="bt" type="button" value="返回" onclick="javascript:history.back()"/>
+			    </div>
+			  </div>
+			<div id="bg_di"></div>
+		  </div>
+		  <div id="bg_yejiao">
+		  <div id="footer"></div>
+		  </div>
+       </div>
+</body>
+</html>

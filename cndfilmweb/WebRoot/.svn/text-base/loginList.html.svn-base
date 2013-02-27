@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+
+
+				var url = "/loginList";
+
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#content_r table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+	                          
+
+							   
+
+							    var col = Number(id)+Number(startWith);
+
+							    
+							   
+
+	                        });
+							$("#pageNav").showPageNav(page2, pageCount, count, url);
+	                        //调用注册按钮的事件
+							register();
+						}
+					);
+				};
+				$(this).showData(url,page);
+				
+				
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+				
+
+				
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header"></div>
+			<div id="content">
+				<div id="main">
+					<div id="content_r">
+						<table border="1" class="listTable">
+							
+						</table>
+						<div id="pageNav"></div>
+					</div>
+				</div>
+
+            </div>
+            <div id="footer"></div>
+
+         </div>
+	</body>
+</html>
+

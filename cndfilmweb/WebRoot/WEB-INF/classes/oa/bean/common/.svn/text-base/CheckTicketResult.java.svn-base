@@ -1,0 +1,23 @@
+package oa.bean.common;
+
+public class CheckTicketResult {
+
+	private String verifyInfo;
+	private String roleString;
+	
+	
+	public String getVerifyInfo() {
+		return verifyInfo;
+	}
+	public void setVerifyInfo(String verifyInfo) {
+		this.verifyInfo = verifyInfo;
+	}
+	public String getRoleString() {
+		return roleString;
+	}
+	public void setRoleString(String roleString) {
+		this.roleString = roleString;
+	}
+	
+	
+}

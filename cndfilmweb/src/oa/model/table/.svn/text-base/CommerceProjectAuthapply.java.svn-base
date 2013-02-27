@@ -1,0 +1,85 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="commerceproject_id")
+@Entity
+@Table(name="tb_commerceprojectauthapply")
+public class CommerceProjectAuthapply {
+	@Id
+	private String commerceproject_id;
+	private String commerceproject_name;
+	private String toAuthnumber;
+	private String authapplier;
+	private String authapplier_id;
+	private String authactor;
+	private String authactor_id;
+	private String authapplytime;
+	private String authresource;
+	private String remark;
+	public String getCommerceproject_id() {
+		return commerceproject_id;
+	}
+	public void setCommerceproject_id(String commerceprojectId) {
+		commerceproject_id = commerceprojectId;
+	}
+	public String getCommerceproject_name() {
+		return commerceproject_name;
+	}
+	public void setCommerceproject_name(String commerceprojectName) {
+		commerceproject_name = commerceprojectName;
+	}
+	public String getToAuthnumber() {
+		return toAuthnumber;
+	}
+	public void setToAuthnumber(String toAuthnumber) {
+		this.toAuthnumber = toAuthnumber;
+	}
+	public String getAuthapplier() {
+		return authapplier;
+	}
+	public void setAuthapplier(String authapplier) {
+		this.authapplier = authapplier;
+	}
+	public String getAuthapplier_id() {
+		return authapplier_id;
+	}
+	public void setAuthapplier_id(String authapplierId) {
+		authapplier_id = authapplierId;
+	}
+	public String getAuthactor() {
+		return authactor;
+	}
+	public void setAuthactor(String authactor) {
+		this.authactor = authactor;
+	}
+	public String getAuthactor_id() {
+		return authactor_id;
+	}
+	public void setAuthactor_id(String authactorId) {
+		authactor_id = authactorId;
+	}
+	
+	public String getAuthresource() {
+		return authresource;
+	}
+	public void setAuthresource(String authresource) {
+		this.authresource = authresource;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public void setAuthapplytime(String authapplytime) {
+		this.authapplytime = authapplytime;
+	}
+	public String getAuthapplytime() {
+		return authapplytime;
+	}
+	
+}

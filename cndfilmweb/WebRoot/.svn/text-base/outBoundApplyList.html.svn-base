@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>OA系统</title>
+	<link type="text/css" href="./style/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+	<script type="text/javascript" src="./scripts/js/page.js"></script>
+	<script type="text/javascript">
+	    showIncludeFile();
+	    showIncludeThickBoxAjaxingFile();
+	</script>
+	<script type="text/javascript" src="./scripts/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="./scripts/js/homePageOutBound.js"></script>
+	<script type="text/javascript">
+	    $(document).ready(function(){
+		    init();
+			$(".tabs").tabs({
+					collapsible: true,
+					selected: 3
+			});	
+			$("#ticket").click(function() {
+				location.href = "ticketInfoList.html";
+			});
+			$("#overtime").click(function() {
+				location.href = "overtimeInfoList.html";
+			});			$("#vacancy").click(function() {
+				location.href = "vacancyInfoList.html";
+			});
+			$("#outBound").click(function() {
+				location.href = "outBoundApplyList.html";
+			});
+			//翻页
+			var href = location.href;
+			var page = href.split("page=")[1];
+			if(page)
+			   page = page.split("&")[0].split("#")[0];
+			if(!page || page<1)
+			   page=1;
+			var pageCount = 0;
+			var count = 0;
+			
+			initDialog();	
+			var outBoundOrderBy = "outTime desc";		
+			var url = "/outBoundApplyList";
+			$(this).showOutBoundData(url, page, outBoundOrderBy);
+			
+			$.fn.showData = function(url,page2) {
+				$(this).showOutBoundData(url, page2, outBoundOrderBy);
+			};
+			
+			function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+				
+		});  
+	</script>
+
+</head>
+
+	<body>
+		<div id="container2">
+			<div id="header" style="background: url(../../images/bg_banner5.jpg)"
+				class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：日常管理&gt;&nbsp;
+										<strong>外出管理</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+<!--												<td>-->
+<!--													<img src="images/bg_yh.gif" />-->
+<!--												</td>-->
+<!--												<td width="10">-->
+<!--													&nbsp;-->
+<!--												</td>-->
+<!--												<td>-->
+<!--													<a href="overtimeApplySearch.html" id="seekDept">外出查询</a>-->
+<!--												</td>-->
+<!--												<td width="10">-->
+<!--													&nbsp;-->
+<!--												</td>-->
+												<td>
+													<img src="images/sq_img_09.png" width="15" height="18" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a href="addOutBoundApply.html" id="addDept">申请外出</a>
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<img src="images/bg_fh.gif" width="18" height="18" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a href="javascript:history.back()">返回</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div id="content_r7">
+						<div class="tabs" id="lable1"
+							style="position: relative; z-index: 0; background-color: #F5F5F5">
+							<ul>
+								<li>
+									<a id="ticket" href="#tabs-1">订票管理</a>
+								</li>
+								<li>
+									<a id="overtime" href="#tabs-1">加班管理</a>
+								</li>
+								<li>
+									<a id="vacancy" href="#tabs-1">请假管理</a>
+								</li>
+								<li>
+									<a id="outBound" href="#tabs-1">外出管理</a>
+								</li>
+							</ul>
+							<div id="#tabs-1">
+								<div id="dialogs">
+									<div id="approveDialog" title="外出审批">
+										<table align="center">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<select id="approveResult" class="doubleSelText">
+														<option id="审批通过">
+															审批通过
+														</option>
+														<option id="审批不通过">
+															审批不通过
+														</option>
+													</select>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+									<div id="backApplyDialog" title="返回申请">
+										<table align="center">
+											<tr>
+												<td>
+													<label class="required">
+														*
+													</label>
+													返回时间
+												</td>
+												<td>
+													<input class="doubleSelText" id="backTime" readonly="readonly"
+														onclick="setday(this)" size="30" />
+												</td>
+											</tr>
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+											<tr>
+												<td width="30%">
+													<label class="required">
+														*
+													</label>
+													反馈结果
+												</td>
+												<td width="70%">
+													<textarea class="doubleSelText" id="feedBack" cols="25"
+														rows="4"></textarea>
+												</td>
+											</tr>
+										</table>
+									</div>
+
+								</div>
+								<table id="outBoundApplyTable" border="0" class="listTable"
+									style="width: 100%">
+									<tr>
+										<th>
+											序号
+										</th>
+										<th>
+											申请人
+										</th>
+										<th>
+											外出时间
+										</th>
+										<th>
+											外出事由
+										</th>
+										<th>
+											外出审批状态
+										</th>
+										<th>
+											外出审批人
+										</th>
+										<th>
+											返回时间
+										</th>
+										<th>
+											外出反馈结果
+										</th>
+										<th>
+											返回审批状态
+										</th>
+										<th>
+											返回审批人
+										</th>
+										<th colspan="1">
+											操作
+										</th>
+									</tr>
+								</table>
+								<div id="pageNavForOutBound"></div>
+							</div>
+						</div>
+
+					</div>
+					<div id="sq_di">
+						
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+				<div id="footer"></div>
+			</div>
+		</div>
+	</body>
+</html>
+

@@ -1,0 +1,147 @@
+package oa.dao.table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.BusinessTrip;
+import oa.util.ResultList;
+import java.util.List;
+@SuppressWarnings("unchecked")
+public class BusinessTripDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(BusinessTripDao.class);
+	// property constants
+	public static final String BIZTRIP_ID="biztrip_id";		   	
+	public static final String CREATE_TIME="create_time";		  	
+	public static final String USER_ID="user_id";	 	  	
+	public static final String DEPT_ID="dept_id";		    	
+	public static final String LEAVE_TIME="leave_time";		 	
+	public static final String BACK_TIME="back_time";	    	
+	public static final String DESTINATION="destination";         
+	public static final String BIZTRIP_REASON="biztrip_reason";      
+	public static final String FOLLOW_PERSON="follow_person";  
+	public static final String VEHICLE="vehicle"; 
+	public static final String MANAGER_JUDGEMENT="manager_judgement"; 
+	public static final String BM_JUDGEMENT="bm_judgement"; 
+	public static final String REMARK="remark"; 
+	public static final String MANAGER_IDEA="manager_idea";
+	public static final String BM_IDEA="bm_idea";
+//	public static final String REMIND="remind";
+	
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(BusinessTrip instance) {
+		log.debug("saving BusinessTrip instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(BusinessTrip instance) {
+		log.debug("deleting BusinessTrip instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(BusinessTrip instance) {
+		log.debug("update BusinessTrip instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public BusinessTrip findById(String id) {
+		log.debug("getting BusinessTrip instance with id: " + id);
+		try {
+			BusinessTrip instance = (BusinessTrip) super.get("oa.model.table.BusinessTrip", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public ResultList<BusinessTrip> findByExample(Integer pageNo, BusinessTrip businessTrip) {
+		log.debug("find BusinessTrip instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.BusinessTrip", businessTrip);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<BusinessTrip> findAll(Integer pageNo) {
+		log.debug("finding all BusinessTrip instances");
+		try {
+			return super.find(pageNo, "oa.model.table.BusinessTrip");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<BusinessTrip> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding BusinessTrip instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.BusinessTrip", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<BusinessTrip> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding BusinessTrip instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.BusinessTrip", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	public List<BusinessTrip> findByHQL(Integer pageNo, String hql){
+		log.debug("finding BusinessTrip instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	public String findCount(String hql){
+		log.debug("finding count instance with hql: " + hql
+		);
+		try {
+			return super.findCount(hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+			}
+	
+}
+
+
+

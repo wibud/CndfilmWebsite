@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>删除进度</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+<script type="text/javascript">
+<!--
+//注：每个嵌入页必须定义该方法，供父窗口调用，并且返回true或false来告之父窗口是否关闭
+	$(document).ready(function(){
+		var href1 = location.href;
+//		href1 = decodeURI(href1);
+//		var templateResultId1 = ((href1.split("?"))[1]).split("&")[0];
+//		var templateResultId = (templateResultId1.split("="))[1];
+		var templateId = href1.split("=")[1];
+		$.ajax({
+			type:'post',
+			async: true,
+			url:'/performanceTemplateList',
+			data:{'templateId':templateId},
+			success:function(xml){
+				var templatename     	  = $(xml).find("templatename").text();
+				var templatedescription   = $(xml).find("description").text();
+        		var managerWeight    	 	  = $(xml).find("managerweight").text();
+        		var selfWeight    	 	  = $(xml).find("selfweight").text() + "&nbsp;%";
+        		if(selfWeight == "0&nbsp;%") selfWeight = "/";
+        		var otherWeight    	 	  = $(xml).find("otherweight").text() + "&nbsp;%";
+        		if(otherWeight == "0&nbsp;%") otherWeight = "/";
+        		var index   = $(xml).find("index").text();
+        		if($.browser.msie){
+           			xmlindex = new ActiveXObject("Microsoft.XMLDOM");
+					xmlindex.async = false;
+					xmlindex.loadXML("<xml>"+index+"</xml>");
+				}else{
+					xmlindex = new DOMParser().parseFromString("<xml>"+index+"</xml>", "text/xml");
+				}
+		
+				var eachindexname = "";
+				var eachindexweight = "";
+				var strmoreline = "";
+				var line = 1;
+				$(xmlindex).find("index").each(function(k){
+					eachindexname = $(this).find("name").text();
+					eachindexweight = $(this).find("weight").text();
+					strmoreline += "<tr class='content' align='center'><td>"+eachindexname+"</td><td>"+eachindexweight+"&nbsp;%</td>";
+					line++;
+				});
+				var stroneline = "<tr align='center'><td rowspan="+line+">"+templatename+"</td><td rowspan="+line+">"+templatedescription+"</td><td rowspan="+line+">"+managerWeight+"&nbsp;%</td><td rowspan="+line+">"+selfWeight+"</td><td rowspan="+line+">"+otherWeight+"</td></tr>";
+				$("#indexscore").append(stroneline + strmoreline + "</tr>");
+			},
+			dataType:'xml'});
+			
+	});
+	
+
+
+
+
+
+function Ok(){
+	
+	window.parent.JqueryDialog.SubmitCompleted("", true, false , "");
+
+	return false;
+}
+//-->
+</script>
+</head>
+
+<body style="margin:0px;padding:0px;">
+<div id="content" class="c-1000">
+<div id="main">
+<div id="content_r7">
+<table width="768" height="256" border="0" cellpadding="0" cellspacing="0" bgcolor="#f2ffe2" id="indexscore" class="sTable" style="margin:0 auto; border:1px solid #cde2b0; border-width:1px 0 0 1px; ">
+	<tr valign="top">
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;width: 16% ; height:12%">模板名称</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333;  border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;width: 15%; height:12%">模板描述</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;; height:12%">主管评分比例</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;; height:12%">自评分比例</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;; height:12%">互评分比例</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid; width: 32%; height:12%" colspan='2'>考评指标及权重</th>
+	</tr>
+
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>

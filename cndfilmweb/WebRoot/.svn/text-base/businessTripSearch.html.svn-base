@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--查询出差申请</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+	                     
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+	                    	$("#deptId").append("<option value=\"\">"+"—部门—"+"</option>");
+							$(xml).find("item").each(function(){
+									$("#deptId").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");							
+								});
+							$.post('/getUserByDept',
+				                    {'userDeptId':$('#deptId').val()},
+				                    function(xml){
+				                    	$("#userId").append("<option value=\"\">"+"—人员—"+"</option>");
+										$(xml).find("item").each(function(){
+												var id =$(this).find("userId").text();
+												var name = $(this).find("userName").text();
+												$("#userId").append("<option value=\""+id+"\">"+name+"</option>");
+											});
+				   	                 },
+				                     'xml');							
+	   	                 },
+	                     'xml');
+	                     
+	                     
+	                     
+	         	$("#deptId").change(function(){
+            		$("#userId option").remove();
+            		var deptId=$('#deptId').val();
+            		$.post('/getUserByDept',
+            			{'userDeptId':deptId},
+            			function(xml){
+            				$("#userId").append("<option value=\"\">"+"—人员—"+"</option>");
+            				$(xml).find("item").each(function(){
+										$("#userId").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+	
+									});
+	
+            			},
+            		'xml');
+            	});	
+            	
+
+				$('#comfirm').click(function(){
+					var deptId      	= $('#deptId').val();
+					var userId			= $('#userId').val();
+					var createTime		= $('#createTime').val();
+					var leaveTime		= $('#leaveTime').val();
+					var destination		= $('#destination').val();
+					
+					var tmp="userId="+userId+"&deptId="+deptId+"&createTime="+createTime+"&leaveTime="+leaveTime+"&destination="+destination;
+					tmp=encodeURI(tmp);
+					location.href="/businessTripSearchList.html?"+tmp;
+				});
+				
+				
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+					
+			});
+		
+
+		</script>
+  </head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="300">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：日常管理 &gt;出差申请管理 &gt;&nbsp;
+										<strong>查询出差申请</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>查询出差申请</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>用户</td>
+								<td class="width_15">
+									<select name="deptId" id="deptId" class="dept" >
+							        </select>
+							        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							        <select name="userId" id="userId" class="person" >
+							        </select>
+							     </td>
+							</tr>
+					        <tr>
+							      <td>申请时间</td>
+						         <td class="width_15"><input id="createTime" style="width:150px" onclick="setday(this)" readonly="readonly"></input></td>
+					        </tr>
+					        <tr>
+							      <td>出差时间</td>
+						         <td class="width_15"><input id="leaveTime" style="width:150px" onclick="setday(this)" readonly="readonly"></input></td>
+					        </tr>
+					        <tr>
+					        	<td>出差目的地</td>
+					        	<td class="width_15"><input id="destination" type="text" style="width:150px"></input></td>
+					        </tr>
+							<tr><td colspan="2"><input class="bt" type="button" id="comfirm" value="确定"></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>
+

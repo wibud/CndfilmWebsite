@@ -1,0 +1,189 @@
+package oa.dao.table;
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.CommerceProject;
+
+import oa.util.ResultList;
+
+public class CommerceProjectDao extends BaseDao{
+	private static final Logger log = LoggerFactory.getLogger(CommerceProjectDao.class);
+
+	public final String COMMERCEPROJECT_ID="commerceproject_id";
+	public final String COMMERCEPROJECT_NAME="commerceproject_name";
+	public final String COMPACT_ID="compact_id";
+    public final String MONEY="money";
+    public final String MONEYTIME="moneytime";
+    public final String MONEYYIJIAN="moneyyiyijian";
+	public final String CLIENTFACTORY="clientfactory";
+	public final String CLIENTPERSON="clientperson";
+	public final String CLIENTTEL="clientTel";
+    public final String JCORNOT="jcOrNot";
+	public final String COMMERCEAPPLIER="commerceapplier";
+	public final String COMMERCEAPPLIER_ID="commerceapplier_id";
+	public final String COMMERCEPROJECTACTOR="commerceprojectactor";
+	public final String PLANACTIONTIME="planActiontime";
+	public final String COMMERCEPROJECTSTATE="commerceprojectstate";
+	public final String COMMERCEPROJECTAPPLYTIME="commerceprojectapplytime";
+	public final String COMMERCEPROJECTACTIONTIME="commerceprojectactiontime";
+	public final String REMARK="remark";
+	public final String FILEPATH="filepath";
+	public final String COMMERCEPROJECTTYPE="commerceprojecttype";
+	public final String ENDTIME="endtime";
+	public final String BAOGAOPATH="baogaopath";
+	public final String MANAGERS="managers";
+	
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(CommerceProject instance) {
+		log.debug("saving CommerceProject instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public  void delete(CommerceProject instance) {
+		log.debug("deleting CommerceProject instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	
+	}
+	public  CommerceProject findCommerceProject(String commerceproject_id) {
+		// TODO Auto-generated method stub
+		CommerceProject key=new CommerceProject();
+		return (key);
+	}
+
+	public  void update(CommerceProject instance) {
+		log.debug("update CommerceProject instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	@SuppressWarnings("unchecked")
+	public CommerceProject findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding CommerceProject instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<CommerceProject> user=super.find(null,"oa.model.table.CommerceProject", propertyName, value);
+			CommerceProject u=user.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+		
+	}
+	public  CommerceProject findById(String commerceproject_id) {
+		log.debug("getting CommerceProject instance with id: " + commerceproject_id);
+		try {
+			CommerceProject keymsg = (CommerceProject)super.get("oa.model.table.CommerceProject", commerceproject_id);
+			return keymsg;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public   ResultList<CommerceProject> findByExample(Integer pageNo, CommerceProject commerceproject) {
+		log.debug("find CommerceProject instances with example");
+		try {
+			return super.find( pageNo, "oa.model.table.CommerceProject", commerceproject);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProject> findAll(Integer pageNo) {
+		log.debug("finding all CommerceProject instances");
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProject");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProject> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding CommerceProject instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProject", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property conditions failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProject> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding CommerceProject instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProject", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	//以一个字段或另一个字段为条件模糊查询
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProject> findByProperty(Integer pageNo,String propertyName1,String propertyName2,String value){
+		log.debug("finding CommerceProject instance with property: " + propertyName1
+				+ ", value: " + value+" or "+propertyName2+", value; "+value);
+		try {
+			return super.likefind(pageNo, "oa.model.table.CommerceProject", propertyName1, propertyName2,value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommerceProject> findByHQL(Integer pageNo, String hql){
+		log.debug("finding Version instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	
+
+}

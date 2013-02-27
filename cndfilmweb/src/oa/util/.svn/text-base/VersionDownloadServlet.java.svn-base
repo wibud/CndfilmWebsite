@@ -1,0 +1,177 @@
+package oa.util;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import oa.service.version.VersionManager;
+
+public class VersionDownloadServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private VersionManager versionManager;
+
+	@Override
+	public void init() {
+		WebApplicationContext ctx = WebApplicationContextUtils
+				.getWebApplicationContext(this.getServletContext());
+		versionManager = (VersionManager) ctx.getBean("versionManager");
+	}
+
+	/**
+	 * 用于web下载可能不在目录ROOT下的文件
+	 * 
+	 */
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException {
+		String filename = request.getParameter("filename");
+		String type = request.getParameter("type");
+		try {
+			filename = new String(filename.getBytes("iso8859-1"), "utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		String path = "";
+		if (File.separator.equals("/")) {
+			path = SystemConfig.getDownloadPath();
+		} else {
+			path = "d:/download/";
+		}
+		String file_absloute_path = path + filename;
+		System.out.println("路径是：" + file_absloute_path);
+
+		File file = new File(file_absloute_path);
+		// 文件不存在，跳转到Alert页面
+		if (file.exists() == false) {
+			System.out.println("文件不存在");
+			try {
+				response.sendRedirect("noExist.html");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+
+		String userSaveFileName = file.getName();
+		System.out.println("文件名：" + userSaveFileName);
+
+		try {
+			sendFile(request, response, file, userSaveFileName);
+			// 写入日志
+			if (type.equals("app")) {
+				String versionId = filename.split("/")[0];
+				if (versionId != null && !versionId.equals("")) {
+					versionManager.writeVersionLog(versionId, "下载", "");
+				}
+			}
+
+		} catch (NullPointerException ex) {
+			System.out.println("fileservlet:获取文件失败:" + file.getAbsolutePath()
+					+ "\n" + ex.toString());
+		} catch (Exception ex) {
+			System.out.println("fileservlet:获取文件失败:" + file.getAbsolutePath()
+					+ "\n" + ex.toString());
+		}
+
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException {
+		doGet(request, response);
+	}
+
+	private void sendFile(HttpServletRequest request,
+			HttpServletResponse response, File file, String userSaveFileName)
+			throws IOException {
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+
+		try {
+			String suggestName = null;
+
+			suggestName = userSaveFileName;
+
+			// 完全使用文件名字作为用户保存时候默认的文件名称
+			try {
+				if (suggestName == null || suggestName.equals("") == true) {
+					suggestName = file.getName();
+				}
+			} catch (Exception ex) {
+			}
+
+			// response.setContentType("UTF-8");
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-disposition", "attachment; filename="
+					+ toUtf8String(suggestName));
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setHeader("Cache-Control",
+					"must-revalidate, post-check=0, pre-check=0");
+			response.setHeader("Cache-Control", "public");
+
+			response.setContentLength((int) file.length());
+
+			// Use Buffered Stream for reading/writing.
+			bis = new BufferedInputStream(new FileInputStream(file));
+			bos = new BufferedOutputStream(response.getOutputStream());
+
+			byte[] buff = new byte[2048];
+			int bytesRead;
+			// Simple read/write loop.
+			while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+				bos.write(buff, 0, bytesRead);
+			}
+			bos.flush();
+		} finally {
+			try {
+				if (bis != null)
+					bis.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			try {
+				if (bos != null)
+					bos.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	private String toUtf8String(String s) {
+
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			if (c >= 0 && c <= 255) {
+				sb.append(c);
+			} else {
+				byte[] b;
+				try {
+					b = Character.toString(c).getBytes("utf-8");
+				} catch (Exception ex) {
+					System.out.println(ex);
+					b = new byte[0];
+				}
+				for (int j = 0; j < b.length; j++) {
+					int k = b[j];
+					if (k < 0)
+						k += 256;
+					sb.append("%" + Integer.toHexString(k).toUpperCase());
+				}
+			}
+		}
+		return sb.toString();
+	}
+
+}

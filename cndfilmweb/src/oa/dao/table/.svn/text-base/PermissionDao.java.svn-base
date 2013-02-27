@@ -1,0 +1,146 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.Permission;
+import oa.util.ResultList;
+import java.util.List;
+@SuppressWarnings("unchecked")
+public class PermissionDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(PermissionDao.class);
+	// property constants
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(Permission instance) {
+		log.debug("saving Permission instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(Permission instance) {
+		log.debug("deleting Permission instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(Permission instance) {
+		log.debug("update Permission instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public Permission findById(String id) {
+		log.debug("getting Permission instance with id: " + id);
+		try {
+			Permission instance = (Permission) super.get("oa.model.table.Permission", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public ResultList<Permission> findByExample(Integer pageNo, Permission permission) {
+		log.debug("find Permission instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.Permission", permission);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Permission> findAll(Integer pageNo) {
+		log.debug("finding all Permission instances");
+		try {
+			return super.find(pageNo, "oa.model.table.Permission");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<Permission> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding Permission instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.Permission", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<Permission> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding Permission instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.Permission", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	
+	
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public Permission findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding Permission instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<Permission> Permission=super.find(null,"oa.model.table.Permission", propertyName, value);
+			Permission u=Permission.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * 按属性查询用户不分页
+	 * @param propertyName
+	 * @param value
+	 * @return
+	 */
+	public List<Permission> findByProperty(String propertyName,String value){
+		log.debug("finding Permission instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find("oa.model.table.Permission", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+
+}

@@ -1,0 +1,38 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="producttype_id")
+@Entity
+@Table(name="tb_producttype")
+public class ProductType {
+	@Id
+	private String producttype_id;      
+	private String top_level;     		
+	private String second_level;
+	public String getProducttype_id() {
+		return producttype_id;
+	}
+	public void setProducttype_id(String producttype_id) {
+		this.producttype_id = producttype_id;
+	}
+	public String getTop_level() {
+		return top_level;
+	}
+	public void setTop_level(String top_level) {
+		this.top_level = top_level;
+	}
+	public String getSecond_level() {
+		return second_level;
+	}
+	public void setSecond_level(String second_level) {
+		this.second_level = second_level;
+	} 	  
+	
+	
+}

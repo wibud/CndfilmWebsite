@@ -1,0 +1,783 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--资产出入库登记</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript">
+		
+			var assetCategory="固定资产";
+			var cassetTotalNum=0;
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+			showDeptAndPeo("#dept","#person");	
+			showFAssetKindList("#fassetKindSel");
+			//fpChangeNoAndName("#oper_td :checked","#fassetKindSel","#fassetNoSel","#fassetNameSel","#fassetModelSel");
+			
+			function showFAssetKindList(kindSel){
+				//获取固定资产类别列表
+				$.post('/assetKindShowList',{'assetCategory':assetCategory},
+					CB_kindList,
+					'xml');
+				function CB_kindList(xml){
+					var perext=kindSel+" option";
+					$(perext).remove();
+					$(kindSel).append("<option value=\"\">"+"—类别—"+"</option>");
+					$(xml).find("item").each(function(){
+						$(kindSel).append("<option value=\""+$(this).find("assetKindID").text()+"\">"+$(this).find("assetKind").text()+"</option>");									
+					});	
+				}
+			}
+			
+				
+			$("#cassetKindSel").change(
+				function()
+				{
+					var perext="";
+					perext="#fassetNameSel"+" option";
+					$(perext).remove();
+					perext="#fassetModelSel"+" option";
+					$(perext).remove();
+					$("#fassetNameSel").append("<option value=\"\">"+"—名称—"+"</option>");
+					$("#fassetModelSel").append("<option value=\"\">"+"—型号—"+"</option>");
+					var kindval = $("#cassetKindSel").val();
+					if(kindval=="")
+					{
+						return;
+					}
+					$.post('/assetFixedListIA',
+							{'page':null,'assetKindID':kindval,'assetCategory':assetCategory},
+							function(xml){
+							
+							$(xml).find("item").each(function(){
+								var same=false;
+								var name=$(this).find("assetName").text();
+								//var tag="#fassetNameSel"+"option";
+								$("#fassetNameSel").children().each(function(){
+									if(name==$(this).val())
+									{
+										same=true;
+									}
+								});
+								if(same==false)
+								{
+									$("#fassetNameSel").append("<option value=\""+name+"\">"+name+"</option>");
+								}
+								});	
+								
+								$("#fassetNameSel").change(
+								function()
+								{
+									var assetName=$("#fassetNameSel").val();
+									perext="#fassetModelSel"+" option";
+									$(perext).remove();
+									$("#fassetModelSel").append("<option value=\"\">"+"—型号—"+"</option>");
+									if(assetName=="")
+									{
+										return;
+									}
+									$(xml).find("item").each(function(){
+									if($(this).find("assetName").text()==assetName)
+									{
+										var same=false;
+										var model=$(this).find("assetModel").text();
+										$("#fassetModelSel").children().each(function(){
+											if(model==$(this).val())
+											{
+												same=true;
+											}
+											
+										});
+										if(same==false)
+										{
+											$("#fassetModelSel").append("<option value=\""+$(this).find("assetModel").text()+"\">"+$(this).find("assetModel").text()+"</option>");
+										}
+									}
+									});
+									}
+								);
+								$("#fassetModelSel").change(
+								function()
+								{
+									if($("#oper_td :checked")!=null&&$("#oper_td :checked").val()=="out"
+									&&$("#cate_td :checked")!=null&&$("#cate_td :checked").val()=="consumed")
+									{
+										var assetModel=$("#fassetModelSel").val();
+										$("#assetNumText").val("");
+										
+										if(assetModel=="")
+										{
+											//$(nameSel).append("<option value=\"\">"+"—名称—"+"</option>");
+											return;
+										}
+										$(xml).find("item").each(function(){
+										if($(this).find("assetName").text()==$("#fassetNameSel").val()&&$(this).find("assetModel").text()==assetModel)
+										{
+											var temp="<="+$(this).find("mark").text();
+											$("#assetNumText").val(temp);
+											cassetTotalNum=parseInt($(this).find("mark").text());
+										}
+										});
+									}
+									
+								}
+							);
+							},
+						'xml');
+					}
+			);
+			$("#fassetKindSel").change(
+				function ()
+				{	
+					var perext="";
+					
+						perext="#fassetNoSel"+" option";
+						$(perext).remove();
+					
+						perext="#fassetNameSel"+" option";
+						$(perext).remove();
+						perext="#fassetModelSel"+" option";
+						$(perext).remove();
+						$("#fassetNameSel").append("<option value=\"\">"+"—名称—"+"</option>");
+						$("#fassetModelSel").append("<option value=\"\">"+"—型号—"+"</option>");
+						var kindval = $("#fassetKindSel").val();
+						if(kindval=="")
+						{
+							///if($("#oper_td :checked")!=null&&$("#oper_td :checked").val()=="out")
+							//{
+								$("#fassetNoSel").append("<option value=\"\">"+"—编号—"+"</option>");
+							//}
+							
+							return;
+						}
+						$.post('/assetFixedListIA',
+							{'page':null,'assetKindID':kindval,'assetCategory':assetCategory},
+							function(xml){
+							
+							////if($("#oper_td :checked")!=null&&$("#oper_td :checked").val()=="out")
+							//{
+								$("#fassetNoSel").append("<option value=\"\">"+"—编号—"+"</option>");
+							//}
+							//$("#fassetNameSel").append("<option value=\"\">"+"—名称—"+"</option>");
+							//$("#fassetModelSel").append("<option value=\"\">"+"—型号—"+"</option>");
+							$(xml).find("item").each(function(){
+								if($("#oper_td :checked")!=null&&$("#oper_td :checked").val()=="in")
+								{
+									var same=false;
+									var name=$(this).find("assetName").text();
+									//var tag="#fassetNameSel"+"option";
+									$("#fassetNameSel").children().each(function(){
+										if(name==$(this).val())
+										{
+											same=true;
+											
+										}
+										
+									});
+									if(same==false)
+									{
+										$("#fassetNameSel").append("<option value=\""+name+"\">"+name+"</option>");
+									}
+								}
+								//if($("#oper_td :checked")!=null&&$("#oper_td :checked").val()=="out")
+								//{
+									$("#fassetNoSel").append("<option value=\""+$(this).find("assetNo").text()+"\">"+$(this).find("assetNo").text()+"</option>");
+								//}
+							});
+							$("#fassetNoSel").change(
+								function()
+								{
+									if($("#oper_td :checked")!=null&&$("#oper_td :checked").val()=="out")
+									{
+										var assetNo=$("#fassetNoSel").val();
+										perext="#fassetNameSel"+" option";
+										$(perext).remove();
+										perext="#fassetModelSel"+" option";
+										$(perext).remove();
+										
+										if(assetNo=="")
+										{
+											$("#fassetNameSel").append("<option value=\"\">"+"—名称—"+"</option>");
+											$("#fassetModelSel").append("<option value=\"\">"+"—型号—"+"</option>");
+											return;
+										}
+										$(xml).find("item").each(function(){
+										if($(this).find("assetNo").text()==assetNo)
+										{
+											$("#fassetNameSel").append("<option value=\""+$(this).find("assetName").text()+"\">"+$(this).find("assetName").text()+"</option>");
+											$("#fassetModelSel").append("<option value=\""+$(this).find("assetModel").text()+"\">"+$(this).find("assetModel").text()+"</option>");
+										}
+										
+										});
+									}
+								}
+							);
+							
+							$("#fassetNameSel").change(
+								function()
+								{
+									var assetName=$("#fassetNameSel").val();
+									perext="#fassetModelSel"+" option";
+									$(perext).remove();
+									$("#fassetModelSel").append("<option value=\"\">"+"—型号—"+"</option>");
+									if(assetName=="")
+									{
+										//$(nameSel).append("<option value=\"\">"+"—名称—"+"</option>");
+										return;
+									}
+									$(xml).find("item").each(function(){
+									if($(this).find("assetName").text()==assetName)
+									{
+										var same=false;
+										var model=$(this).find("assetModel").text();
+										//var tag="#fassetModelSel"+"option";
+										$("#fassetModelSel").children().each(function(){
+											if(model==$(this).val())
+											{
+												same=true;
+											}
+										});
+										if(same==false)
+										{
+											$("#fassetModelSel").append("<option value=\""+$(this).find("assetModel").text()+"\">"+$(this).find("assetModel").text()+"</option>");
+										}
+										//$(modelSel).append("<option value=\""+$(this).find("assetName").text()+"\">"+$(this).find("assetName").text()+"</option>");
+									}
+									});
+								}
+							);
+							
+							
+							
+							
+							},
+							'xml');
+				}		
+			);
+		
+			
+				
+			function init(){
+				$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+			}
+			
+			
+			var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+			
+			function showDeptAndPeo(dept,person){
+				//获取部门以及该部门的成员
+				$.post('/systemDeptList',{},
+					function(xml){
+						$(dept).append("<option value=\"\">"+"—部门—"+"</option>");
+						$(xml).find("item").each(function(){
+							$(dept).append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");									
+						});
+																	
+						$(person).append("<option value=\"\">"+"—人员—"+"</option>");
+						
+						},
+					'xml');
+																	
+				 //人员随着部门改变而改变
+			 	$(dept).change(function(){
+			 		var perext=person+" option";
+					$(perext).remove();
+					var deptval = $(dept).val();
+					if(deptval=="")
+					{
+						$(person).append("<option value=\"\">"+"—人员—"+"</option>");
+						return;
+					}
+					$.post('/gotUserbyDept',
+							{'dept':deptval},
+							function(xml){
+							$(person).append("<option value=\"\">"+"—人员—"+"</option>");
+							$(xml).find("item").each(function(){
+							$(person).append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+							});
+					},
+				'xml');
+			
+				});
+			}
+			$("#oper_td :radio").change(
+				function(){
+					var inout = $(":checked").val();
+					if(inout=="in")
+					{
+						$("#fassetKindSel").val("");
+						$("#fassetNameSel").show();
+						$("#fassetNameText").hide();
+						$("#fassetModelSel").show();
+						$("#fassetModelText").hide();
+						$("#newName").show();
+						$("#newModel").show();
+						$("#newName").text("New...");
+						$("#newModel").text("New...");
+						document.getElementById("fassetNameSel").className="person";
+						document.getElementById("fassetModelSel").className="person";
+						$("#fassetNoSel").hide();
+						$("#fassetNoText").show();
+					}
+					else if(inout=="out")
+					{
+						$("#fassetNameSel").show();
+						$("#fassetNameText").hide();
+						$("#fassetModelSel").show();
+						$("#fassetModelText").hide();
+						$("#newName").hide();
+						$("#newModel").hide();
+						document.getElementById("fassetNameSel").className="dept";
+						document.getElementById("fassetModelSel").className="dept";
+						$("#fassetNoText").hide();
+						$("#fassetNoSel").show();
+						$("#fassetModelSel").val("");
+					}
+					else
+						alert("出现未知错误！控件的初始化可能受到影响！");
+					
+					if($("#cate_td :checked").val()=="consumed")
+					{
+						$("#assetNumText").val("");
+					}
+					else
+					{
+						$("#assetNumText").val("不必填写");
+					}
+					
+				}
+			);
+			
+			$("#cate_td :radio").change(
+				function(){
+					var perext="#fassetNameSel"+" option";
+					$(perext).remove();
+					perext="#fassetModelSel"+" option";
+					$(perext).remove();
+					perext="#fassetNoSel"+" option";
+					$(perext).remove();
+					$("#fassetNoSel").append("<option value=\"\">"+"—编号—"+"</option>");
+					$("#fassetNameSel").append("<option value=\"\">"+"—名称—"+"</option>");
+					$("#fassetModelSel").append("<option value=\"\">"+"—型号—"+"</option>");
+					assetCategory=getCategory();
+					if($("#cate_td :checked").val()=="consumed")
+					{
+						$("#div_fpassetKindNo").hide();
+						$("#div_cassetKindNo").show();
+						$("#assetNumText").val("");
+						$("#assetNumText").removeAttr("readonly");
+						showFAssetKindList("#cassetKindSel");
+						
+					}
+					else
+					{
+						$("#div_fpassetKindNo").show();
+						$("#div_cassetKindNo").hide();
+						$("#assetNumText").val("不必填写");
+						$("#assetNumText").attr("readonly","readonly");
+						showFAssetKindList("#fassetKindSel");
+						//fpChangeNoAndName("#oper_td :checked","#fassetKindSel","#fassetNoSel","#fassetNameSel","#fassetModelSel");
+					}
+					
+					
+					
+				}
+			);	
+			
+			$("#comfirm").click(function(){
+				assetCategory=getCategory();
+				var inout = $("#oper_td :checked").val();
+				if(inout=="in")
+				{
+					var assetNum="";
+					
+					if(assetCategory=="耗材资产")
+					{
+						var assetNo="";
+						var assetKindID=$("#cassetKindSel").val();
+						assetNum=$("#assetNumText").val();
+					}
+					else
+					{
+						var assetKindID=$("#fassetKindSel").val();
+						var assetNo		=$("#fassetNoText").val();
+					}
+					
+					if($("#newName").text()=="New...")
+					{
+						var assetName	=$("#fassetNameSel").val();
+					}
+					else
+					{
+						var assetName	=$("#fassetNameText").val();
+					}
+					if($("#newModel").text()=="New...")
+					{
+						var assetModel	=$("#fassetModelSel").val();
+					}
+					else
+					{
+						var assetModel	=$("#fassetModelText").val();
+					}
+					var assetPrice=$("#fassetPriceText").val();
+					var assetOperTime	=$("#fassetInOutTime").val();
+					var assetFromTo	=$("#fassetwhere").val();
+					var assetOperWay=$("#fassetway").val();
+					var assetOper=$("#person").val();
+					var assetOperDeptID=$("#dept").val();
+					var mark		="在库中";
+					var array=[assetKindID,assetNo,assetName,assetPrice,assetNum,assetOperTime,assetFromTo,assetOperWay,assetOper,assetOperDeptID];
+					for(i=0;i<10;i++){
+						if(array[i]==""){
+							if(i==1&&assetCategory=="耗材资产") continue;
+							if(i==4&&assetCategory!="耗材资产") continue;
+							if(i==5) continue;//跳过时间，
+							alert("请填入完整信息！");return;
+						}
+					}
+					//判读资产编码是否合法
+					var judge=0;
+					if(assetCategory!="耗材资产")
+					{
+						$.post('/assetFixedListIA',{'assetCategory':assetCategory},CB_fassetNo,'xml');
+						function CB_fassetNo(databack){
+							$(databack).find('item').each(function(i){
+								if(assetNo==$(this).find('assetNo').text()){
+									alert("资产编号重复！");
+									judge=1;
+									return;
+								}
+								
+							});
+							if(judge==1) return;
+							$.post('/assetIn',{'assetCategory':assetCategory,'assetKindID':assetKindID,'assetNo':assetNo,'assetName':assetName,'assetModel':assetModel,'assetNum':assetNum,'assetPrice':assetPrice,'assetOpeTime':assetOperTime,'assetOper':assetOper,'assetOperDeptID':assetOperDeptID,'assetFromTo':assetFromTo,'assetOpeWay':assetOperWay,'mark':mark},callback,'xml');
+								function callback(databack){
+									var recode = $(databack).find("recode").text();
+									if(recode != 0){
+										alert($(databack).find("errormsg").text());
+									}else {
+											alert("入库成功！");
+											location.href="AssetFixedold.html";
+									}
+							}	
+						}
+					}
+					else
+					{
+						$.post('/assetIn',{'assetCategory':assetCategory,'assetKindID':assetKindID,'assetNo':assetNo,'assetName':assetName,'assetModel':assetModel,'assetNum':assetNum,'assetPrice':assetPrice,'assetOpeTime':assetOperTime,'assetOper':assetOper,'assetOperDeptID':assetOperDeptID,'assetFromTo':assetFromTo,'assetOpeWay':assetOperWay,'mark':mark},callback,'xml');
+								function callback(databack){
+									var recode = $(databack).find("recode").text();
+									if(recode != 0){
+										alert($(databack).find("errormsg").text());
+									}else {
+											alert("入库成功！");
+											location.href="AssetFixedold.html";
+									}
+							}	
+					}
+					
+				}
+				else if(inout=="out")
+				{
+					//这里先假设数量已经输入正确，前面已经经过验证。
+					var assetNum="";
+					
+					if(assetCategory=="耗材资产")
+					{
+						var assetNo="";
+						assetNum=$("#assetNumText").val();
+						var assetKindID=$("#cassetKindSel").val();
+					}
+					else
+					{
+						var assetKindID=$("#fassetKindSel").val();
+						var assetNo		=$("#fassetNoSel").val();
+					}
+					var assetName	=$("#fassetNameSel").val();
+					var assetModel=$("#fassetModelSel").val();
+					var assetPrice=$("#fassetPriceText").val();
+					var assetOperTime	=$("#fassetInOutTime").val();
+					var assetFromTo	=$("#fassetwhere").val();
+					var assetOperWay=$("#fassetway").val();
+					var assetOper=$("#person").val();
+					var assetOperDeptID=$("#dept").val();
+					var mark		="已出库";
+					var array=[assetKindID,assetNo,assetName,assetPrice,assetNum,assetOperTime,assetFromTo,assetOperWay,assetOper,assetOperDeptID];
+					for(i=0;i<10;i++){
+						if(array[i]==""){
+							if(i==1&&assetCategory=="耗材资产") continue;
+							if(i==4&&assetCategory!="耗材资产") continue;
+							alert("请填入完整信息！");return;
+						}
+					}
+					if(assetCategory=="耗材资产"&&parseInt(assetNum)>cassetTotalNum)
+					{
+						alert("出库数量超过库存数量，请重新填写！");
+						return;
+					}
+						
+					$.post('/assetOut',{'assetKindID':assetKindID,'assetCategory':assetCategory,'assetNo':assetNo,'assetName':assetName,'assetModel':assetModel,'assetNum':assetNum,'assetPrice':assetPrice,'assetOpeTime':assetOperTime,'assetOper':assetOper,'assetOperDeptID':assetOperDeptID,'assetFromTo':assetFromTo,'assetOpeWay':assetOperWay,'mark':mark},CB_faasetOut,'xml');
+						function CB_faasetOut(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode != 0){
+								alert($(databack).find("errormsg").text());
+							}else {
+									alert("出库成功！");
+									location.href="AssetFixedold.html";
+							}
+						}
+				}
+				else
+					alert("没有选择出库还是入库，无法提交申请，请重新填写！");
+				
+			});
+			
+			}); 
+			function getCategory()
+			{
+				var cateval=$("#cate_td :checked").val();
+				if(cateval=="fixed")
+					return "固定资产";
+				if(cateval=="purchase")
+					return "采购资产";
+				if(cateval=="consumed")
+					return "耗材资产";
+				alert("请选择资产分类！");
+			}
+			function addNewName()
+			{
+				if($("#newName").text()=="New...")
+				{
+					$("#newName").text("Old...");
+					$("#fassetNameSel").hide();
+					$("#fassetNameText").show();
+				}
+				else
+				{
+					$("#newName").text("New...");
+					$("#fassetNameText").hide();
+					$("#fassetNameSel").show();
+				}
+			}
+			function addNewModel()
+			{
+				if($("#newModel").text()=="New...")
+				{
+					$("#newModel").text("Old...");
+					$("#fassetModelSel").hide();
+					$("#fassetModelText").show();
+				}
+				else
+				{
+					$("#newModel").text("New...");
+					$("#fassetModelText").hide();
+					$("#fassetModelSel").show();
+				}
+			}
+		</script>
+		 
+	</head>
+	
+	<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<div id="content">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="300">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：资产管理  &gt;&nbsp;
+										<strong>出入库登记</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>资产出入库登记</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					
+					<div id="content_r">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>资产流动</td>
+								<td class="width_15" id="oper_td">
+									<input type="radio"  name="inout" id="radioIn" value="in" checked="checked"/>入库&nbsp; &nbsp;&nbsp; &nbsp;
+									<input type="radio" name="inout" id="radioOut" value="out"/>出库
+								</td>
+							</tr>
+							<tr>
+								<td>资产分类</td>
+								<td id="cate_td">
+									<input type="radio"   name="assetCategory" id="fixed" value="fixed" checked="checked"/>固定资产&nbsp; &nbsp;&nbsp; &nbsp;
+									<input type="radio"   name="assetCategory" id="purchase" value="purchase"/>采购资产&nbsp; &nbsp;&nbsp; &nbsp;
+									<input type="radio"   name="assetCategory" id="consumed" value="consumed"/>耗材资产
+								</td>
+							</tr>
+							<tr>
+								<td class="width_5">资产类别/编号</td>
+								<td >
+									 <div id="div_fpassetKindNo">
+								    <select name="fassetKindSel" id="fassetKindSel" class="doubleSelText">
+							        </select>
+							       
+							        <select name="fassetNoSel" id="fassetNoSel" class="doubleSelText" style="display:none">
+								    <option value="" selected="selected">—编号—</option>
+							        </select>
+							        	 <input type="text" name="fassetNoText" id="fassetNoText" class="doubleSelText" />           
+							        </div>
+							        <div id="div_cassetKindNo" style="display:none">
+							        <select name="fassetKindSel" id="cassetKindSel" class="wideSelText">
+							        </select>
+							        </div>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">资产名称/型号</td>
+								<td class="width_15">
+							        <select name="fassetNoSel" id="fassetNameSel" class="doubleSelText">
+								    <option value="" selected="selected">—名称—</option>
+							        </select>
+							        <input type="text" name="fassetNameText" id="fassetNameText" class="doubleSelText" style="display:none"/>
+							        <a id="newName" href="#" onclick="addNewName()" style="color:#009933">New...</a>
+							        
+							        <select name="fassetModelSel" id="fassetModelSel" class="doubleSelText">
+								    <option value="" selected="selected">—型号—</option>
+							        </select>
+							        <input type="text" name="fassetNoText" id="fassetModelText" class="doubleSelText" style="display:none"/>
+							        <a id="newModel" href="#" onclick="addNewModel()" style="color:#009933">New...</a>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">价钱/数量</td>
+								<td class="width_15">
+								    价钱：<input type="text" id="fassetPriceText" class="doubleSelText" />
+								 	
+								    数量： <input type="text" id="assetNumText" value="不必填写" readonly="readonly" class="doubleSelText" />
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">出入库时间</td>
+								<td class="width_15">
+								    <input type="text" id="fassetInOutTime" class="wideSelText" readonly="readonly" onclick="setday(this)"/>
+							    </td>
+							</tr>
+						    <tr>
+								<td>来源/去向</td>
+								<td><textarea  id="fassetwhere" class="wideSelText"></textarea></td>
+							</tr>
+							<tr>
+								<td class="width_5">流动方式</td>
+								<td class="width_15">
+								    <input type="text" id="fassetway" class="wideSelText"/>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">经办人</td>
+								<td class="width_15">
+									<select name="dept" id="dept" class="doubleSelText" >
+					        		</select>
+					       			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					        		<select name="person" id="person" class="doubleSelText" >
+					        		</select>
+					    		</td>	
+							</tr>
+							<tr><td colspan="2"><input class="bt" type="button" id="comfirm" value="确定"  ></input>
+							                    <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+		</div>
+	</body>
+</html>

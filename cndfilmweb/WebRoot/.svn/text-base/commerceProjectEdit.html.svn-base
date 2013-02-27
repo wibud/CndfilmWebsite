@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+			var href = location.href;
+			href = decodeURI(href);
+			var tmp  = (href.split("?"))[1].split("&");
+			 var conditions = href.split("conditions=")[1].split("&page1=")[0];
+			var laizi  = href.split("&laizi=")[1]; 
+			var prePage = href.split("&page1=")[1].split("&laizi=")[0];
+			
+					                var commerceproject_id  = tmp[0].split("=")[1];				
+									var commerceproject_name  = tmp[1].split("=")[1];
+		 						    var compact_id    				= tmp[2].split("=")[1];
+								    var clientfactory   			= tmp[3].split("=")[1];
+								    var clientperson   				= tmp[4].split("=")[1];
+								    var clientTel 		= tmp[5].split("=")[1];
+								    
+								    var jcornot				=  tmp[6].split("=")[1];
+								    var commerceprojectapplier		=  tmp[7].split("=")[1];
+								    var commerceprojectactor			=  tmp[8].split("=")[1];
+								    var planActiontime					=  tmp[9].split("=")[1];
+								    var commerceprojectstate					=  tmp[10].split("=")[1];
+								    var commerceprojectapplier_id			= tmp[11].split("=")[1];
+								    
+		                            var commerceprojecttype      		= tmp[12].split("=")[1];
+								    var commerceprojectapplytime    	= tmp[13].split("=")[1];
+								    var commerceprojectactiontime   			= tmp[14].split("=")[1];
+								    var remark   		= tmp[18].split("=")[1];
+								    var money				= tmp[15].split("=")[1];
+								    var moneytime					= tmp[16].split("=")[1];
+								    var mpersonyijian			=  tmp[17].split("=")[1];
+								
+							    
+		
+						
+						       $("#commerceproject_id").val(commerceproject_id);				
+							   $("#commerceproject_name").val(commerceproject_name);
+						       $("#compact_id").val(compact_id);
+							   $("#commerceprojectapplier").val(commerceprojectapplier);
+							   $("#money").val(money);
+							   $("#mpersonyijian").val(mpersonyijian);
+							   $("#commerceprojectstate").val(commerceprojectstate);
+							   $("#commerceprojecttype").val(commerceprojecttype);
+							   $("#jcornot").val(jcornot);
+							   $("#commerceprojectapplytime").val(commerceprojectapplytime);
+							   $("#planActiontime").val(planActiontime);
+							   $("#moneytime").val(moneytime);
+							   $("#commerceprojectactiontime").val(commerceprojectactiontime);
+							   $("#clientfactory").val(clientfactory);
+							   $("#clientperson").val(clientperson);
+							   $("#clientTel").val(clientTel);
+							   $("#remark").val("");
+						   var member = commerceprojectactor.split(";");
+							   //显示原有成员列表
+								 	var memberId,memberName;
+									for(var i = 0, len = member.length-1; i< len; i++)
+								     {
+								          memberId = member[i].split(",")[0];
+								          memberName = member[i].split(",")[1];
+								          $("#removeMember").append("<option value=\""+memberId+"\">"+memberName+"</option>");
+								      }
+								      
+							if( commerceprojectstate.replace(/[ ]/g,"")=="合同已签订"||commerceprojectstate.replace(/[ ]/g,"")=="预付款已讫"){
+									$('#chooseactor').hide();
+									
+							}else{
+									
+									$('#chooseactor').attr("disabled", false);
+									
+							}		      
+					//获取权限
+			var applyProjectPermission;
+			var editProductPermission;
+			var mpersonPermission;
+			$.ajax({
+		type: 'POST',
+		async: false,
+		url: "/getPermission",
+		success:	
+				function(xml){
+				applyProjectPermission=Number($(xml).find("permission").find("commerceProject").find("applyproject").text());
+				editProductPermission=Number($(xml).find("permission").find("commerceProject").find("editproduct").text());
+	            mpersonPermission=Number($(xml).find("permission").find("commerceProject").find("mperson").text());
+	            if(mpersonPermission==0){
+						$('#mperson').hide();
+				}else{
+						$('#mperson').attr("disabled", false);
+				}
+	           
+				},
+			 dataTyep: "xml" 
+			});
+					      
+					                      		                 		                     	  						      
+	/*     		//获取部门以及该部门的成员
+				$.post('/systemDeptList',{},
+							function(xml){
+								$("#dept").append("<option value=\"\">"+"—部门—"+"</option>");
+								$(xml).find("item").each(function(){
+									$("#dept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");									
+									});
+																		
+								$.post('/gotUserbyDept',
+										{'dept': $('#dept').val()},
+										function(xml){
+											$("#mperson_id").append("<option value=\""+mperson_id+"\">"+mperson+"</option>");
+											$("#mperson_id").append("<option value=\"\">"+"—不选择—"+"</option>");
+											$(xml).find("item").each(function(){
+												$("#mperson_id").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+											});										
+										},
+										'xml');
+							},
+						'xml');
+																		
+				//人员随着部门改变而改变
+				$('#dept').change(function(){
+					$("#mperson_id option").remove();
+					var dept1 = $('#dept').val();
+					$.post('/gotUserbyDept',
+						{'dept':dept1},
+						function(xml){
+							$(xml).find("item").each(function(){
+								$("#mperson_id").append("<option value=\""+$(this).find("userName").text()+"\">"+$(this).find("userName").text()+"</option>");
+							});
+							$("#mperson_id").append("<option value=\"\">"+"—不选择—"+"</option>");
+						},
+					'xml');
+				
+				});
+
+		*/
+          	
+           		//初始化memberDept,addMember列表
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){							      
+									$("#memberDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});
+							$.post('/getUserByDept',
+				                    {'userDeptId':$("#memberDept").val()},
+				                    function(xml){
+										$(xml).find("item").each(function(){
+													var id =$(this).find("userId").text();
+													var name = $(this).find("userName").text();
+													dup = false;
+													//添加待选人员
+													$("#removeMember option").each(function(){
+														if(id == $(this).val()) {
+															dup = true;
+														}
+													});
+													if(!dup) {
+														$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+													}
+											});
+				   	                 },
+				                     'xml');	
+	   	                 },
+	                     'xml');
+	                     
+	                     	//动态更新待选成员列表
+	             $('#memberDept').change(function(){
+		           			$("#addMember option").remove();
+		            		var dept = $('#memberDept').val();
+		            		var dup;
+		            		$.post('/getUserByDept',
+		                    {'userDeptId':dept},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+									var id =$(this).find("userId").text();
+									var name = $(this).find("userName").text();
+									dup = false;
+									$("#removeMember option").each(function(){
+										if(id == $(this).val()) {
+											dup = true;
+										}
+									});
+									if(!dup) {
+										$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+									}
+								});
+		   	                 },
+		                     'xml');
+	            });   
+
+				//添加成员
+	            $("#addMember").dblclick(function(){
+					$("#addMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#removeMember").append(option);
+						$(this).remove();
+					});
+				});  
+				//删除成员  
+				$("#removeMember").dblclick(function(){
+					$("#removeMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#addMember").append(option);
+						$(this).remove();
+					});
+				});  
+            	
+
+				   //点击确定按钮，对编辑后的数据进行提交，提交时调用businessUpdate接口
+			        $("#comfirm").click(function(){
+			        	   var commerceproject_id     	= $('#commerceproject_id').val();	        	
+                            var commerceproject_name      	= $('#commerceproject_name').val();
+						    var compact_id    				= $('#compact_id').val();
+						    var clientfactory   			= $('#clientfactory').val();
+						    var clientperson   				=$('#clientperson').val();
+						    var clientTel 		= $('#clientTel').val();
+						    var jcornot				= $('#jcornot').val();
+						    var commerceprojectapplier					=  $('#commerceprojectapplier').val();
+						    var planActiontime					=  $('#planActiontime').val();
+						    var commerceprojectstate					= $('#commerceprojectstate').val();
+                            var commerceprojecttype      		= $('#commerceprojecttype').val();
+						    var commerceprojectapplytime    	= $('#commerceprojectapplytime').val();
+						    var commerceprojectactiontime   			=$('#commerceprojectactiontime').val();
+						    var remark   		= $('#remark').val();
+						    var money				=  $('#money').val();
+						    var moneytime					= $('#moneytime').val();
+						    var mpersonyijian			= $('#mpersonyijian').val();
+					var strMember = "";
+                    $("#removeMember option").each(function() {
+                    	var id = $(this).val();
+                    	var name = $(this).text();
+                    	strMember += id + "," + name + ";";
+                    });
+						if($('#clientperson').val() ==  ""){
+						alert(" 客户联系人不能为空！");
+						return;
+						}
+							
+						if($('#clientTel').val() ==  ""){
+						alert("  客户联系方式不能为空！");
+						return;
+						}
+                       if($('#jcornot').val() ==  ""){
+						alert(" 集成方式不能为空！");
+						return;
+						} 
+						 if($('#commerceprojectapplier').val() ==  ""){
+						alert(" 项目申请人不能为空！");
+						return;
+						}
+						
+						
+	                    $.post('/editCommerceProjectDetail', {'commerceproject_id':commerceproject_id,'commerceproject_name':commerceproject_name,'jcOrNot':jcornot,
+	             'mpersonyijian':mpersonyijian,'moneytime':moneytime,'money':money,'commerceprojectactiontime': commerceprojectactiontime,'compact_id':compact_id,
+	             'commerceprojectapplytime': commerceprojectapplytime, 'commerceprojecttype':commerceprojecttype, 'commerceprojectapplier_id':commerceprojectapplier_id,
+	             'commerceprojectstate':commerceprojectstate,'commerceprojectactor':strMember,'planActiontime':planActiontime , 'commerceprojectapplier':commerceprojectapplier,
+	             'clientTel': clientTel,'clientperson':clientperson,'clientfactory':clientfactory,'remark':remark}, callback, 'xml');
+
+					
+                      
+
+				});
+									$("#clientTel").change(function() {
+								    	var money = $("#clientTel").val(); 
+								    	
+								    	var reg = new RegExp(/^\d{3,4}-?\d{7,8}-?\d{0,1}$/g);
+										if(!money.match(reg)){
+												alert("请确认输入输入正确电话号码格式！");
+												$("#clientTel").val(null);
+												return;
+											}
+							    	});
+				
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								alert("修改成功！");
+								if(conditions == ""){
+								location.href="commerceProjectList.html?page="+prePage;
+							}else{
+								alert("修改成功！");
+							    location.href="commerceProjectSearchList.html?"+conditions+"&page="+prePage;
+							}
+						//		location.href="allProductList.html";
+							}
+						}
+	/*			
+		//		 <input type="button" value="修改产品信息" id="comfirm1"></input>
+				$('#comfirm1').click(function(){
+					  var commerceproject_id      	= $('#commerceproject_id').val();
+					  var commerceproject_name      	= $('#commerceproject_name').val();
+					
+						
+					var tmp="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+					tmp=encodeURI(tmp);
+					
+		
+					 location.href="/commerceProductEdit.html?"+tmp;
+					
+					
+					
+				
+					
+				});
+				
+				$('#comfirm2').click(function(){
+					  var commerceproject_id      	= $('#commerceproject_id').val();
+					  var commerceproject_name      	= $('#commerceproject_name').val();
+					
+						
+					var tmp="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+					tmp=encodeURI(tmp);
+					
+		
+					 location.href="/addProductForCommerceProject.html?"+tmp;
+					
+					
+					
+				
+					
+				});
+		*/		
+
+		$("#back").click(
+					function(){
+							if(laizi=="list"){
+								location.href="commerceProjectList.html?page="+prePage;
+							}else if(laizi=="search"){
+							    location.href="commerceProjectSearchList.html?"+conditions+"&page="+prePage;
+							}
+					});
+					function init(){
+
+						$("#header").showHeaderSystem();
+						$("#footer").showFooter();
+						$(this).navi();
+					}
+					
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner4.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+				<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						    <td width="250"><div class="biao" align="left">当前位置：项目列表&gt;&nbsp;<strong>项目信息修改</strong></div></td>
+						    <td >&nbsp;</td>
+						    <td align="right"><div class="biao2"><table border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  
+						    <td><img src="images/bg_fh.gif" width="18" height="18" /></td>
+						    <td width="10">&nbsp;</td>
+						    <td><a href="#" id="back" >返回</a></td>
+						  </tr>
+						</table>
+						</div></td>
+ 					 </tr>
+ 					</table>
+					</div>
+				
+					  <div align="center" id="content_xdao2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+						  <tr>
+						  	<td width="14"><img src="images/bg_9.png" width="14" height="28" /></td>
+						    <td height="28" align="center" valign="middle" class="b_di"><strong>项目信息修改</strong></td>
+						    <td width="14" align="right"><img src="images/bg_11.png" width="14" height="28" /></td>
+						  </tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table  class="sTable" style="overflow: auto;" border="0"
+							cellpadding="0" cellspacing="0">
+				
+							
+									<tr  style="display:none;">
+								<td class="width_5">项目ID</td>
+								<td class="width_15"><input type="text" id="commerceproject_id" class="width_15" readonly="readonly" style="background:#DDEEEE;"></input></td>
+							</tr>
+							
+							<tr >
+								<td class="width_5">项目名称</td>
+								<td class="width_15"><input type="text" id="commerceproject_name" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px"></input></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">合同编号</td>
+								<td class="width_15"><input type="text" id="compact_id" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px"></input></td>
+							</tr>
+							
+                    	<tr  style="display:none;">
+								<td class="width_5">项目申请人</td>
+								<td class="width_15"><input type="text" id="commerceprojectapplier" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px"></input></td>
+							</tr>
+							<tr id="mperson">
+								<td class="width_5">已付金额百分比</td>
+								<td class="width_15"><input type="text" id="money" class="width_15" style="width:280px" ></input></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">财务审批人意见</td>
+								<td class="width_15"><input type="text" id="mpersonyijian" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px" ></input></td>
+							</tr>
+						
+							<tr id="chooseactor">
+								<td>选择实施工程师</td>
+								<td>
+									<select name="memberDept" id="memberDept" class="width_15"  style="width:280px">
+							        </select>
+							        <br/>
+									<select id="addMember" multiple="multiple" title="双击以添加" style="width:125px">							       
+							        </select>
+							   		<img src="images/arrow_two_head.png"></img>
+							   		<select id="removeMember" multiple="multiple" title="双击以删除" style="width:125px">
+							        </select>
+							    </td>
+							</tr>
+							
+							<tr  style="display:none;">
+								<td class="width_5">项目状态</td>
+								<td class="width_15"><input type="text" id="commerceprojectstate" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px" ></input></td>
+								
+						<!--  	 <td class="width_15"><select name="commerceprojectstate" id="commerceprojectstate" class="width_15" style="background:#DDEEEE; width:280px">
+								        <option value="合同已签订">合同已签订</option>
+								        <option value="预付款已讫">预付款已讫</option>
+								         <option value="安排实施">安排实施</option>
+								         <option value="正在实施">正在实施</option>
+								          <option value="项目成功，圆满完成任务">项目成功，圆满完成任务</option>
+								           <option value="项目失败，结束合同">项目失败，结束合同</option>
+							        </select></td>-->
+							</tr>
+							<tr>
+								<td class="width_5">项目类型</td>
+							    <td class="width_15"><select name="commerceprojecttype" id="commerceprojecttype" class="width_15" style="width:280px">
+								       <option value="BGW">BGW</option>
+								         <option value="ZHW">ZHW</option>
+								         <option value="其他">其他</option>
+							        </select></td>
+							</tr>
+							<tr>
+								<td class="width_5">集成方式</td>
+							    <td class="width_15"><select name="jcornot" id="jcornot" class="width_15" style="width:280px">
+								        <option value="我方集成">我方集成</option>
+								        <option value="第三方集成">第三方集成</option>
+								         <option value="无集成商">无集成商</option>
+							        </select></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">项目申请时间</td>
+								<td class="width_15"><input type="text" id="commerceprojectapplytime" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px" ></input></td>
+							</tr>
+							
+							<tr  style="display:none;">
+								<td class="width_5">计划执行时间</td>
+								<td class="width_15"><input type="text" id="planActiontime" class="width_15"   readonly="readonly" style="background:#DDEEEE; width:280px"></input></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">预付款付讫时间</td>
+								<td class="width_15"><input type="text" id="moneytime" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px"></input></td>
+							</tr>
+							<tr  style="display:none;">
+								<td class="width_5">实际执行时间</td>
+								<td class="width_15"><input type="text" id="commerceprojectactiontime" class="width_15" readonly="readonly" style="background:#DDEEEE; width:280px"></input></td>
+							</tr>
+							<tr >
+								<td class="width_5">客户单位名称</td>
+								<td class="width_15"><input type="text" id="clientfactory" class="width_15"style="width:280px"></input></td>
+							</tr>
+							
+							<tr >
+								<td class="width_5">客户联系人</td>
+								<td class="width_15"><input type="text" id="clientperson" class="width_15" style="width:280px"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">客户联系方式</td>
+								<td class="width_15"><input type="text" id="clientTel" class="width_15" style="width:280px"></input></td>
+							</tr>
+							<tr>
+								<td class="width_5">修改原因</td>
+								<td class="width_15"><input type="text" id="remark" class="width_15" style="width:280px"></input></td>
+							</tr>
+							<tr><td colspan="2">
+							                    <input type="button" value="提交" id="comfirm" class="bt"></input>
+							    </td>
+							</tr>
+								</table>
+						</div>
+						<div id="sq_di">
+                     		<div id="pageNav">
+                    		</div>
+                  		</div>
+					</div>
+				  <div id="bg_di"></div>
+            	</div>
+		 		 <div id="footer">
+		          </div>
+				</div>
+        
+		</body>
+</html>

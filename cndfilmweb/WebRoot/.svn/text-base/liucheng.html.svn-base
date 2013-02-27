@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>项目实施流程</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/myTime.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<script type="text/javascript">
+<!--
+//注：每个嵌入页必须定义该方法，供父窗口调用，并且返回true或false来告之父窗口是否关闭
+
+function Ok(){
+
+	//相关逻辑代码
+	var href1 = location.href;
+	 var tmp  = (href.split("?"))[1].split("&"); 
+		    var commerceproject_id  =tmp[0].split("=")[1];
+		    var commerceproject_name  =tmp[1].split("=")[1];
+		    var filepath  =tmp[2].split("=")[1];
+		    var uurrll = "'/commerceProjectEnd.html?'+tmp1;"
+		    $("#commerceproject_id").val(commerceproject_id);				
+			$("#commerceproject_name").val(commerceproject_name);
+			$("#filepath").val(filepath);
+	
+			
+		$('#comfirm6').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name+"&filepath="+filepath;
+			//			tmp1=encodeURI(tmp1);		
+						 location.href="/addProductForCommerceProject.html?"+tmp1;						
+					});
+					
+					$('#comfirm1').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/mpersonComfirm.html?"+tmp1;						
+					});				
+					$('#comfirm2').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+			//			tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/chooseactor.html?"+tmp1;						
+					});
+					$('#comfirm3').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+		//				tmp1=encodeURI(tmp1);
+						
+			
+						 location.href="/actorComfirm.html?"+tmp1;						
+					});
+					$('#comfirm5').click(function(){
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+				//		tmp1=encodeURI(tmp1);	
+				//		 location.href="/commerceProjectEnd.html?"+tmp1;	
+						window.parent.JqueryDialog.SubmitCompleted("添加阶段成功！", true, true , uurrll);
+					//	window.location.href = "/commerceProjectEnd.html?"+tmp1;					
+					});
+		
+					
+		/*	<input id="comfirm7" type="button"  value="再次授权" / >
+			
+			$('#comfirm7').click(function(){
+						
+						 var commerceproject_id  =tmp[0].split("=")[1];
+						    var commerceproject_name  =tmp[1].split("=")[1];
+						    $("#commerceproject_id").val(commerceproject_id);				
+							$("#commerceproject_name").val(commerceproject_name);	
+							
+						var tmp1="commerceproject_id="+commerceproject_id+"&commerceproject_name="+commerceproject_name;
+				//		tmp1=encodeURI(tmp1);	
+						 location.href="/commerceProjectApplyAuthorAgain.html?"+tmp1;						
+					});
+					*/
+	}
+
+//-->
+</script>
+</head>
+
+<body style="margin:0px;padding:0px;">
+<table width="450" height="450" border="0" cellpadding="0" cellspacing="0" bgcolor="#eeffe">
+						  <tr>
+						    <td><img src="images/oa_downbutton.png" /></td>						 
+						    <td><a href="#" id="comfirm5">财务负责人确认</a></td>
+						   </tr>
+						   <tr>				
+						    <td><img src="images/bg_yh.gif" /></td>						  
+						    <td><a href="commerceProjectSearch.html" >选择实施工程师</a></td>
+						   </tr>
+						   <tr>						   
+						    <td><img src="images/bg_xg.png" /></td>						
+					    	<td><a href="#" id= "comfirm2" >实施工程师确认</a></td>										
+							</tr>
+						
+						</table>
+
+
+
+</body>
+</html>

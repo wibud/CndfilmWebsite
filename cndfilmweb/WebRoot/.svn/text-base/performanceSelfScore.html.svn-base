@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>删除进度</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/myTime.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+<script type="text/javascript">
+<!--
+//注：每个嵌入页必须定义该方法，供父窗口调用，并且返回true或false来告之父窗口是否关闭
+	$(document).ready(function(){
+		var href1 = location.href;
+//		href1 = decodeURI(href1);
+		var templateResultId1 = ((href1.split("?"))[1]).split("&")[0];
+		var templateResultId = (templateResultId1.split("="))[1];
+		$.post('/listIdResult',{'templateResultId':templateResultId},decallback,'xml');
+		function decallback(databack){
+//			var templateResultId     	  = $(this).find("templateResultId").text();
+	        var templateId     	  	= $(databack).find("templateId").text();
+	        var selfMark    	 	  = $(databack).find("selfMark").text();
+
+	        if($.browser.msie){
+	            xmlselfMark = new ActiveXObject("Microsoft.XMLDOM");
+				xmlselfMark.async = false;
+				xmlselfMark.loadXML("<xml>"+selfMark+"</xml>");
+			}else{
+					xmlselfMark = new DOMParser().parseFromString("<xml>"+selfMark+"</xml>", "text/xml");
+			}
+			var strscore = "<td><input type='text' class='score' title='自我评分' style='width:25px'></input></td>";
+			var strmain = "";
+			$(xmlselfMark).find("index").each(function(j){
+				eachindexname = $(this).find("name").text();
+				strmain += "<tr class='content' valign='top' align='center'><td align='center'>"+eachindexname+"</td>"+strscore+"</tr>";
+			});
+			$("#indexscore").append(strmain);
+		}
+	});
+	
+
+
+
+
+
+function Ok(){
+	//相关逻辑代码
+	var href1 = location.href;
+	var templateResultId1 = ((href1.split("?"))[1]).split("&")[0];
+	var templateResultId = (templateResultId1.split("="))[1];
+	var laizi = href1.split("from=")[1];
+	$.post('/listIdResult',{'templateResultId':templateResultId},decallback,'xml');
+	function decallback(databack){
+		var selfMark = $(databack).find("selfMark").text();
+		var selfweight = $(databack).find("weight").text().split(",")[1];
+		var totalMark = $(databack).find("totalMark").text();
+		if($.browser.msie){
+	        xmlselfMark = new ActiveXObject("Microsoft.XMLDOM");
+			xmlselfMark.async = false;
+			xmlselfMark.loadXML("<xml>"+selfMark+"</xml>");
+		}else{
+			xmlselfMark = new DOMParser().parseFromString("<xml>"+selfMark+"</xml>", "text/xml");
+		}
+		if($.browser.msie){
+	        xmltotalMark = new ActiveXObject("Microsoft.XMLDOM");
+			xmltotalMark.async = false;
+			xmltotalMark.loadXML("<xml>"+totalMark+"</xml>");
+		}else{
+			xmltotalMark = new DOMParser().parseFromString("<xml>"+totalMark+"</xml>", "text/xml");
+		}		
+		var totalmark = 0;
+		$(xmlselfMark).find("index").each(function(i){
+			var eachscore = $(".score").get(i).value;
+			$(this).find("mark").text(eachscore);
+			var tempmark = "";
+			$(xmltotalMark).find("index").each(function(j){
+				if(i==j){
+					tempmark = $(this).find("mark").text();
+					var newtempmark = (Number(eachscore))*(Number(selfweight))/100 + Number(tempmark);
+					$(this).find("mark").text(newtempmark);
+				}
+			});
+			totalmark += Number(eachscore)*Number($(this).find("weight").text())/100;
+		});
+		// 算自评的平均分
+		$(xmlselfMark).find("totalmark").text(totalmark);
+		// 给总评的字段里据加入新的内容
+		var tempmark = "";
+		tempmark = $(xmltotalMark).find("totalmark").text();
+		var newtempmark = Number(totalmark)*Number(selfweight)/100 + Number(tempmark);
+		$(xmltotalMark).find("totalmark").text(newtempmark);
+		var tempcount = "";
+		tempcount = $(xmltotalMark).find("assessedcount").text();
+		var newtempcount = Number(tempcount) + 1;
+		$(xmltotalMark).find("assessedcount").text(newtempcount);
+		// 状态的变化
+		var status = "";
+		if(newtempcount == $(xmltotalMark).find("allassesscount").text()){
+			var status = "暂时完成";
+		}
+		
+		
+		
+		
+		//xml转字符串部分
+		$(xmlselfMark).each(function(){
+			if($.browser.msie){
+				strSelfMark = this.xml;
+			}else{
+				strSelfMark = (new XMLSerializer()).serializeToString(this);
+			}
+		});
+		strSelfMark = (strSelfMark.split("<xml>")[1]).split("</xml>")[0];
+		
+		$(xmltotalMark).each(function(){
+			if($.browser.msie){
+				strTotalMark = this.xml;
+			}else{
+				strTotalMark = (new XMLSerializer()).serializeToString(this);
+			}
+		});
+		strTotalMark = (strTotalMark.split("<xml>")[1]).split("</xml>")[0];
+		
+		var postornot = 0;
+		$(".score").each(function(i){
+			if ($(this).val() == "") {
+				postornot++;
+				alert("请给所有项目打分！");
+				return;
+			}
+			var strnum = /^[0-9]*$/;
+			var mark = $(this).val();
+			if (!mark.match(strnum) || mark>100 || mark<1) {
+				postornot++;
+				alert("每条项目的打分范围是整数1-100分!\n请重新输入！");
+				return;
+			}
+		});
+		
+//		herf3="project_id="+project_id+"&pjName="+pjName+"&pjDept="+pjDept+"&pjManager="+pjManagerName+"&pjCreatTime="+pjCreatTime+"&pjCreator="+pjCreator+"&percent="+jindu+"&page1=1";
+		var uurrll = "performanceSelfAssess.html";
+		if(postornot == 0) {
+			$.post('/scoreSelf',{'templateResultId':templateResultId,'selfMark':strSelfMark,'totalMark':strTotalMark,'status':status},callback,'xml');
+			function callback(databack){
+//				window.location.href = "projectInfoList.html";
+				if(laizi != "homePage"){
+					window.parent.JqueryDialog.SubmitCompleted("评分成功", true, true , uurrll);
+				} else {
+					window.parent.JqueryDialog.SubmitCompleted("评分成功", true, false , uurrll);
+				}
+//				window.location.href="javascript:history.back()";
+//				return true;//返回true模态窗口关闭；返回false模态窗口不关闭；
+			};
+		}
+	}
+	return false;
+}
+//-->
+</script>
+</head>
+
+<body style="margin:0px;padding:0px;">
+<table width="600" height="300" border="0" cellpadding="0" cellspacing="0" bgcolor="#f2ffe2" id="indexscore">
+	<tr valign="top">
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">指标</th>
+		<th style="background:url(../../images/bg_3.jpg) repeat-x; color:#333333; border-right-color:#FFFFFF; border-width:0 2px 1px 0; border-right-style: solid;">评分（每条指标评分范围均为1-100）</th>
+	</tr>
+
+</table>
+</body>
+</html>

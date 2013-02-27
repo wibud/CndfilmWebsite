@@ -1,0 +1,52 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+
+@DatabaseAnno(id="project_member_id")
+@Entity
+@Table(name="tb_member")
+public class ProjectMember {
+	@Id
+	private String project_member_id;		
+	private String project_id;			
+	private String user_id;			
+	private String user_name;			
+	private String des;		
+	public String getProject_member_id() {
+		return project_member_id;
+	}
+	public void setProject_member_id(String project_member_id) {
+		this.project_member_id = project_member_id;
+	}
+	public String getProject_id() {
+		return project_id;
+	}
+	public void setProject_id(String project_id) {
+		this.project_id = project_id;
+	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+	public String getUser_name() {
+		return user_name;
+	}
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+	public String getDes() {
+		return des;
+	}
+	public void setDes(String des) {
+		this.des = des;
+	}
+	
+}

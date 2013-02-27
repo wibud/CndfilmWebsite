@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--周计划审核</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+		
+		   $(document).ready(function(){
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+				
+				var planId			=tmp[0].split('=')[1];
+				var planStartTime	=tmp[1].split('=')[1];
+				var planEndTime		=tmp[2].split('=')[1];
+				var weekPlan		=tmp[3].split('=')[1];
+				var planProgress	=tmp[4].split('=')[1];
+				var planCount		=tmp[5].split('=')[1];
+				var userName		=tmp[6].split('=')[1];
+				var deptName		=tmp[7].split('=')[1];
+				var createTime		=tmp[8].split('=')[1];
+				var editTime		=tmp[9].split('=')[1];
+				var judgement		=tmp[10].split('=')[1];
+				var remark			=tmp[11].split('=')[1];
+				var testStartTime	=tmp[12].split('=')[1];
+				var testEndTime		=tmp[13].split('=')[1];
+				var planName		=tmp[14].split('=')[1];
+				var planDetail		=tmp[15].split('=')[1];
+				var testFinishDetail=tmp[16].split('=')[1];
+				var i = "";
+				$('#userName').val(userName);
+				$('#deptName').val(deptName);
+				$('#createTime').val(createTime);
+				$('#editTime').val(editTime);
+				$('#planStartTime').val(planStartTime);
+				$('#planEndTime').val(planEndTime);
+				for(i=0;i<planCount;i++){
+					var plan = weekPlan.split(",")[i];
+					var pName = planName.split(",")[i];
+					var pDetail = planDetail.split(",")[i];
+					var fDetail = testFinishDetail.split(",")[i];
+					var startTime = testStartTime.split(",")[i];
+					var endTime = testEndTime.split(",")[i];
+					$("#weekPlan").append("<tr><td style='text-align:center'>"+(i+1)+"</td><td style='text-align:center'>"+pName+"</td><td style='text-align:center'>"+pDetail+"</td><td style='text-align:center'>"+fDetail+"</td><td style='text-align:center'>"+plan+"</td><td style='text-align:center'>从&nbsp;<input class=\"testStartTime\" disabled='disabled' readonly=\"readonly\" value=\""+startTime+"\"></input>&nbsp;到&nbsp;<input class=\"testEndTime\" disabled='disabled' readonly=\"readonly\" value=\""+endTime+"\"></input></td></tr>");
+				}				
+				//点击确定按钮，对编辑后的数据进行提交
+			    $("#confirm").click(function(){
+					 var judgement	=$('#judgement').val();
+					 var remark		=$('#remark').val();
+					 if($('#judgement').val()==""){
+					 	alert("您还没有审核");
+					 	return;
+					 }
+					 if($('#judgement').val()=="-1"){
+					 	if($('#remark').val()==""){
+					 		alert("您需要填写意见");
+					 		return;
+					 	}
+					 }
+					 
+					 $.post('/editWeekPlan',{'planId':planId,'judgement':judgement,'remark':remark},callback,'xml')
+					 function callback(xml){
+							var $xml = $(xml);
+							var recode = $xml.find("recode").text();
+							if(recode){
+								alert($xml.find("errormsg").text());
+								return ;
+							}
+
+													
+							alert("修改成功！");
+							location.href="javascript:history.back()";
+
+						}
+
+						function callback(databack){
+							var recode = $(databack).find("recode").text();
+							if(recode!=0){
+								alert($(databack).find("errormsg").text());
+							}else {
+								location.href="javascript:history.back()";
+							}
+						}
+				 
+				});
+				
+				
+                function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				   }
+		   });
+		</script>
+</head>
+	<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：首页 &gt;&nbsp;
+										<strong>审核周计划</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>审核周计划</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							 <tr>
+						   <td>姓名</td>
+						   <td class="width_15"><input id="userName" type="text" style="width:150px" readonly="readonly" disabled="disabled" style="background:#DDEEEE;"/></td>
+					   </tr>
+					   <tr>
+						   <td>部门</td>
+						   <td class="width_15"><input id="deptName" type="text" style="width:150px" readonly="readonly" disabled="disabled" style="background:#DDEEEE;"/></td>
+					  </tr>
+                      <tr>
+	                      <td>创建时间</td>
+	                      <td class="width_15"><input id="createTime" type="text" style="width:150px" readonly="readonly" disabled="disabled" style="background:#DDEEEE;"/></td>
+                      </tr>
+                      <tr>
+						  <td>修改时间</td>
+						  <td class="width_15"><input id="editTime" type="text" style="width:150px" readonly="readonly" disabled="disabled" style="background:#DDEEEE;"/></td>
+					  </tr>
+					  <tr>
+						  <td>计划开始时间</td>
+						  <td class="width_15"><input id="planStartTime" type="text" style="width:150px" readonly="readonly" disabled="disabled" style="background:#DDEEEE;"/></td>				
+                      </tr>
+                      <tr>
+	                      <td>计划结束时间</td>
+	                      <td  class="width_15"><input id="planEndTime" type="text" style="width:150px" readonly="readonly" disabled="disabled" style="background:#DDEEEE;"/></td>
+                      </tr>
+                       <tr>
+	                      <td>备注意见</td>
+	                      <td class="width_15"><textarea id="remark" style="width:150px"></textarea></td>
+                      </tr>
+                      <tr>
+                      		<td>您的审批意见：</td>
+	                      <td  class="width_15">
+		                      <select id="judgement" class="dept">
+								  <option value="" selected="selected"></option>
+			                      <option value="1">审批通过</option>
+			                      <option value="-1">审批不通过</option>
+		                      </select>
+						  </td>
+                      </tr>
+      				  </table>
+      				  <br /><br />
+	   				  	<table id="weekPlan" class="sTable" border="0" cellpadding="0" cellspacing="0">
+	   				  		<tr><th style=width:50px>序号</th><th>任务名称</th><th>任务详情</th><th>任务完成情况</th><th>本周任务目标</th><th style=width:350px >目标期限</th></tr>
+	   				  	</table>
+	   				  	<br /><br />
+				      <input class="bt" type="button" id="confirm" value="提交"/>
+					  <input class="bt" type="button" value="返回" onclick="javascript:history.back()"/>
+					</div>
+			</div>
+			 <div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

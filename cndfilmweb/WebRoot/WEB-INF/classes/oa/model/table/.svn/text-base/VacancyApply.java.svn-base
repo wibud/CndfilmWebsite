@@ -1,0 +1,213 @@
+package oa.model.table;
+
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="id")
+@Entity
+@Table(name="tb_applyvacancy")
+public class VacancyApply {
+	@Id
+	private String id;
+	private String user_id;
+	private String user_name;
+	private String dept_id;
+	private String apply_type;
+	private String apply_Reason;
+	private String apply_time;
+	private String apply_start_time;
+	private String apply_end_time;
+	private String bm_judgement;
+	private String manager_judgement;
+	private String gm_judgement;
+	private String remark;
+	private Integer total_day;
+	private String person_in_charge;
+	private String second_manager;
+	private String general_manager;
+	private String approval1Name;//部门审批人
+	private Date approval1Date;//部门主管审批日期
+	private String approval2Name;//分管领导审批人
+	private Date approval2Date;//分管领导审批日期
+	private String approval3Name;//总经理
+	private Date approval3Date;
+	private String approval4Name;//人事部
+	private Date approval4Date;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+	public String getUser_name() {
+		return user_name;
+	}
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+	public String getDept_id() {
+		return dept_id;
+	}
+	public void setDept_id(String dept_id) {
+		this.dept_id = dept_id;
+	}
+	public String getApply_type() {
+		return apply_type;
+	}
+	public void setApply_type(String apply_type) {
+		this.apply_type = apply_type;
+	}
+	public String getApply_Reason() {
+		return apply_Reason;
+	}
+	public void setApply_Reason(String apply_Reason) {
+		this.apply_Reason = apply_Reason;
+	}
+	public String getApply_time() {
+		return apply_time;
+	}
+	public void setApply_time(String apply_time) {
+		this.apply_time = apply_time;
+	}
+	public String getApply_start_time() {
+		return apply_start_time;
+	}
+	public void setApply_start_time(String apply_start_time) {
+		this.apply_start_time = apply_start_time;
+	}
+	public String getApply_end_time() {
+		return apply_end_time;
+	}
+	public void setApply_end_time(String apply_end_time) {
+		this.apply_end_time = apply_end_time;
+	}
+	public String getBm_judgement() {
+		return bm_judgement;
+	}
+	public void setBm_judgement(String bm_judgement) {
+		this.bm_judgement = bm_judgement;
+	}
+	public String getManager_judgement() {
+		return manager_judgement;
+	}
+	public void setManager_judgement(String manager_judgement) {
+		this.manager_judgement = manager_judgement;
+	}
+	public String getGm_judgement() {
+		return gm_judgement;
+	}
+	public void setGm_judgement(String gm_judgement) {
+		this.gm_judgement = gm_judgement;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getTotal_day() {
+		return total_day;
+	}
+	public void setTotal_day(Integer total_day) {
+		this.total_day = total_day;
+	}
+	public String getPerson_in_charge() {
+		return person_in_charge;
+	}
+	public void setPerson_in_charge(String person_in_charge) {
+		this.person_in_charge = person_in_charge;
+	}
+	public String getSecond_manager() {
+		return second_manager;
+	}
+	public void setSecond_manager(String second_manager) {
+		this.second_manager = second_manager;
+	}
+	public String getGeneral_manager() {
+		return general_manager;
+	}
+	public void setGeneral_manager(String general_manager) {
+		this.general_manager = general_manager;
+	}
+	public String getApproval1Name() {
+		return approval1Name;
+	}
+	public void setApproval1Name(String approval1Name) {
+		this.approval1Name = approval1Name;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getApproval1Date() {
+		return approval1Date;
+	}
+	public void setApproval1Date(Date approval1Date) {
+		this.approval1Date = approval1Date;
+	}
+	public String getApproval2Name() {
+		return approval2Name;
+	}
+	public void setApproval2Name(String approval2Name) {
+		this.approval2Name = approval2Name;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getApproval2Date() {
+		return approval2Date;
+	}
+	public void setApproval2Date(Date approval2Date) {
+		this.approval2Date = approval2Date;
+	}
+	public String getApproval3Name() {
+		return approval3Name;
+	}
+	public void setApproval3Name(String approval3Name) {
+		this.approval3Name = approval3Name;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getApproval3Date() {
+		return approval3Date;
+	}
+	public void setApproval3Date(Date approval3Date) {
+		this.approval3Date = approval3Date;
+	}
+	public String getApproval4Name() {
+		return approval4Name;
+	}
+	public void setApproval4Name(String approval4Name) {
+		this.approval4Name = approval4Name;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getApproval4Date() {
+		return approval4Date;
+	}
+	public void setApproval4Date(Date approval4Date) {
+		this.approval4Date = approval4Date;
+	}
+	@Override
+	public String toString() {
+		return "VacancyApply [id=" + id + ", user_id=" + user_id
+				+ ", user_name=" + user_name + ", dept_id=" + dept_id
+				+ ", apply_type=" + apply_type + ", apply_Reason="
+				+ apply_Reason + ", apply_time=" + apply_time
+				+ ", apply_start_time=" + apply_start_time
+				+ ", apply_end_time=" + apply_end_time + ", bm_judgement="
+				+ bm_judgement + ", manager_judgement=" + manager_judgement
+				+ ", gm_judgement=" + gm_judgement + ", remark=" + remark
+				+ ", total_day=" + total_day + ", person_in_charge="
+				+ person_in_charge + ", second_manager=" + second_manager
+				+ ", general_manager=" + general_manager + "]";
+	}
+	
+}

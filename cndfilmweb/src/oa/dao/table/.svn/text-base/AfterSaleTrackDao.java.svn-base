@@ -1,0 +1,129 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import oa.dao.BaseDao;
+import oa.model.table.AfterSaleTrack;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class AfterSaleTrackDao extends BaseDao {
+	private static final Logger log = LoggerFactory
+			.getLogger(AfterSaleTrackDao.class);
+	// property constants
+	public static final String TRACK_ID = "track_id"; // 详细跟踪记录标识
+	public static final String RECORD_ID = "record_id"; // 售后服务记录标识
+	public static final String EDITPERSON = "editperson";
+	public static final String EDITTIME = "edittime";
+	public static final String LIUYAN = "liuyan";
+	public static final String CUSTOMERNAME = "customername";
+	public static final String CUSTOMERTEL = "customertel";
+	public static final String CUSTOMERUNIT = "customerunit";
+	public static final String CURRENTDEALER = "currentdealer";
+	public static final String RESULT = "result";
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(AfterSaleTrack instance) {
+		log.debug("saving AfterSaleTrack instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(AfterSaleTrack instance) {
+		log.debug("deleting AfterSaleTrack instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	/****
+	 * public void deletemany(ResultList<AfterSaleTrack> afterSaleTrack) {
+	 * log.debug("deleting AfterSaleTrack instance"); try {
+	 * super.deleteList(afterSaleTrack); log.debug("delete successful"); } catch
+	 * (RuntimeException re) { log.debug("delete failed", re); throw re; } }
+	 ***/
+
+	public void update(AfterSaleTrack instance) {
+		log.debug("update AfterSaleTrack instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+	public AfterSaleTrack findById(String id) {
+		log.debug("getting AfterSaleTrack instance with id: " + id);
+		try {
+			AfterSaleTrack instance = (AfterSaleTrack) super.get(
+					"oa.model.table.AfterSaleTrack", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AfterSaleTrack> findByExample(Integer pageNo,
+			AfterSaleTrack afterSaleTrack) {
+		log.debug("find AfterSaleTrack instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.AfterSaleTrack",
+					afterSaleTrack);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AfterSaleTrack> findAll(Integer pageNo) {
+		log.debug("finding all AfterSaleTrack instances");
+		try {
+			return super.find(pageNo, "oa.model.table.AfterSaleTrack");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AfterSaleTrack> findByCondition(Integer pageNo,
+			String conditions) {
+		log.debug("finding AfterSaleTrack instance with conditions: "
+				+ conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.AfterSaleTrack",
+					conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<AfterSaleTrack> findByProperty(Integer pageNo,
+			String propertyName, String value) {
+		log.debug("finding AfterSaleTrack instance with property: "
+				+ propertyName + ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.AfterSaleTrack",
+					propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+}

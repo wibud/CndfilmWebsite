@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>删除进度</title>
+<script type="text/javascript" src="./scripts/js/page.js"></script>
+<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="./scripts/js/myTime.js"></script>
+<script type="text/javascript" src="./scripts/js/pageJq.js"></script>
+<script type="text/javascript" src="./scripts/js/jquery_dialog.js"></script>
+<link type="text/css" rel="stylesheet" href="./style/css/jquery_dialog.css" />
+<script type="text/javascript">
+<!--
+//注：每个嵌入页必须定义该方法，供父窗口调用，并且返回true或false来告之父窗口是否关闭
+	$(document).ready(function(){
+		var href1 = location.href;
+		href1 = decodeURI(href1);
+		herf2 = (href1.split("?"))[1];
+		var tmp  = (href1.split("?"))[1].split("&");
+		var project_id = tmp[0].split("=")[1];
+		var dijitiao = tmp[1].split("=")[1];
+		$.post('/pjProgressList',{'projectId':project_id},decallback,'xml');
+		function decallback(databack){
+			var pjStep				=$(databack).find("projectStep").text().split("$");
+			var miaoshu				=$(databack).find("currentStep").text().split("$");
+			var deStart				=$(databack).find("deStartTime").text().split(",");
+			var deEnd				=$(databack).find("deEndTime").text().split(",");
+			var mubiao				=$(databack).find("curStepEndTime").text().split("$");
+			var reStartTime			=$(databack).find("reStartTime").text().split(",");
+			
+			if(reStartTime[dijitiao]==""||reStartTime[dijitiao]=="未开始"){
+				$("#projectStep").removeAttr("readonly");
+			}
+			$("#projectStep").val(pjStep[dijitiao]);
+			$("#miaoshu").val(miaoshu[dijitiao]);
+			$("#deStartTime").val(deStart[dijitiao]);
+			$("#deEndTime").val(deEnd[dijitiao]);
+			$("#mubiao").val(mubiao[dijitiao]);
+		}
+	});
+	
+
+
+
+
+
+function Ok(){
+	//相关逻辑代码
+	var href1 = location.href;
+	href1 = decodeURI(href1);
+	herf2 = (href1.split("?"))[1];
+	var tmp  = (href1.split("?"))[1].split("&");
+	var project_id = tmp[0].split("=")[1];
+	var dijitiao = tmp[1].split("=")[1];
+	
+	$.post('/pjProgressList',{'projectId':project_id},decallback,'xml');
+	function decallback(databack){
+		var projectStep			="";
+		var currentStep			="";
+		var deStartTime			="";
+		var deEndTime			="";
+		var curStepEndTime		="";
+		var newpercent			="";
+		var project_id			= $(databack).find("project_id").text();
+		var pjName			= $(databack).find("pjName").text();
+		var pjDept			= $(databack).find("pjDept").text();
+		var pjManagerName			= $(databack).find("pjManager").text();
+		var pjCreatTime			= $(databack).find("pjCreatTime").text();
+		var pjCreator			= $(databack).find("pjCreator").text();
+		var stepCount			=Number($(databack).find("stepCount").text());
+		var reStartCount		=Number($(databack).find("reStartCount").text());
+		var reEndCount			=Number($(databack).find("reEndCount").text());
+		var pjStep				=$(databack).find("projectStep").text().split("$");
+		var miaoshu				=$(databack).find("currentStep").text().split("$");
+		var deStart				=$(databack).find("deStartTime").text().split(",");
+		var deEnd				=$(databack).find("deEndTime").text().split(",");
+		var mubiao				=$(databack).find("curStepEndTime").text().split("$");
+		var reStartTime			=$(databack).find("reStartTime").text();
+		var reEndTime			=$(databack).find("reEndTime").text();
+		var jindu				=$(databack).find("updateEveryProgress").text();
+//		if(isNaN(reStartCount))reStartCount=0;
+//		if(isNaN(reEndCount))reEndCount=0;
+		if(isNaN(stepCount))stepCount=0;
+//		stepCount+=step;
+	
+		herf3="project_id="+project_id+"&pjName="+pjName+"&pjDept="+pjDept+"&pjManager="+pjManagerName+"&pjCreatTime="+pjCreatTime+"&pjCreator="+pjCreator+"&percent="+jindu+"&page1=1";
+		var uurrll = "pjModifyPlan.html?" + herf3;
+	
+	var pjStep2='';
+	for(var i=0;i<dijitiao;i++){
+		pjStep2+=pjStep[i]+"$";
+	}
+	pjStep2+=$('#projectStep').val()+"$";
+	i+=1;
+	for(;i<stepCount;i++){
+		pjStep2+=pjStep[i]+"$";
+	}
+	
+	var miaoshu2='';
+	for(var i=0;i<dijitiao;i++){
+		miaoshu2+=miaoshu[i]+"$";
+	}
+	miaoshu2+=$('#miaoshu').val()+"$";
+	i+=1;
+	for(;i<stepCount;i++){
+		miaoshu2+=miaoshu[i]+"$";
+	}
+	
+	var deStart2='';
+	for(var i=0;i<dijitiao;i++){
+		deStart2+=deStart[i]+",";
+	}
+	deStart2+=$('#deStartTime').val()+",";
+	i+=1;
+	for(;i<stepCount;i++){
+		deStart2+=deStart[i]+",";
+	}
+
+	var deEnd2='';
+	for(var i=0;i<dijitiao;i++){
+		deEnd2+=deEnd[i]+",";
+	}
+	deEnd2+=$('#deEndTime').val()+",";
+	i+=1;
+	for(;i<stepCount;i++){
+		deEnd2+=deEnd[i]+",";
+	}
+	
+	var mubiao2='';
+	for(var i=0;i<dijitiao;i++){
+		mubiao2+=mubiao[i]+"$";
+	}
+	mubiao2+=$('#mubiao').val()+"$";
+	i+=1;
+	for(;i<stepCount;i++){
+		mubiao2+=mubiao[i]+"$";
+	}
+
+
+	
+	if($('#projectStep').val() == ""){
+		alert("请填写阶段名！");
+		return;
+	}
+	if($('#miaoshu').val() == ""){
+		alert("请填写该阶段的描述情况！");
+		return;
+	}
+	if($('#deStartTime').val() == ""){
+		alert("请填写阶段的计划开始时间！");
+		return;
+	}
+	if($('#deEndTime').val() == ""){
+		alert("请填写阶段的计划结束时间！");
+		return;
+	}
+	if($('#mubiao').val() == ""){
+		alert("请填入完成目标！");
+		return;
+	}
+	
+	
+	$.post('/creatProjectPlan',{'projectId':project_id,'stepCount':stepCount,'projectStep':pjStep2,'currentStep':miaoshu2,
+							'deStartTime':deStart2,'deEndTime':deEnd2,'curStepEndTime':mubiao2,'newpercent':jindu,'reStartTime':reStartTime,'reEndTime':reEndTime},callback,'xml');
+	function callback(databack){
+//	window.location.href = "projectInfoList.html";
+	window.parent.JqueryDialog.SubmitCompleted("修改阶段成功！", true, true , uurrll);
+//	window.location.href="javascript:history.back()";
+//	return true;//返回true模态窗口关闭；返回false模态窗口不关闭；
+	};
+	}
+//	window.location.href = "projectInfoList.html";
+	return false;
+}
+//-->
+</script>
+</head>
+
+<body style="margin:0px;padding:0px;">
+<table width="450" height="450" border="0" cellpadding="0" cellspacing="0" bgcolor="#f2ffe2">
+  <tr>
+    <th width="150" height="10" align="right" valign="middle"  style="white-space: nowrap">
+    	阶段名称
+	</th>
+    <td width="350" height="10" align="center" valign="middle" ><label><input type="text" name="textfield" id="projectStep" readonly="readonly" style="width:200px;" ></input></label></td>
+  </tr>
+  <tr>
+    <th width="150" height="10" align="right" valign="middle"  style="white-space: nowrap">
+    	计划开始时间
+    </th>
+    <td width="350" height="10" align="center" valign="middle" ><label><input type="text" name="textfield" id="deStartTime" style="width:200px;overflow:auto" readonly="readonly" onclick="setday(this)" ></input></label></td>
+  </tr>
+  <tr>
+    <th width="150" height="10" align="right" valign="middle"  style="white-space: nowrap">
+    	计划完成时间
+    </th>
+    <td width="350" height="10" align="center" valign="middle" ><label><input type="text" name="textfield" id="deEndTime" style="width:200px;" readonly="readonly" onclick="setday(this)" ></input></label></td>
+  </tr>
+  <tr>
+    <th width="150" height="10" align="right" valign="middle"  style="white-space: nowrap">
+    	阶段描述
+    </th>
+    <td width="350" height="10" align="center" valign="middle" ><label><textarea rows="5" cols="8" style="width:200px;"  id= "miaoshu" ></textarea></label></td>
+  </tr>
+  <tr>
+    <th width="150" height="10" align="right" valign="middle"  style="white-space: nowrap">
+    	目标
+    </th>
+    <td width="350" height="10" align="center" valign="middle" ><label><textarea rows="5" cols="8" style="width:200px;"  id= "mubiao" ></textarea></label></td>
+  </tr>
+
+</table>
+</body>
+</html>

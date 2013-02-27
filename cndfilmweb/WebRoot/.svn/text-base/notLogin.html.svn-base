@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>OA系统--错误</title>
+		<link rel="stylesheet" href="./style/css/login.css" type="text/css" media="screen" charset="utf-8" />
+		<link rel="stylesheet" href="./style/css/font.css" type="text/css" media="screen" charset="utf-8" />
+		<script type="text/javascript" src="./scripts/jquery/jquery.js"></script>
+		<script type="text/javascript" src="./scripts/js/jquery.corner.js"></script>
+		<script type="text/javascript" src="./scripts/js/pngfix.js"></script>
+		<script type="text/javascript" src="./scripts/js/login.js"></script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="needlogin">
+				<div id="gologin">
+					您没有登录，不能访问该页面，请先<a href="/">登录</a>。
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

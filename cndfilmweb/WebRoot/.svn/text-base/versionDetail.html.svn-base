@@ -1,0 +1,401 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--版本信息
+		</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				init();
+			 
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+
+				var version_id = href.split("version_id=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				
+			    //获取搜索条件
+			   var conditions = href.split("conditions=")[1];
+			    if(conditions) {
+			    	conditions = conditions.split("#")[0];	
+			    }else{
+			    	conditions = "";
+			    }
+			    
+				var page = href.split("page=")[1];
+				if(page){
+				   page = page.split("&")[0].split("#")[0];
+				}
+				if(!page || page<1){
+				   page=1;
+				}
+				
+				$.post('/getVersionById',
+	                    {'versionId':version_id},
+	                    function(xml){
+								$(xml).find("result").each(function(i){
+									var version_id			= $(this).find("version_id").text();
+								    var versionName    		= $(this).find("versionName").text();
+								    var number   			= $(this).find("number").text();
+								    var versionType   		= $(this).find("versionType").text();
+								    var productType   		= $(this).find("productType").text();
+								    var deptId				= $(this).find("deptId").text();
+								    var deptName			= $(this).find("deptName").text();
+								    var managerId 			= $(this).find("managerId").text();
+								    var managerName   		= $(this).find("managerName").text();
+								    var update				= $(this).find("update").text();
+								    var updateReport		= $(this).find("updateReport").text();
+								    var strMember			= $(this).find("member").text();
+								    var bug					= $(this).find("bug").text();
+								    var testReport			= $(this).find("testReport").text();
+								    //var upload_on			= $(this).find("upload_on").text();
+								    var path				= $(this).find("path").text();
+								    var os					= $(this).find("os").text();
+								    var releaseOn			= $(this).find("releaseOn").text();
+								    var status				= $(this).find("status").text();
+								    var subVersion			= $(this).find("subVersion").text();
+								    var fileSize			= $(this).find("fileSize").text();
+								    var permission			= Number($(this).find("permission").text());
+								   
+								   $("#versionName").text(versionName);
+								   $("#number").text(number);
+								   $("#fileSize").text(fileSize);
+								   $("#versionType").text(versionType);
+								   $("#productType").text(productType);
+								   $("#deptName").text(deptName);
+								   $("#managerName").text(managerName);
+								   $("#os").text(os);
+								   $("#releaseOn").text(releaseOn);
+								   $("#update").text(update);
+								   var member = strMember.split(";");
+								   //显示原有成员列表
+								 	var memberId,memberName;
+									for(var i = 0, len = member.length-1; i< len; i++) {
+								          memberId = member[i].split(",")[0];
+								          memberName = member[i].split(",")[1];
+								          $("#member").append("<li value=\""+memberId+"\">"+memberName+"</li>");
+								      }
+								   $("#bug").text(bug); 
+								   if (updateReport!=null && updateReport!=""){
+								   		$("#updateReport").append("<a href='/VersionDownloadServlet.do?type=updateReport&filename="+updateReport+"'>下载</a>");
+								   } else {
+								   		$("#updateReport").append("无");
+								   }
+								   if (testReport!=null && testReport!=""){
+								   		$("#testReport").append("<a href='/VersionDownloadServlet.do?type=testReport&filename="+testReport+"'>下载</a>");
+								   } else {
+								   		$("#testReport").append("无");
+								   }
+								   
+								   //$("#upload_on").text(upload_on); 
+								   var strStatus;
+								  switch(status) {
+							    	case "0":
+							    		strStatus = "未测试";
+							    		break;
+							    	case "1":
+							    		strStatus = "正在测试";
+							    		break;
+							    	case "2":
+							    		strStatus = "测试通过";
+							    		break;
+							    	case "3":
+							    		strStatus = "测试未通过";
+							    		break;
+							    	case "4":
+							    		strStatus = "已发布";
+							    		break;
+							    }
+							   if (status=="3" && (subVersion=="1" || subVersion=="0")) {
+							   		$("#upgrade").show();
+							   }
+							    	$("#status").text(strStatus);			
+		   	                	 });
+	   	               	},
+	                     'xml'
+	            	);
+	            	$("#back").click(function(){
+                  		location.href="versionList.html?page=" + prePage + "&conditions=" + conditions;
+                 	});	
+                 	$("#upgrade").click(function() {
+                 		location.href="\addVersion.html?version_id="+version_id;
+                 	});
+	            });   
+
+                  
+				function init(){
+
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				} 
+		</script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" class="c-1000"
+				style="background: url(../../images/bg_banner3.jpg)">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" align="left">
+										当前位置：首页 &gt;&nbsp;
+										<strong>版本详细信息</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>版本详细信息</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<div>
+										产品类型
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="productType"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										版本类型
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="versionType"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										版本名称
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="versionName"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										版本号
+									</div>
+								</td>
+								<td class="width_15">
+									<div>
+										<label id="number"></label>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									文件大小
+								</td>
+								<td id="fileSize"></td>
+							</tr>
+							<tr>
+								<td><div>发布日期</div></td>
+								<td class="width_15"> <div>
+								  <label id="releaseOn" ></label>
+							    </div></td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										所属部门
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="deptName"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										负责人
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="managerName"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										适用操作系统
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="os"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										更新说明
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="update"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									更新报告
+								</td>
+								<td id="updateReport"></td>
+							</tr>
+							<tr>
+								<td>
+									测试成员
+								</td>
+								<td>
+									<div class="infoList">
+										<ul id="member" style="list-style: none"></ul>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										仍存在的问题
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="bug"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									测试报告
+								</td>
+								<td id="testReport"></td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										发布时间
+									</div>
+								</td>
+								<td class="width_15">
+									<label id="releaseOn"></label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div>
+										状态
+									</div>
+								</td>
+								<td class="width_15">
+									<div>
+										<label id="status"></label>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<input style="display: none" class="bt" type="button"
+										value="重新发布" id="upgrade" />
+									<input class="bt" type="button" value="返回" id="back"></input>
+
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

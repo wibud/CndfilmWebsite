@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--项目管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			$(document).ready(function(){
+
+				init();
+				var permission;
+				//获取权限值
+				 $.post('/getPermission', {}, permissioncallback, 'xml');
+				 function permissioncallback(xml) {
+				 	permission = Number($(xml).find("result").text());
+				 	if(!(permission & 64)){
+				 		$("#addProject").attr("disabled", "disabled");
+				 	}
+				 }
+				//翻页
+				var href = location.href;
+			    var page = href.split("page=")[1];
+			    if(page)
+			    	page = page.split("&")[0].split("#")[0];
+			    if(!page || page<1)
+			    	page=1;
+				var pageCount = 0;
+				var count = 0;
+
+				var url = "/projectList";
+
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url+"?page="+page2;
+					$(this).handlerData(
+						urlT,
+						function(xml){
+							$("#content_r table tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+								var projectId	= $(this).find("project_id").text();
+	                            var name      	= $(this).find("name").text();
+							    var dept    		= $(this).find("dept").text();
+							    var deptId   	= $(this).find("deptId").text();
+							    var manager   	= $(this).find("manager").text();
+							    var managerId   	= $(this).find("managerId").text();
+							    var create_on 	= $(this).find("create_on").text();
+							    var create_by   = $(this).find("create_by").text();
+							    var des				=  $(this).find("des").text();
+							    var col = Number(id)+Number(startWith);
+							    
+							    var tmp = "projectId="+projectId+"&name="+name+"&deptId="+deptId+"&managerId="+managerId+"&des="+des;
+							    
+							    var strInfo ="<td>"+(i+1)+"</td><td>"+name+"</td><td>"+dept+"</td><td>"+manager+"</td><td>"+create_on+
+   	                                 "</td><td>"+create_by+"</td><td>"+des+"</td>";
+   	                            
+   	                            var strEdit = null;
+   	                            
+								
+								if(permission & 64) {
+									strEdit = "<td><input class='edit' type='image' src='./images/edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'editProject.html?"+tmp+"&page1="+page+"\')\"></input></td><td id='delete'><input type='image' src='./images/del.png'  title='删除' class='delete'></input></td>";
+								}else{
+									strEdit = "<td><img src='./images/edit1.jpg'/></td><td><img src='./images/del1.jpg'/></td>";
+								}
+								$("#content_r table").append("<tr class='content' id='"+projectId+"'>"+strInfo+strEdit+"</tr>");
+                          		
+		                        id++;
+	                        });
+							$("#pageNav").showPageNav(page2, pageCount, count, url);
+	                        //调用注册按钮的事件
+							register();
+						}
+					);
+				};
+				 
+				$(this).showData(url,page);
+				 
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$(this).navi();
+				}
+
+				//注册按钮
+			    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/deleteProject', {'projectId':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+				} 
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="projectList.html?page="+page;
+					}
+				}
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header"></div>
+			<div id="content">
+				<div id="main">
+					<div id="content_r">
+						<table border="1" class="listTable">
+							<caption>项目管理列表</caption>
+							<tr>
+								<th>序号</th>
+								<th>项目名称</th>
+								<th>所属部门</th>
+								<th>负责人</th>
+								<th>创建时间</th>
+								<th>创建者</th>
+								<th>备注</th>
+								<th colspan="2"><input id="addProject" type="button" value="添加项目" onclick="javascript: location.href='addProject.html'"/></th>
+							</tr>
+						</table>
+						<div id="pageNav"></div>
+					</div>
+				</div>
+
+            </div>
+            <div id="footer"></div>
+
+         </div>
+	</body>
+</html>
+

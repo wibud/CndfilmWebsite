@@ -1,0 +1,265 @@
+package oa.filter;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.ServletActionContext;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
+import oa.bean.user.UserBean;
+import oa.util.OaConfig;
+import oa.util.SystemConfig;
+
+
+public class ActionCheckFilter implements Filter{
+	
+	public void init(FilterConfig arg0) throws ServletException {
+
+	}
+
+	public void destroy() {
+
+	}
+
+	//这里进行Action是否存在的判断和用户是否有此权限的判断
+	@SuppressWarnings("rawtypes")
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
+
+		HttpServletRequest req = ServletActionContext.getRequest();
+		
+		//获取请求的uri
+		String request_uri = req.getRequestURI();
+		String ctxPath = req.getContextPath();
+		String uri = request_uri.substring(ctxPath.length()+1);
+		String method = req.getMethod();
+		
+		HttpSession session = req.getSession();
+		//获取当前用户信息
+		UserBean userBean = (UserBean) session.getAttribute("loginUser");
+		//获取权限字符串
+		if(userBean == null){
+			chain.doFilter(request, response);
+			return;
+		}
+		String strXml = userBean.getPermissionXml();
+		
+		//转换为xml
+		SAXReader saxReader = new SAXReader();
+		Document document = null;
+		try {
+			document = saxReader.read(ServletActionContext.getServletContext().getResourceAsStream("/permissionTemplate.xml"));
+		} catch (DocumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if(strXml!=null && !strXml.equals("")){
+			try {
+				document = DocumentHelper.parseText(strXml);
+			} catch (DocumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		//得到根节点
+		Element root = null;
+		if(document != null){
+			root = document.getRootElement();
+		}
+		
+		HashMap<String,String> hm = new HashMap<String , String>();
+		//将权限信息存入hashmap，如 userInfo-update=0
+		for(Iterator iter = root.elementIterator(); iter.hasNext();){
+			 Element element = (Element) iter.next();
+			 for(Iterator innerIter = element.elementIterator(); innerIter.hasNext();){
+				 Element innerElement = (Element)innerIter.next();
+				 hm.put(element.getName()+"-"+innerElement.getName(), innerElement.getText());
+			 }
+		}
+
+		if(request_uri.equals("/loginJump.html") || request_uri.equals("/systemSubmit.html") || request_uri.equals("/setPermission.html")){
+			if(userBean.getUserId().trim().equals(SystemConfig.getAdmin_id())){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}			
+		}
+		
+		
+		
+		if(request_uri.equals("/systemUserAdd.html") || request_uri.equals("/systemUserEdit.html") || request_uri.startsWith("/systemUserDelete")){
+			if(hm.get("userInfo-update")!=null && !hm.get("userInfo-update").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}
+		}if(request_uri.equals("/systemUserList.html") || request_uri.startsWith("/systemUserSeek") || request_uri.startsWith("/systemUserSearch")){
+			if(hm.get("userInfo-read")!=null && !hm.get("userInfo-read").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}
+		}else if(request_uri.equals("/systemDeptAdd.html") || request_uri.equals("/systemDeptEdit.html") || request_uri.startsWith("/systemDeptDelete")){
+			if(hm.get("deptInfo-update")!=null && !hm.get("deptInfo-update").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}
+		}if(request_uri.equals("/systemDeptList.html") || request_uri.startsWith("/systemDeptSeek") || request_uri.startsWith("/systemDeptSearch")){
+			if(hm.get("deptInfo-read")!=null && !hm.get("deptInfo-read").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}
+		}else if(request_uri.equals("/addProject.html") || request_uri.equals("/editProject.html") || request_uri.startsWith("/deleteProject")){
+			if(hm.get("projectInfo-update")!=null && !hm.get("projectInfo-update").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}			
+		}else if(request_uri.equals("/projectInfoList.html")){
+			if(hm.get("projectInfo-read")!=null && !hm.get("projectInfo-read").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}			
+		}else if(request_uri.equals("/addVersion.html")){
+			if(hm.get("versionInfo-create")!=null && !hm.get("versionInfo-create").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}			
+		}else if(request_uri.equals("/versionList.html")){
+			if(hm.get("versionInfo-read")!=null && !hm.get("versionInfo-read").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}			
+
+		}else if( request_uri.equals("/editCommerceProject.html") || request_uri.equals("/commerceProjectApplyNew.html")){
+			if(hm.get("commerceProject-applyproject")!=null && !hm.get("commerceProject-applyproject").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}			
+         
+		}
+//		else if( request_uri.equals("/commerceProductEdit.html") || request_uri.equals("/commerceProjectApplyAuthorAgain.html")||request_uri.startsWith("/deleteCommerceProduct")){
+//			if(hm.get("commerceProject-editproduct")!=null && !hm.get("commerceProject-editproduct").equals("0")){
+//				chain.doFilter(request, response);
+//				return;
+//			}else{
+//				noWay(request, response);
+//				return;
+//			}
+//			
+//		}
+//		else if(request_uri.equals("/authortextSubmit.html")){
+//			if(hm.get("commerceProject-upload")!=null && !hm.get("commerceProject-upload").equals("0")){
+//				chain.doFilter(request, response);
+//				return;
+//			}else{
+//				noWay(request, response);
+//				return;
+//			}			
+//
+//		}
+		
+		else if(request_uri.equals("/afterSale.html") || request_uri.startsWith("/afterEdit") ||
+				request_uri.startsWith("/afterSearch") || request_uri.startsWith("/afterSearchList") 
+				|| request_uri.startsWith("/afterTrack")){
+			if(hm.get("afterSaleInfo-read")!=null && !hm.get("afterSaleInfo-read").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}			
+
+		}else if(request_uri.equals("/fassetKindConfig.html") || request_uri.startsWith("/fassetlog") ||
+				request_uri.startsWith("/fassetLogSearch") || request_uri.startsWith("/fassetLogSearchList") 
+				|| request_uri.startsWith("/fassetsearch")|| request_uri.startsWith("/fassetSearchList")
+				|| request_uri.startsWith("/assetIn")|| request_uri.startsWith("/assetManage")
+				|| request_uri.startsWith("/assetOut")|| request_uri.startsWith("/fassetLYApply")){
+			if(hm.get("assetManager-internalAsset")!=null && !hm.get("assetManager-internalAsset").equals("0")){
+				chain.doFilter(request, response);
+				return;
+			}else{
+				noWay(request, response);
+				return;
+			}	
+			
+		}
+
+		//排除非Action请求
+		if(!FilterUtil.isAction(uri)){
+			chain.doFilter(request, response);
+			return ;
+		}
+		
+//-----------------------到此，说明是请求Action------------------------
+		
+		// 部署状态下，屏蔽浏览器地址栏访问Action
+		if(!OaConfig.devMode){
+			if(method != null && method.toUpperCase().equals("GET")){
+				request.getRequestDispatcher("/notExist.html").forward(request, response);
+				return;
+			}
+		}
+		chain.doFilter(request, response);		
+	}
+	
+	public void noWay(ServletRequest request, ServletResponse response) throws ServletException, IOException{
+		HttpServletRequest req = ServletActionContext.getRequest();
+		HttpServletResponse resp = ServletActionContext.getResponse();
+		String method = req.getMethod();
+		
+		if(method != null && method.toUpperCase().equals("POST")){
+			PrintWriter out = resp.getWriter();
+			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?><result><recode>-1</recode><errormsg>请求的页面不存在或您没有此权限</errormsg></result>");
+			out.close();
+			return ;
+		}else{
+			request.getRequestDispatcher("/notExist.html").forward(request, response);
+			return ;
+		}
+	}
+
+}
+

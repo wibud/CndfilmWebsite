@@ -1,0 +1,88 @@
+package oa.model.table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="allrandom")
+@Entity
+@Table(name="tb_chanpin")
+public class CommerceProduct {
+	@Id
+	private String allrandom;	
+	private String commerceproject_id;
+	private String product_type;
+	private String softwareVession;
+	private String product_id;
+	private String authstate;	
+	private String commerceproject_name;
+    private String authtext;
+	private String commerceprojectAuthnumber;
+	private String product_number;
+//	private String commerce_id;
+	
+	public String getAuthtext() {
+		return authtext;
+	}
+	public void setAuthtext(String authtext) {
+		this.authtext = authtext;
+	}
+	public String getCommerceprojectAuthnumber() {
+		return commerceprojectAuthnumber;
+	}
+	public void setCommerceprojectAuthnumber(String commerceprojectAuthnumber) {
+		this.commerceprojectAuthnumber = commerceprojectAuthnumber;
+	}
+	public String getAllrandom() {
+		return allrandom;
+	}
+	public void setAllrandom(String allrandom) {
+		this.allrandom = allrandom;
+	}
+	public String getCommerceproject_id() {
+		return commerceproject_id;
+	}
+	public void setCommerceproject_id(String commerceprojectId) {
+		commerceproject_id = commerceprojectId;
+	}
+	public String getProduct_type() {
+		return product_type;
+	}
+	public void setProduct_type(String productType) {
+		product_type = productType;
+	}
+	public String getSoftwareVession() {
+		return softwareVession;
+	}
+	public void setSoftwareVession(String softwareVession) {
+		this.softwareVession = softwareVession;
+	}
+	public String getProduct_id() {
+		return product_id;
+	}
+	public void setProduct_id(String productId) {
+		product_id = productId;
+	}
+
+	public void setCommerceproject_name(String commerceproject_name) {
+		this.commerceproject_name = commerceproject_name;
+	}
+	public String getCommerceproject_name() {
+		return commerceproject_name;
+	}
+	public void setAuthstate(String authstate) {
+		this.authstate = authstate;
+	}
+	public String getAuthstate() {
+		return authstate;
+	}
+	public void setProduct_number(String product_number) {
+		this.product_number = product_number;
+	}
+	public String getProduct_number() {
+		return product_number;
+	}
+
+}

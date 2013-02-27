@@ -1,0 +1,104 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.VersionLog;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class VersionLogDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(VersionLogDao.class);
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(VersionLog instance) {
+		log.debug("saving VersionLog instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(VersionLog instance) {
+		log.debug("deleting VersionLog instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(VersionLog instance) {
+		log.debug("update VersionLog instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public VersionLog findById(String id) {
+		log.debug("getting VersionLog instance with id: " + id);
+		try {
+			VersionLog instance = (VersionLog) super.get("oa.model.table.VersionLog", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<VersionLog> findByExample(Integer pageNo, VersionLog VersionLog) {
+		log.debug("find VersionLog instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.VersionLog", VersionLog);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<VersionLog> findAll(Integer pageNo) {
+		log.debug("finding all VersionLog instances");
+		try {
+			return super.find(pageNo, "oa.model.table.VersionLog");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<VersionLog> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding VersionLog instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.VersionLog", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<VersionLog> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding VersionLog instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.VersionLog", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+}

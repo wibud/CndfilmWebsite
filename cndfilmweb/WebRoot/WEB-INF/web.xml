@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+  	<!-- 浏览器输入的url不存在时跳转到此页面 -->
+	<welcome-file-list>
+	  <welcome-file>login2.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<!-- 发生http404错误时跳转到此页面 -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/login2.jsp</location>
+	</error-page>
+	
+	<!-- 提供spring支持 --> 
+	<!-- 用于初始化Spring容器的Listener -->
+	 <context-param>
+	   <param-name>contextConfigLocation</param-name>
+	   <param-value>
+			/WEB-INF/classes/applicationContext.xml
+		</param-value>
+	 </context-param>
+	 <listener>
+	   <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	 </listener>
+	 
+	 <filter>
+	   <filter-name>StrutsPrepareFilter</filter-name>
+	   <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareFilter</filter-class>
+	 </filter>
+	 <filter>
+	   <filter-name>EncodingFilter</filter-name>
+	   <filter-class>oa.filter.EncodingFilter</filter-class>
+	 </filter>
+	 <filter>
+	   <filter-name>StrutsExecuteFilter</filter-name>
+	   <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsExecuteFilter</filter-class>
+	 </filter>
+	 <filter-mapping>
+	   <filter-name>StrutsPrepareFilter</filter-name>
+	   <url-pattern>/*</url-pattern>
+	 </filter-mapping>
+	 <filter-mapping>
+	   <filter-name>EncodingFilter</filter-name>
+	   <url-pattern>/*</url-pattern>
+	 </filter-mapping>
+	 <filter-mapping>
+	   <filter-name>StrutsExecuteFilter</filter-name>
+	   <url-pattern>/*</url-pattern>
+	 </filter-mapping>
+	 
+	<!-- Servlet配置，主要用来初始化  -->
+	<servlet>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>oa.util.InitServlet</servlet-class>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>OpenResultServlet</servlet-name>
+		<servlet-class>oa.util.OpenResultServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OpenResultServlet</servlet-name>
+		<url-pattern>/OpenResultServlet.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 监听器 -->
+	<listener>
+		<listener-class>oa.listener.NFDFlightDataTaskListener</listener-class>
+	</listener>
+</web-app>

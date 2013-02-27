@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--用户信息查询结果
+		</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeThickBoxAjaxingFile();
+		</script>
+
+		<script type="text/javascript">
+			//初始化页面
+			
+				$(document).ready(function(){
+				init();
+				
+				var updatePermission;
+				var deletePermission;
+				$.post('/getPermission',{},
+					function(xml){
+						updatePermission=Number($(xml).find("permission").find("userInfo").find("update").text());
+						deletePermission=Number($(xml).find("permission").find("userInfo").find("delete").text());
+						readIdNoPermission=Number($(xml).find("permission").find("userInfo").find("readIdNo").text());
+						
+						if(readIdNoPermission == 1){
+							$("#idNumber").show();
+						}
+						$(this).showData(url,page);
+				
+					},
+				'xml');
+				
+			
+	                     
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp = (href.split("?"))[1].split("&");
+				var page = 1;
+				var pageCount = 0;
+				var count = 0;
+				
+				var url = "/systemUserSearch";
+				
+				var userName           = tmp[0].split("=")[1];
+				var userSex            = tmp[1].split("=")[1];
+				var userDeptId         = tmp[2].split("=")[1];
+				var userPostId       	= tmp[3].split("=")[1];
+				var userDesc           = tmp[4].split("=")[1];
+				
+				
+			
+				$.fn.showData = function(url,page2){
+					page = page2;
+					urlT = url;
+					$(this).handlerData(
+						urlT,
+						//解析xml
+						function(xml){
+							$("#userSearchList tr:gt(0)").remove();
+							var id = (page2-1)*20 + 1;
+							count = $(xml).find("result").attr("count");
+							pageCount = $(xml).find("result").attr("pageCount");
+							var startWith = $(xml).find("result").attr("startWith");
+
+							//判断recode，如果是0，则不弹出“errormsg”对话框
+							var recode = $(xml).find("recode").text();
+							if(recode){
+								alert($(xml).find("errormsg").text());
+							}
+							$(xml).find("item").each(function(i){
+	                            var userId            = $(this).find("userId").text();
+							    var userName          = $(this).find("userName").text();
+							    var userSex           = $(this).find("userSex").text();
+							    var userDeptName      = $(this).find("userDeptName").text();
+							    var userPostName      = $(this).find("userPostName").text();
+							    var userPlaceInfo     = $(this).find("userPlaceInfo").text();
+							    var userTempDeptName  = $(this).find("userTempDeptName").text();
+							    var userTempPostName  = $(this).find("userTempPostName").text();
+							    var idNumber		  = $(this).find("idNumber").text();
+							    var userAddress       = $(this).find("userAddress").text();
+							    var userTel           = $(this).find("userTel").text();
+							    var userMobile        = $(this).find("userMobile").text();
+							    var userEmail         = $(this).find("userEmail").text();
+							    var userIp            = $(this).find("userIp").text();
+							    var userDesc          = $(this).find("userDesc").text();
+							    var userDeptId      = $(this).find("userDeptId").text();
+							    var userPostId      = $(this).find("userPostId").text();
+							     var col = Number(id)+Number(startWith);
+
+							    var tmp = "userId="+userId+"&userName="+userName+"&userSex="+userSex+"&userDeptId="+userDeptId+"&userPostId="+userPostId+"&userPlaceInfo="+userPlaceInfo+"&userAddress="+userAddress+"&userTel="+userTel+"&userMobile="+userMobile+"&userEmail="+userEmail+"&userIp="+userIp+"&userDesc="+userDesc+tmpIdNo;
+								var tmpIdNo = "";
+								var strIdNo = "";
+								if (readIdNoPermission == 1) {
+									strIdNo = "<td style='width:96px'>"+idNumber+"</td>";
+									tmpIdNo = "&idNumber="+idNumber;
+								}
+								var strInfo ="<td>"+(i+1)+"</td><td>"+userName+"</td><td>"+userSex+"</td><td>"+userDeptName+"</td><td>"+userPostName+
+   	                                 "</td><td>"+userPlaceInfo+"</td>"+strIdNo+"<td>"+userAddress+"</td><td>"+userTel+"</td><td>"+userMobile+"</td><td>"+userEmail+"</td><td>"+userIp+"</td><td>"+userDesc+"</td>";
+   	                            var strEdit = null;
+   	                            var strDelete=null;
+								if(updatePermission == 1) {
+									strDelete="<td id='delete'><input type='image' src='./images/oa_delete.png'  title='删除' class='delete'></input></td>";
+								}else{
+									strDelete="<td><img src='./images/oa_delete_g.png'/></td>";
+								}
+								if(updatePermission == 1) {
+									strEdit = "<td><input class='edit' type='image' src='./images/oa_edit.gif' title='修改' onclick=\"javascript: location.href=encodeURI(\'systemUserEdit.html?"+tmp+"&page1=1\')\"></input></td>";
+								}else{
+									strEdit = "<td><img src='./images/oa_edit_g.gif'/></td>";
+								}
+								$("#userSearchList").append("<tr class='content' id='"+userId+"'>"+strInfo+strEdit+strDelete+"</tr>");
+									
+							    id++;
+							    
+							  });
+			                //$("#pageNav").showPageNav(page2, pageCount, count, url);
+			                pageNav(page2,pageCount,count,url,"#pageNav");
+	                        //调用注册按钮的事件
+							register();
+						},
+						{"page":page2,"userName":userName,"userSex":userSex,"userDeptId":userDeptId,"userPostId":userPostId,"userDesc":userDesc}
+					);
+				};
+				
+				
+				
+
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+
+				//注册按钮
+			    function register(){
+	               //点击"删除"按钮，弹出是否删除的询问对话框
+	               $(".delete").each(function(index){
+						var $this = $(this);
+						var id = $this.parents('.content').attr('id');
+
+						$this.click(function(){
+							if(confirm("您确定删除吗？")){
+								$.post('/systemUserDelete', {'userId':id}, delCallback, 'xml');
+		                	}
+		               });
+	               });
+	               /*$(".deleteNot").click(function(){
+						alert("不能删除admin！");
+		           })*/
+				}
+
+				//返回成功与否的判断与跳转
+			    function delCallback(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						location.href="systemUserList.html?page="+page;
+					}
+				}
+
+			});
+
+        </script>
+
+	</head>
+	<body>
+		<div id="container2">
+			<div id="header" style="background: url(../../images/bg_banner2.jpg)"
+				class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center">
+								<a href="homePage.html" class="updatePawd">返回首页</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="980" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div class="biao" style="width: 310px" align="left">
+										当前位置：用户管理&gt;用户信息管理&gt;&nbsp;
+										<strong>用户信息查询列表</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<img src="images/bg_fh.gif" width="18" height="18" />
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													<a href="javascript:history.back()">返回</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>用户查询列表</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r7">
+						<table id="userSearchList" class="listTable"  border="0" style="word-break:break-all;">
+							<tr>
+								<th>
+									序号
+								</th>
+								<th>
+									姓名
+								</th>
+								<th>
+									性别
+								</th>
+								<th>
+									部门名称
+								</th>
+								<th>
+									职位
+								</th>
+								<th>
+									工位信息
+								</th>
+								<th id="idNumber" style="display:none">
+									身份证号码
+								</th>
+								<th>
+									家庭住址
+								</th>
+								<th>
+									固话
+								</th>
+								<th>
+									移动电话
+								</th>
+								<th>
+									邮箱
+								</th>
+								<th>
+									IP地址
+								</th>
+								<th>
+									备注
+								</th>
+								<th colspan="2">
+									操作
+								</th>
+							</tr>
+						</table>
+					</div>
+					<div id="sq_di">
+						<div id="pageNav">
+						</div>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+				<div id="footer">
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>

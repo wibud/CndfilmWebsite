@@ -1,0 +1,173 @@
+package oa.dao.table;
+
+import java.util.List;
+
+import oa.dao.BaseDao;
+import oa.model.table.CommerceProjectLogs;
+import oa.util.ResultList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class CommerceProjectLogsDao extends BaseDao{
+	private static final Logger log = LoggerFactory.getLogger(CommerceProjectLogsDao.class);
+	
+	public final String LOG_ID="log_id";
+	public final String COMMERCEPROJECT_ID="commerceproject_id";
+	public final String COMMERCEPROJECT_NAME="commerceproject_name";
+	public final String OPPERSON="opperson";
+	public final String OPDETAIL="opdetil";
+	public final String OPTIME="optime";
+	public final String SRCIP="srcip";
+	public final String PROJECTSTATEBEFORE="projectstatebefore";
+	public final String DESCA="desca";
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(CommerceProjectLogs instance) {
+		log.debug("saving CommerceProjectLogs instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public  void delete(CommerceProjectLogs instance) {
+		log.debug("deleting CommerceProjectLogs instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	
+	}
+	public  CommerceProjectLogs findCommerceProject(String commerceproject_id) {
+		// TODO Auto-generated method stub
+		CommerceProjectLogs key=new CommerceProjectLogs();
+		return (key);
+	}
+
+	public  void update(CommerceProjectLogs instance) {
+		log.debug("update CommerceProjectLogs instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	@SuppressWarnings("unchecked")
+	public CommerceProjectLogs findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding CommerceProjectLogs instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<CommerceProjectLogs> user=super.find(null,"oa.model.table.CommerceProjectLogs", propertyName, value);
+			CommerceProjectLogs u=user.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+		
+	}
+	public  CommerceProjectLogs findById(String log_id) {
+		log.debug("getting CommerceProject instance with id: " + log_id);
+		try {
+			CommerceProjectLogs keymsg = (CommerceProjectLogs)super.get("oa.model.table.CommerceProjectLogs", log_id);
+			return keymsg;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public   ResultList<CommerceProjectLogs> findByExample(Integer pageNo, CommerceProjectLogs commerceprojectlogs) {
+		log.debug("find CommerceProjectLogs instances with example");
+		try {
+			return super.find( pageNo, "oa.model.table.CommerceProjectLogs", commerceprojectlogs);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProjectLogs> findAll(Integer pageNo) {
+		log.debug("finding all CommerceProjectLogs instances");
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProjectLogs");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProjectLogs> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding CommerceProjectLogs instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProjectLogs", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property conditions failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResultList<CommerceProjectLogs> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding CommerceProjectLogs instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.CommerceProjectLogs", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+//	//以一个字段或另一个字段为条件模糊查询
+//	public ResultList<CommerceProject> findByProperty(Integer pageNo,String propertyName1,String propertyName2,String value){
+//		log.debug("finding CommerceProject instance with property: " + propertyName1
+//				+ ", value: " + value+" or "+propertyName2+", value; "+value);
+//		try {
+//			return super.likefind(pageNo, "oa.model.table.CommerceProject", propertyName1, propertyName2,value);
+//		} catch (RuntimeException re) {
+//			log.debug("find by property name failed", re);
+//			throw re;
+//		}
+//		
+//	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommerceProjectLogs> findByHQL(Integer pageNo, String hql){
+		log.debug("finding CommerceProjectLogs instance with hql: " + hql
+				);
+		try {
+			return super.findByHQl(pageNo, hql);
+		} catch (RuntimeException re) {
+			log.debug("find failed", re);
+			throw re;
+		}
+	}
+	
+}

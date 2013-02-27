@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/oa/!svn/ver/80/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3
+END
+hibernate3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3/hibernate3.jar
+END
+mysql-connector-java-5.1.12-bin.jar
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3/mysql-connector-java-5.1.12-bin.jar
+END
+ejb3-persistence.jar
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3/ejb3-persistence.jar
+END
+ojdbc14.jar
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/oa/!svn/ver/80/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3/ojdbc14.jar
+END
+c3p0-0.9.1.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3/c3p0-0.9.1.2.jar
+END
+cglib-2.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3/cglib-2.2.jar
+END
+hibernate-jpa-2.0-api-1.0.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/oa/!svn/ver/7/src/trunk/CyberOA/WebRoot/WEB-INF/lib/hibernate3/hibernate-jpa-2.0-api-1.0.0.Final.jar
+END

@@ -1,0 +1,151 @@
+package oa.model.table;
+
+
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import oa.dao.DatabaseAnno;
+
+@DatabaseAnno(id="commerceproject_id")
+@Entity
+@Table(name="tb_commerceprojectacting")
+public class CommerceProjectActing {
+	@Id
+	private String commerceproject_id;
+	private String commerceproject_name;
+	
+	private String commerceproduct_type;
+	private String clientfactory;
+	private String clientperson;
+	private String clientTel;
+	private String Authnumber;
+	private String sendproductType;
+	private String softwareVession;
+	private String product_id;
+	
+	private String commerceprojectactor;
+	private String commerceprojectactor_id;
+
+	private String commerceprojectAuthstate;
+	private String remark;
+
+	public String getCommerceproject_id() {
+		return commerceproject_id;
+	}
+
+	public void setCommerceproject_id(String commerceprojectId) {
+		commerceproject_id = commerceprojectId;
+	}
+
+	public String getCommerceproject_name() {
+		return commerceproject_name;
+	}
+
+	public void setCommerceproject_name(String commerceprojectName) {
+		commerceproject_name = commerceprojectName;
+	}
+
+	
+
+	public String getClientfactory() {
+		return clientfactory;
+	}
+
+	public void setClientfactory(String clientfactory) {
+		this.clientfactory = clientfactory;
+	}
+
+	public String getClientperson() {
+		return clientperson;
+	}
+
+	public void setClientperson(String clientperson) {
+		this.clientperson = clientperson;
+	}
+
+	public String getClientTel() {
+		return clientTel;
+	}
+
+	public void setClientTel(String clientTel) {
+		this.clientTel = clientTel;
+	}
+
+	public String getAuthnumber() {
+		return Authnumber;
+	}
+
+	public void setAuthnumber(String authnumber) {
+		Authnumber = authnumber;
+	}
+
+	public String getSendproductType() {
+		return sendproductType;
+	}
+
+	public void setSendproductType(String sendproductType) {
+		this.sendproductType = sendproductType;
+	}
+
+	public String getSoftwareVession() {
+		return softwareVession;
+	}
+
+	public void setSoftwareVession(String softwareVession) {
+		this.softwareVession = softwareVession;
+	}
+
+	public String getProduct_id() {
+		return product_id;
+	}
+
+	public void setProduct_id(String productId) {
+		product_id = productId;
+	}
+
+	public String getCommerceprojectactor() {
+		return commerceprojectactor;
+	}
+
+	public void setCommerceprojectactor(String commerceprojectactor) {
+		this.commerceprojectactor = commerceprojectactor;
+	}
+
+	public String getCommerceprojectactor_id() {
+		return commerceprojectactor_id;
+	}
+
+	public void setCommerceprojectactor_id(String commerceprojectactorId) {
+		commerceprojectactor_id = commerceprojectactorId;
+	}
+
+	public String getCommerceprojectAuthstate() {
+		return commerceprojectAuthstate;
+	}
+
+	public void setCommerceprojectAuthstate(String commerceprojectAuthstate) {
+		this.commerceprojectAuthstate = commerceprojectAuthstate;
+	}
+
+	
+
+	public void setCommerceproduct_type(String commerceproduct_type) {
+		this.commerceproduct_type = commerceproduct_type;
+	}
+
+	public String getCommerceproduct_type() {
+		return commerceproduct_type;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	
+}

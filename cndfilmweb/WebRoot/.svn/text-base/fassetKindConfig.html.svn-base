@@ -1,0 +1,470 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--资产类别管理</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+		<link type="text/css" href="./style/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+		 <script type="text/javascript" src="./scripts/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript">
+		
+			var assetCategory="固定资产";
+			$(document).ready(function(){
+				init();
+				 $('#tabs').tabs(
+					);
+			function init(){
+				$("#header").showHeaderSystem();
+				$("#footer").showFooter();
+				$("#sidebar").showSideBar();
+				$(this).navi();
+			}
+			showFAssetKindList("#fassetKindSel");
+			showFAssetKindList("#sel_Kind_del");
+			showFAssetKindList("#sel_Kind_addSub");
+			showFAssetKindList("#sel_Kind_changeSub");
+			showFAssetKindList("#sel_Kind_delSub");
+			
+			$(":radio").change(
+				function(){
+					assetCategory=getCategory();
+					showFAssetKindList("#fassetKindSel");
+					showFAssetKindList("#sel_Kind_del");
+					showFAssetKindList("#sel_Kind_addSub");
+					showFAssetKindList("#sel_Kind_changeSub");
+					showFAssetKindList("#sel_Kind_delSub");
+					var perext="#sel_oldSubKind"+" option";
+					$(perext).remove();
+					$("#sel_oldSubKind").append("<option value=\"\">"+"—小类—"+"</option>");
+					perext="#sel_delSubKind"+" option";
+					$(perext).remove();
+					$("#sel_delSubKind").append("<option value=\"\">"+"—小类—"+"</option>");
+				}
+			);	
+			
+			$("#sel_Kind_changeSub").change(
+				function()
+				{
+					var kindID = $("#sel_Kind_changeSub").val();
+					var perext="#sel_oldSubKind"+" option";
+					$(perext).remove();
+					$("#sel_oldSubKind").append("<option value=\"\">"+"—小类—"+"</option>");
+					if(kindID=="")
+					{
+						return;
+					}
+					$.post('/assetSubKindShowList',{'assetKindID':kindID},
+					function(xml){
+						$(xml).find("item").each(function(){
+							$("#sel_oldSubKind").append("<option value=\""+$(this).find("assetSubKindID").text()+"\">"+$(this).find("assetSubKind").text()+"</option>");									
+						});	
+						},
+					'xml');
+				}
+			);
+			$("#sel_Kind_delSub").change(
+				function()
+				{
+					var kindID = $("#sel_Kind_delSub").val();
+					var perext="#sel_delSubKind"+" option";
+					$(perext).remove();
+					$("#sel_delSubKind").append("<option value=\"\">"+"—小类—"+"</option>");
+					if(kindID=="")
+					{
+						return;
+					}
+					$.post('/assetSubKindShowList',{'assetKindID':kindID},
+					function(xml){
+						$(xml).find("item").each(function(){
+							$("#sel_delSubKind").append("<option value=\""+$(this).find("assetSubKindID").text()+"\">"+$(this).find("assetSubKind").text()+"</option>");									
+						});	
+						},
+					'xml');
+				}
+			);
+			
+			}
+			);
+			function showFAssetKindList(kindSel){
+				//获取固定资产类别列表
+				$.post('/assetKindShowList',{'assetCategory':assetCategory},
+					function(xml){
+						var perext=kindSel+" option";
+						$(perext).remove();
+						$(kindSel).append("<option value=\"\">"+"—大类—"+"</option>");
+						$(xml).find("item").each(function(){
+							$(kindSel).append("<option value=\""+$(this).find("assetKindID").text()+"\">"+$(this).find("assetKind").text()+"</option>");									
+						});	
+						},
+					'xml');
+			}
+			
+			
+			function addNewKind()
+			{
+				assetCategory=getCategory();
+				var newKind=$("#text_newKind").val();
+				if(newKind==null||newKind=="")
+				{
+					alert("新类别不能为空，请填写新类别！");
+					return;
+				}
+				if(!kindNameCheck(newKind)) return;
+				
+				$.post('/assetAddNewKind',{'assetCategory':assetCategory,'assetKind':newKind},CB_addNewKind,'xml');
+				function CB_addNewKind(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						alert("添加新类型成功！");
+						location.href="fassetKindConfig.html";
+					}
+				}
+				
+				
+			}
+			function modifyKind()
+			{
+				assetCategory=getCategory();
+				var oldKind=$("#fassetKindSel :selected").val();
+				var newKind=$("#text_KindNewName").val();
+				if (oldKind==null||oldKind=="")
+				{
+					alert("修改类别名失败：请填写旧类别！");
+					return ;
+				}
+				if(newKind==null||newKind=="")
+				{
+					alert("修改类别名失败：请填写新类别！");
+					return;
+				}
+				
+				if(!kindNameCheck(newKind)) return;
+				
+				$.post('/assetmodifyKind',{'assetCategory':assetCategory,'assetKindID':oldKind,'assetKind':newKind},CB_modifyKind,'xml');
+				function CB_modifyKind(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						alert("修改类别名成功！");
+						location.href="fassetKindConfig.html";
+					}
+				}
+			}
+			function delFAKind()
+			{
+				assetCategory=getCategory();
+				var kindID=$("#sel_Kind_del :selected").val();
+				var kindText=$("#sel_Kind_del :selected").text();
+				if(kindID==null||kindID=="")
+				{
+					alert("删除已有类别失败：请选择现有类别！");
+					return;
+				}
+				$.post('/assetDelKind',{'assetCategory':assetCategory,'assetKindID':kindID,'assetKind':kindText},CB_delKind,'xml');
+				function CB_delKind(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						alert("删除类别名成功！");
+						location.href="fassetKindConfig.html";
+					}
+				}
+			}
+			function addSubKind()
+			{
+				var newSubKind=$("#text_KindNewSub").val();
+				var majKindID = $("#sel_Kind_addSub").val();
+				if(newSubKind==null||newSubKind=="")
+				{
+					alert("新类别不能为空，请填写新类别！");
+					return;
+				}
+				if(!kindNameCheck(newSubKind)) return;
+				
+				$.post('/assetAddNewSubKind',{'assetSubKind':newSubKind,'assetKindID':majKindID},CB_addNewKind,'xml');
+				function CB_addNewKind(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						alert("添加新小类别成功！");
+						location.href="fassetKindConfig.html";
+					}
+				}
+				
+				
+			}
+			function changeSubKind()
+			{
+				var majKindID=$("#sel_Kind_changeSub :selected").val();
+				var oldKindID = $("#sel_oldSubKind").val();
+				var newSubKind=$("#text_changedSubKind").val();
+				if (majKindID==null||majKindID=="")
+				{
+					alert("修改小类别名失败：请填写大类别！");
+					return ;
+				}
+				if(newSubKind==null||newSubKind=="")
+				{
+					alert("修改小类别名失败：请填写新小类别！");
+					return;
+				}
+				if(oldKindID==null||oldKindID=="")
+				{
+					alert("修改小类别名失败：请填写新小类别！");
+					return;
+				}
+				if(!kindNameCheck(newSubKind)) return;
+				$.post('/assetmodifySubKind',{'assetKindID':majKindID,'assetSubKind':newSubKind,'assetSubKindID':oldKindID},CB_modifyKind,'xml');
+				function CB_modifyKind(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						alert("修改小类别名成功！");
+						location.href="fassetKindConfig.html";
+					}
+				}
+			}
+			function delSubKind()
+			{
+				var subKindID=$("#sel_delSubKind").val();
+				if(subKindID==null||subKindID=="")
+				{
+					alert("删除已有类别失败：请选择现有小类别！");
+					return;
+				}
+				$.post('/assetDelSubKind',{'assetSubKindID':subKindID},CB_delKind,'xml');
+				function CB_delKind(databack){
+					var recode = $(databack).find("recode").text();
+					if(recode != 0){
+						alert($(databack).find("errormsg").text());
+					}else {
+						alert("删除小类别名成功！");
+						location.href="fassetKindConfig.html";
+					}
+				}
+			}
+			function getCategory()
+			{
+				var cateval=$(":checked").val();
+				if(cateval=="fixed")
+					return "固定资产";
+				if(cateval=="purchase")
+					return "采购资产";
+				if(cateval=="consumed")
+					return "耗材资产";
+				alert("请选择资产分类！");
+			}
+			function kindNameCheck(str)
+		{
+			var   type="^\\d{2,3}_[^_]+$"; 
+      	 		var   re   =   new   RegExp(type); 
+      			if(str.match(re)==null) 
+       		{ 
+	         	alert( "类别名称格式不正确，请按照提示重新输入!"); 
+	        	return false;
+	       	}
+	       	return true;
+		}
+		</script>
+		 
+	</head>
+	
+	<body>
+		<div id="container2">
+			<div id="header" style="background:url(../../images/bg_banner2.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<div id="content">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="300">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：资产管理 &gt;资产管理 &gt;&nbsp;
+										<strong>资产类别管理</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>资产类别管理</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>资产分类</td>
+								
+								<td style="padding-left:6cm" align="left">
+									<input type="radio"  name="assetCategory" id="fixed" value="fixed" checked="checked"/>固定资产&nbsp; &nbsp;&nbsp; &nbsp;
+									<!--<input type="radio"  name="assetCategory" id="purchase" value="purchase"/>采购资产&nbsp; &nbsp;&nbsp; &nbsp;
+									--><input type="radio"  name="assetCategory" id="consumed" value="consumed"/>耗材资产
+								</td>
+							</tr>
+							<tr>
+							<td colspan="2">
+							   大类别管理                
+							</td>
+							</tr>
+							<tr>
+								<td>添加大类别</td>
+								
+								<td style="padding-left:3cm" align="left">
+									新大类别：<input type="text"  id="text_newKind" class="wideSelText"/>
+									<input class="bt_small" type="button" id="btn_addNewKind" value="添加" onclick="addNewKind()"/>
+									<strong>(类别格式：类别编号_类别名)</strong>
+								</td>
+							</tr>
+							<tr>
+								<td class="width_5">修改大类别名称</td>
+								
+								<td style="padding-left:3cm" align="left">
+								    旧大类别：<select name="fassetKindSel" id="fassetKindSel" class="wideSelText"></select>
+							        <br/>
+							               新大类别：<input type="text" id="text_KindNewName" class="wideSelText"/>
+							        <input class="bt_small" type="button" id="btn_changeKindName" value="修改" onclick="modifyKind()"/>
+							        <strong>(类别格式：类别编号_类别名)</strong>
+							     </td>
+							</tr>
+							<tr>
+								<td class="width_5">删除已有大类别</td>
+								
+								<td style="padding-left:3cm" align="left">
+									现有大类别：<select  id="sel_Kind_del" class="wideSelText"></select>
+							        <input class="bt_small" type="button" id="btn_delKind" value="删除" onclick="delFAKind()"/>
+
+							    </td>
+							</tr>
+							<tr>
+							<td colspan="2">
+							   小类别管理                
+							</td>
+							</tr>
+							<tr>
+								<td class="width_5">添加小类别</td>
+								
+								<td style="padding-left:3cm" align="left">
+									所属大类别：<select  id="sel_Kind_addSub" class="wideSelText"></select>
+									 <br/>
+							               新小类别：<input type="text" id="text_KindNewSub" class="wideSelText"/>
+							        <input class="bt_small" type="button" id="btn_addSubKind" value="添加" onclick="addSubKind()"/>
+									<strong>(类别格式：类别编号_类别名)</strong>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">修改小类别</td>
+								<td style="padding-left:3cm" align="left">
+									所属大类别：<select  id="sel_Kind_changeSub" class="wideSelText"></select>
+									 <br/>
+									 旧小类别：<select name="fassetKindSel" id="sel_oldSubKind" class="wideSelText">
+									 			<option value="">—小类—</option>
+									 			</select>
+									 <br/>
+							               新小类别：<input type="text" id="text_changedSubKind" class="wideSelText"/>
+							        <input class="bt_small" type="button" id="btn_changeSubKind" value="修改" onclick="changeSubKind()"/>
+							        <strong>(类别格式：类别编号_类别名)</strong>
+							    </td>
+							</tr>
+							<tr>
+								<td class="width_5">删除小类别</td>
+								<td style="padding-left:3cm" align="left">
+									所属大类别：<select  id="sel_Kind_delSub" class="wideSelText"></select>
+									 <br/>
+									 小类别：<select name="fassetKindSel" id="sel_delSubKind" class="wideSelText">
+									 		<option value="">—小类—</option>
+									 		</select>
+							        <input class="bt_small" type="button" id="btn_delSubKind" value="删除" onclick="delSubKind()"/>
+							    </td>
+							</tr>
+							<tr>
+							<td colspan="2">
+							                    <input class="bt" type="button" value="返回" onclick="javascript:history.back()"></input>
+							    </td>
+							</tr>    
+						</table>
+					</div>
+				</div>
+			<div id="bg_di"></div>
+			</div>
+			<div id="bg_yejiao">
+		  	<div id="footer">
+          </div>
+			</div>
+
+		</div>
+	</body>
+</html>

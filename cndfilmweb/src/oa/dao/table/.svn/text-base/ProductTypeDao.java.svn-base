@@ -1,0 +1,145 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import oa.dao.BaseDao;
+import oa.model.table.ProductType;
+import oa.util.ResultList;
+import java.util.List;
+@SuppressWarnings("unchecked")
+public class ProductTypeDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(ProductTypeDao.class);
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(ProductType instance) {
+		log.debug("saving ProductType instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(ProductType instance) {
+		log.debug("deleting ProductType instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(ProductType instance) {
+		log.debug("update ProductType instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public ProductType findById(String id) {
+		log.debug("getting ProductType instance with id: " + id);
+		try {
+			ProductType instance = (ProductType) super.get("oa.model.table.ProductType", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+	
+
+
+	public ResultList<ProductType> findByExample(Integer pageNo, ProductType ProductType) {
+		log.debug("find ProductType instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.ProductType", ProductType);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<ProductType> findAll(Integer pageNo) {
+		log.debug("finding all ProductType instances");
+		try {
+			return super.find(pageNo, "oa.model.table.ProductType");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<ProductType> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding ProductType instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.ProductType", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<ProductType> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding ProductType instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.ProductType", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+	
+	
+	
+	/*
+	 * 按属性查询返回集合中唯一对象
+	 */
+	public ProductType findByPropertyReturnOnly(String propertyName, String value){
+		log.debug("finding ProductType instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			ResultList<ProductType> ProductType=super.find(null,"oa.model.table.ProductType", propertyName, value);
+			ProductType u=ProductType.get(0);
+			return u;
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * 按属性查询用户不分页
+	 * @param propertyName
+	 * @param value
+	 * @return
+	 */
+	public List<ProductType> findByProperty(String propertyName,String value){
+		log.debug("finding ProductType instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find("oa.model.table.ProductType", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+		
+	}
+
+}

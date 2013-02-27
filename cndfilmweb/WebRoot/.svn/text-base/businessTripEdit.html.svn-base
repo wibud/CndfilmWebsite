@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OA系统--修改出差申请</title>
+		<script type="text/javascript" src="./scripts/js/page.js"></script>
+
+		<script type="text/javascript">
+			showIncludeFile();
+			showIncludeAjaxingFile();
+		</script>
+        <script type="text/javascript">
+			$(document).ready(function(){
+
+				init();
+				var href = location.href;
+				href = decodeURI(href);
+				var tmp  = (href.split("?"))[1].split("&");
+				var bizTripId = href.split("bizTripId=")[1].split("&")[0].split("#")[0];
+				var prePage = href.split("page1=")[1].split("&")[0].split("#")[0];
+				var flag	=href.split("flag=")[1].split("&")[0].split("#")[0];
+				$.post('/businessTripDetail',
+						{'bizTripId':bizTripId},
+						function(xml){
+						     var userId 			= $(xml).find("userId").text();
+							 var userName 			= $(xml).find("userName").text();
+							 var deptId 			= $(xml).find("deptId").text();
+							 var deptName			= $(xml).find("deptName").text();
+							 var createTime			= $(xml).find("createTime").text();
+							 var leaveTime 			= $(xml).find("leaveTime").text();
+							 var backTime 			= $(xml).find("backTime").text();
+							 var destination 		= $(xml).find("destination").text();
+							 var bizTripReason 		= $(xml).find("bizTripReason").text();
+							 var followPerson 		= $(xml).find("followPerson").text();
+							 var vehicle 			= $(xml).find("vehicle").text();
+							 var managerJudgement 	= $(xml).find("managerJudgement").text(); 
+							 var bmJudgement 		= $(xml).find("bmJudgement").text();
+							 var remark 			= $(xml).find("remark").text();
+							 var bmIdea 			= $(xml).find("bmIdea").text();
+							 var managerIdea 		= $(xml).find("managerIdea").text();
+							 var status = "";
+							 var memberId = "";
+							 var memberName = "";
+							bizTripReason=bizTripReason.replaceAll("\n|\r\n","<br/>");
+		                    remark=remark.replaceAll("\n|\r\n","<br/>");
+		                    var person = followPerson.split(";");
+		                    for(var i=0;i<person.length-1;i++){
+		                    	memberId = person[i].split(",")[0];
+		                    	memberName = person[i].split(",")[1];
+		                    	$("#removeMember").append("<option value=\""+memberId+"\">"+memberName+"</option>");
+		                    }
+							$("#leaveTime").val(leaveTime);
+							$("#backTime").val(backTime);
+							$("#destination").val(destination);
+							$("#bizTripReason").val(bizTripReason);
+							$("#vehicle option[value='"+vehicle+"']").attr("selected","selected");
+							$("#remark").val(remark);
+						},
+						'xml'
+				);
+				//初始化memberDept,addMember列表
+				$.post('/DeptList',
+	                    {},
+	                    function(xml){
+							$(xml).find("item").each(function(){							      
+									$("#memberDept").append("<option value=\""+$(this).find("deptId").text()+"\">"+$(this).find("deptName").text()+"</option>");
+								});
+							$.post('/getUserByDept',
+	            			{'userDeptId':$("#memberDept  option:first").val()},
+	            			 function(xml){
+								$(xml).find("item").each(function(){
+										$("#addMember").append("<option value=\""+$(this).find("userId").text()+"\">"+$(this).find("userName").text()+"</option>");
+									});
+		   	                 },
+		                     'xml');
+	   	                 },
+	                     'xml');
+
+	             $('#memberDept').change(function(){
+		           			$("#addMember option").remove();
+		            		var dept = $('#memberDept').val();
+		            		var dup;
+		            		$.post('/getUserByDept',
+		                    {'userDeptId':dept},
+		                    function(xml){
+								$(xml).find("item").each(function(){
+									var id =$(this).find("userId").text();
+									var name = $(this).find("userName").text();
+									dup = false;
+									$("#removeMember option").each(function(){//已添加的成员不显示在待选成员里
+										if(id == $(this).val()) {
+											dup = true;
+										}
+									});
+									if(!dup) {
+										$("#addMember").append("<option value=\""+id+"\">"+name+"</option>");
+									}
+								});
+		   	                 },
+		                     'xml');
+	            }); 
+	         
+	            //添加成员
+	            $("#addMember").dblclick(function(){
+					$("#addMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#removeMember").append(option);
+						$(this).remove();
+					});
+				});  
+				//删除成员  
+				$("#removeMember").dblclick(function(){
+					$("#removeMember option:selected").each(function(){
+						var option = "<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+						$("#addMember").append(option);
+						$(this).remove();
+					});
+				});  
+				 
+				$('#comfirm').click(function(){
+					var leaveTime     	= $('#leaveTime').val();
+					var destination    	= $('#destination').val();  
+					var backTime     	= $('#backTime').val();
+					var bizTripReason	=$('#bizTripReason').val();
+					var vehicle			=$('#vehicle').val();
+					var remark			=$('#remark').val();
+					var followPerson = "";
+					var managerJudgement = "0";
+					var bmJudgement = "1";
+					$("#removeMember option").each(function() {
+                    	var id = $(this).val();
+                    	var name = $(this).text();
+                    	followPerson += id + "," + name + ";";
+                    });
+                    var now = new Date();
+                    var currentTime = new Date(now.getYear(),now.getMonth(),now.getDate());
+                    var year = $('#leaveTime').val().split("-")[0];
+                    var month = $('#leaveTime').val().split("-")[1];
+                    var date = $('#leaveTime').val().split("-")[2];
+                    var time = new Date(year,month-1,date);
+                    var backYear = $('#backTime').val().split("-")[0];
+                    var backMonth = $('#backTime').val().split("-")[1];
+                    var backDate = $('#backTime').val().split("-")[2];
+                    var bTime = new Date(backYear,backMonth-1,backDate);
+                    if(time.valueOf() < currentTime.valueOf()){
+                    	alert("出差时间不正确");
+                    	return;
+                    }
+					if($('#leaveTime').val() == ""){
+						alert("出差时间不能为空");
+						return;
+                    }
+                    if($('#destination').val() == ""){
+						alert("出差目的地不能为空");
+						return;
+                    }
+                    if($('#backTime').val() == ""){
+						alert("预计返回时间不能为空");
+						return;
+                    }
+                    if($('#backTime').val()<=$('#leaveTime').val()){
+                    	alert("出差期限不正确");
+                    	return;
+                    }
+                    if($('#bizTripReason').val() == ""){
+						alert("出差事由不能为空");
+						return;
+                    }
+                    if($('#vehicle').val() == ""){
+						alert("交通工具不能为空");
+						return;
+                    }
+                    if($('#vehicle').val() == "其他" && $('#remark').val() == ""){
+                    	alert("请在备注里说明您的交通方式");
+                    	return;
+                    }
+                    if(((bTime.valueOf()-time.valueOf())/(1000*60*60*24))>3){
+                    	bmJudgement = "0";
+                    }
+                    remark=remark.replaceAll("\n|\r\n","<br/>");
+                    bizTripReason=bizTripReason.replaceAll("\n|\r\n","<br/>");
+                    $.post('/businessTripEdit', {'bizTripId':bizTripId,'leaveTime':leaveTime,'destination':destination,'backTime':backTime,'bizTripReason':bizTripReason,'vehicle':vehicle,'remark':remark,'followPerson':followPerson,'managerJudgement':managerJudgement,'bmJudgement':bmJudgement}, callback, 'xml');
+
+					function callback(databack){
+						var recode = $(databack).find("recode").text();
+						if(recode != 0){
+							alert($(databack).find("errormsg").text());
+						}else {
+							alert("修改成功");
+		                	if(flag == 1){
+								location.href="businessTripList.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+						}
+					}
+				});
+				$("#back").click(
+						function(){
+							if(flag == 1){
+								location.href="businessTripList.html?page="+prePage;
+							}else{
+								location.href="javascript:history.back()";
+							}
+						}
+					);
+				function init(){
+					$("#header").showHeaderSystem();
+					$("#footer").showFooter();
+					$("#sidebar").showSideBar();
+					$(this).navi();
+				}
+			});
+
+		</script>
+
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" style="background:url(../../images/bg_banner5.jpg)" class="c-1000">
+				<div id="userInfo">
+					<table class="di" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="5">
+								<img src="images/sq_img_14.png" />
+							</td>
+							<td align="right">
+								<span id="welcome" class="welcome"></span>
+							</td>
+							<td width="80" align="center">
+								<a href="authUpdatePasswd.html" class="updatePawd">修改密码</a>
+							</td>
+							<td width="80" align="center">
+								<a href="#" onclick="logout()" class="updatePawd">安全退出</a>
+							</td>
+							<td width="80" align="center"><a href="homePage.html" class="updatePawd">返回首页</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="content" class="c-1000">
+				<div id="main">
+					<div id="content_top" align="center">
+						<table width="950" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="250">
+									<div style="width:300px" class="biao" align="left">
+										当前位置：日常管理 &gt;出差申请管理&gt;&nbsp;
+										<strong>修改出差申请</strong>
+									</div>
+								</td>
+								<td>
+									&nbsp;
+								</td>
+								<td align="right">
+									<div class="biao2">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+												<td width="10">
+													&nbsp;
+												</td>
+												<td>
+													&nbsp;
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div align="center" id="content_xdao2">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="14">
+									<img src="images/bg_9.png" width="14" height="28" />
+								</td>
+								<td height="28" align="center" valign="middle" class="b_di">
+									<strong>修改出差申请</strong>
+								</td>
+								<td width="14" align="right">
+									<img src="images/bg_11.png" width="14" height="28" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="content_r2">
+						<table class="sTable" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td><label class="required">*</label>出差时间</td>
+								<td class="width_15">
+								   <input type="text" id="leaveTime" style="width:200px" onclick="setday(this)" readonly="readonly"></input>
+							    </td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>出差目的地</td>
+								<td class="width_15">
+								   <input type="text" id="destination" style="width:200px"></input>
+							    </td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>预计返回时间</td>
+								<td class="width_15">
+								   <input type="text" id="backTime" style="width:200px" onclick="setday(this)" readonly="readonly"></input>
+							    </td>
+							</tr>
+							<tr>
+								<td><label class="required">*</label>出差事由</td>
+								<td class="width_15">
+								   <textarea id="bizTripReason" style="width:200px"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td align="center">随行人员</td>
+								<td align="center">
+									<table  border="0" cellspacing="0" cellpadding="0">
+									<tr>
+									<td style="border:0" colspan="3">
+									<select name="memberDept" id="memberDept" style="width:130px">
+							        </select>
+							        </td>
+							        </tr>
+							        <tr>
+							        <td style="border:0">
+									<select id="addMember" multiple="multiple" title="双击以添加" style="width:60px" >							       
+							        </select>
+							        </td>
+							        <td style="border:0">
+							   		<img src="images/arrow_two_head.png" style="float:left"></img>
+							   		</td>
+							   		<td style="border:0">
+							   		<select id="removeMember" multiple="multiple" title="双击以删除" style="width:50px">
+							        </select>
+							        </td>
+							        </tr>
+							       </table>
+							    </td>
+							</tr>
+							<tr>
+							   <td><label class="required">*</label>交通工具</td>
+							   <td class="width_15">
+							   		<select id="vehicle" style="width:130px" >
+									     <option value="飞机" selected="selected">飞机</option>
+									     <option value="火车" selected="selected">火车</option>
+									     <option value="汽车" selected="selected">汽车</option>
+									     <option value="其他" selected="selected">其他(需备注里说明)</option>
+									</select>
+								</td>
+						   </tr>
+							<tr>
+								<td>备注</td>
+								<td class="width_15">
+								   <textarea id="remark" style="width:200px"></textarea>
+							    </td>
+							</tr>
+							<tr>
+								<td colspan="2">
+				                    <input class="bt" type="button" value="确定" id="comfirm"></input>
+				                    <input class="bt" type="button" value="返回" id="back"></input>
+							    </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div id="bg_di"></div>
+			</div>
+			<div id="footer"></div>
+
+		</div>
+	</body>
+</html>

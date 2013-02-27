@@ -1,0 +1,118 @@
+package oa.dao.table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+import java.util.List;
+
+import oa.dao.BaseDao;
+import oa.model.table.ProjectMember;
+import oa.util.ResultList;
+
+@SuppressWarnings("unchecked")
+public class ProjectMemberDao extends BaseDao {
+	private static final Logger log = LoggerFactory.getLogger(ProjectMemberDao.class);
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(ProjectMember instance) {
+		log.debug("saving ProjectMember instance");
+		try {
+			super.save(instance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.debug("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(ProjectMember instance) {
+		log.debug("deleting ProjectMember instance");
+		try {
+			super.delete(instance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+	
+	public void deleteAll(List<ProjectMember> list) {
+		log.debug("deleting ProjectMember instance");
+		try {
+			super.deleteList(list);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.debug("delete failed", re);
+			throw re;
+		}
+	}
+
+	public void update(ProjectMember instance) {
+		log.debug("update ProjectMember instance");
+		try {
+			super.update(instance);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.debug("update failed", re);
+			throw re;
+		}
+	}
+
+
+	public ProjectMember findById(String id) {
+		log.debug("getting ProjectMember instance with id: " + id);
+		try {
+			ProjectMember instance = (ProjectMember) super.get("oa.model.table.ProjectMember", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.debug("get failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<ProjectMember> findByExample(Integer pageNo, ProjectMember ProjectMember) {
+		log.debug("find ProjectMember instances with example");
+		try {
+			return super.find(pageNo, "oa.model.table.ProjectMember", ProjectMember);
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<ProjectMember> findAll(Integer pageNo) {
+		log.debug("finding all ProjectMember instances");
+		try {
+			return super.find(pageNo, "oa.model.table.ProjectMember");
+		} catch (RuntimeException re) {
+			log.debug("find all failed", re);
+			throw re;
+		}
+	}
+	
+	public ResultList<ProjectMember> findByCondition(Integer pageNo, String conditions){
+		log.debug("finding ProjectMember instance with conditions: " + conditions);
+		try {
+			return super.find(pageNo, "oa.model.table.ProjectMember", conditions);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public ResultList<ProjectMember> findByProperty(Integer pageNo, String propertyName, String value) {
+		log.debug("finding ProjectMember instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			return super.find(pageNo, "oa.model.table.ProjectMember", propertyName, value);
+		} catch (RuntimeException re) {
+			log.debug("find by property name failed", re);
+			throw re;
+		}
+	}
+
+}
